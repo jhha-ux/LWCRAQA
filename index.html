@@ -336,7 +336,8 @@
   const today = new Date();
   document.getElementById('todayDate').textContent =
     today.toLocaleDateString('ko-KR', {year:'numeric', month:'2-digit', day:'2-digit'});
-  document.getElementById('f-date').value = today.toISOString().slice(0,10);
+  const kstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000);
+document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
 
   // =============================================
   // API 통신
@@ -611,7 +612,7 @@
 
       return `<tr>
         ${cbCell}
-        <td><span class="date-mono">${r.date}</span></td>
+        <td><span class="date-mono">${String(r.date).slice(0,10)}</span></td>
         <td><b style="font-weight:500;">${r.product}</b></td>
         <td><span class="country-badge">${r.country}</span></td>
         <td><span class="type-badge ${badgeClass}">${r.type}</span></td>
