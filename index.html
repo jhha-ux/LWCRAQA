@@ -652,7 +652,7 @@
     cell.innerHTML = `
       <select class="status-select" onchange="changeStatus(this, ${idx})">
         <option value="진행중"  ${current==='진행중'  ?'selected':''}>진행중</option>
-        <option value="검토대기" ${current==='검토대기'?'selected':''}>검토대기</option>
+        <option value="신청" ${current==='신청'?'selected':''}>신청</option>
         <option value="완료"    ${current==='완료'   ?'selected':''}>완료</option>
       </select>`;
     cell.querySelector('.status-select').focus();
