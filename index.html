@@ -558,10 +558,10 @@ document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
       const matchStatus = currentStatusFilter === 'all' || r.status === currentStatusFilter;
       const q = currentSearch.toLowerCase();
       const matchSearch = !q ||
-        (r.product||'').toLowerCase().includes(q) ||
-        (r.country||'').toLowerCase().includes(q) ||
-        (r.manager||'').toLowerCase().includes(q) ||
-        (r.remarks||'').toLowerCase().includes(q);
+String(r.product||'').toLowerCase().includes(q) ||
+String(r.country||'').toLowerCase().includes(q) ||
+String(r.manager||'').toLowerCase().includes(q) ||
+String(r.remarks||'').toLowerCase().includes(q);
       return matchType && matchStatus && matchSearch;
     });
 
