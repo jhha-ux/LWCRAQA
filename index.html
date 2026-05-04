@@ -159,7 +159,7 @@
 
 <!-- ✅ 여기에 Apps Script URL 붙여넣기 -->
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHMXU7R9fMjRLyul4qcwosX1Rc8vSwbX7Wm0-zTmW3SswqBmWSoytMkWrc-x789jLZ/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyoG9kkM-ZaLby_GsynM18s5E0qHSDX1DH_aqaPfmCNLSTj4dKpGfjnQpy26A2CStj1/exec';
 </script>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -224,12 +224,12 @@
         <tr>
           <th id="th-cb" style="display:none;width:40px;"><input type="checkbox" class="cb" id="checkAll" onchange="toggleCheckAll(this)"></th>
           <th>요청일자</th>
-          <th>회신기한</th>
           <th>제품명(제목)</th>
           <th>국가</th>
           <th>유형</th>
           <th>담당자</th>
           <th>상태</th>
+          <th>회신기한</th>
           <th>비고</th>
           <th>구글 드라이브(완료시)</th>
           <th id="th-del" style="display:none;"></th>
@@ -621,6 +621,7 @@ String(r.remarks||'').toLowerCase().includes(q);
         <td><span class="type-badge ${badgeClass}">${r.type}</span></td>
         <td style="color:var(--text-muted)">${r.manager||'-'}</td>
         ${statusCell}
+        <td><span class="date-mono">${r.deadline ? String(r.deadline).slice(0,10) : '-'}</span></td>
         <td><span class="remarks-text">${r.remarks||'-'}</span></td>
         ${linkCell}
         ${deleteCell}
@@ -722,22 +723,23 @@ String(r.remarks||'').toLowerCase().includes(q);
   function closeModalOutside(e) { if (e.target.id === 'modalOverlay') closeModal(); }
 
   async function saveRow() {
-    const date    = document.getElementById('f-date').value;
-  const product = document.getElementById('f-product').value.trim();
-  const country = document.getElementById('f-country').value.trim();
-  const type    = document.getElementById('f-type').value;
-  const manager = document.getElementById('f-manager').value.trim();
-  const status  = document.getElementById('f-status').value;
-  const remarks = document.getElementById('f-remarks').value.trim();
-  const link    = document.getElementById('f-link').value.trim();
-  const email   = document.getElementById('f-email').value.trim();
-  if (!date || !product || !country) { alert('요청일자,회신기한, 제품명, 국가는 필수입니다.'); return; }
+    const date     = document.getElementById('f-date').value;
+  const product  = document.getElementById('f-product').value.trim();
+  const country  = document.getElementById('f-country').value.trim();
+  const type     = document.getElementById('f-type').value;
+  const manager  = document.getElementById('f-manager').value.trim();
+  const status   = document.getElementById('f-status').value;
+  const remarks  = document.getElementById('f-remarks').value.trim();
+  const link     = document.getElementById('f-link').value.trim();
+  const email    = document.getElementById('f-email').value.trim();
+  const deadline = document.getElementById('f-deadline').value;
+  if (!date || !product || !country) { alert('요청일자, 제품명, 국가는 필수입니다.'); return; }
   showLoading('저장 중...');
   try {
-    await api({ action:'add', date, product, country, type, manager, status, remarks, link, email });
+    await api({ action:'add', date, product, country, type, manager, status, remarks, link, email, deadline });
     showToast('✅ 새 요청이 등록되었습니다.');
     closeModal();
-    ['f-product','f-country','f-link','f-manager','f-remarks','f-email'].forEach(id => document.getElementById(id).value = '');
+    ['f-product','f-country','f-link','f-manager','f-remarks','f-email','f-deadline'].forEach(id => document.getElementById(id).value = '');
     await loadData();
   } catch(e) {
     showToast('❌ 저장 실패. 다시 시도해주세요.');
