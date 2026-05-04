@@ -269,6 +269,7 @@
           <option value="신청">신청</option>
         </select>
       </div>
+      <div class="form-group full"><label class="form-label">요청자 이메일</label><input class="form-input" type="email" id="f-email" placeholder="완료 시 알림을 받을 이메일 주소"></div>
       <div class="form-group full"><label class="form-label">비고</label><input class="form-input" type="text" id="f-remarks" placeholder="내용을 입력해 주세요."></div>
       <div class="form-group full"><label class="form-label">구글 드라이브 링크</label><input class="form-input" type="url" id="f-link" placeholder="https://drive.google.com/..."></div>
     </div>
@@ -661,17 +662,26 @@ String(r.remarks||'').toLowerCase().includes(q);
 
   async function changeStatus(sel, idx) {
     const newStatus = sel.value;
-    showLoading('저장 중...');
-    try {
-      await api({ action: 'updateStatus', rowIndex: data[idx]._rowIndex, status: newStatus });
-      data[idx].status = newStatus;
-      showToast('✅ 상태가 업데이트되었습니다.');
-      render();
-    } catch(e) {
-      showToast('❌ 저장 실패');
-    }
-    hideLoading();
+  const r = data[idx];
+  showLoading('저장 중...');
+  try {
+    await api({
+      action: 'updateStatus',
+      rowIndex: r._rowIndex,
+      status: newStatus,
+      email: r.email || '',
+      product: r.product || '',
+      country: r.country || '',
+      type: r.type || ''
+    });
+    data[idx].status = newStatus;
+    showToast('✅ 상태가 업데이트되었습니다.');
+    render();
+  } catch(e) {
+    showToast('❌ 저장 실패');
   }
+  hideLoading();
+}
 
   function toggleLinkEdit(cell, idx) {
     if (!isAdmin) return;
@@ -711,26 +721,27 @@ String(r.remarks||'').toLowerCase().includes(q);
 
   async function saveRow() {
     const date    = document.getElementById('f-date').value;
-    const product = document.getElementById('f-product').value.trim();
-    const country = document.getElementById('f-country').value.trim();
-    const type    = document.getElementById('f-type').value;
-    const manager = document.getElementById('f-manager').value.trim();
-    const status  = document.getElementById('f-status').value;
-    const remarks = document.getElementById('f-remarks').value.trim();
-    const link    = document.getElementById('f-link').value.trim();
-    if (!date || !product || !country) { alert('요청일자, 제품명(제목), 국가는 필수입니다.'); return; }
-    showLoading('저장 중...');
-    try {
-      await api({ action:'add', date, product, country, type, manager, status, remarks, link });
-      showToast('✅ 새 요청이 등록되었습니다.');
-      closeModal();
-      ['f-product','f-country','f-link','f-manager','f-remarks'].forEach(id => document.getElementById(id).value = '');
-      await loadData();
-    } catch(e) {
-      showToast('❌ 저장 실패. 다시 시도해주세요.');
-    }
-    hideLoading();
+  const product = document.getElementById('f-product').value.trim();
+  const country = document.getElementById('f-country').value.trim();
+  const type    = document.getElementById('f-type').value;
+  const manager = document.getElementById('f-manager').value.trim();
+  const status  = document.getElementById('f-status').value;
+  const remarks = document.getElementById('f-remarks').value.trim();
+  const link    = document.getElementById('f-link').value.trim();
+  const email   = document.getElementById('f-email').value.trim();
+  if (!date || !product || !country) { alert('요청일자, 제품명, 국가는 필수입니다.'); return; }
+  showLoading('저장 중...');
+  try {
+    await api({ action:'add', date, product, country, type, manager, status, remarks, link, email });
+    showToast('✅ 새 요청이 등록되었습니다.');
+    closeModal();
+    ['f-product','f-country','f-link','f-manager','f-remarks','f-email'].forEach(id => document.getElementById(id).value = '');
+    await loadData();
+  } catch(e) {
+    showToast('❌ 저장 실패. 다시 시도해주세요.');
   }
+  hideLoading();
+}
 
   // =============================================
   // 필터 / 검색
