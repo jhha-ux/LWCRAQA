@@ -853,7 +853,7 @@ String(r.remarks||'').toLowerCase().includes(q);
   // =============================================
   // 공지사항
   // =============================================
-  let noticeContent = localStorage.getItem('lwc_notice') || '공지사항을 입력해주세요.';
+  let noticeContent = '여기에 공지사항 내용을 직접 입력하세요.';
 
   function initNotice() {
     document.getElementById('noticeBody').textContent = noticeContent;
@@ -871,16 +871,15 @@ String(r.remarks||'').toLowerCase().includes(q);
 
   function saveNotice() {
     const textarea = document.getElementById('noticeTextarea');
-    const body = document.getElementById('noticeBody');
-    const saveBtn = document.getElementById('noticeSaveBtn');
-    noticeContent = textarea.value;
-    localStorage.setItem('lwc_notice', noticeContent);
-    body.textContent = noticeContent;
-    body.style.display = 'block';
-    textarea.style.display = 'none';
-    saveBtn.style.display = 'none';
-    showToast('✅ 공지사항이 저장되었습니다.');
-  }
+  const body = document.getElementById('noticeBody');
+  const saveBtn = document.getElementById('noticeSaveBtn');
+  noticeContent = textarea.value;
+  body.textContent = noticeContent;
+  body.style.display = 'block';
+  textarea.style.display = 'none';
+  saveBtn.style.display = 'none';
+  showToast('⚠️ 공지사항은 HTML 파일에 직접 저장해야 모든 사용자에게 표시됩니다.');
+}
 
   initNotice();
 
