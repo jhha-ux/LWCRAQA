@@ -15,7 +15,6 @@
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; font-size:14px; min-height:100vh; }
 
-  /* TOPBAR */
   .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 32px; height:56px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
   .topbar-left { display:flex; align-items:center; gap:12px; }
   .logo-dot { width:10px; height:10px; border-radius:50%; background:var(--accent); box-shadow:0 0 8px var(--accent); }
@@ -29,10 +28,8 @@
   .admin-btn.active { background:rgba(52,201,138,0.12); border-color:var(--green); color:var(--green); }
   .admin-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-  /* MAIN */
   .main { max-width:1300px; margin:0 auto; padding:32px 24px; }
 
-  /* STATS */
   .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:32px; }
   .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; position:relative; overflow:hidden; }
   .stat-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
@@ -48,20 +45,17 @@
   .stat-card.yellow .stat-value { color:var(--yellow); }
   .stat-desc { font-size:11px; color:var(--text-dim); }
 
-  /* FILTER */
   .section-title { font-size:13px; font-weight:700; display:flex; align-items:center; gap:8px; margin-bottom:16px; }
   .section-title span { width:3px; height:14px; border-radius:2px; background:var(--accent); display:inline-block; }
   .filter-btn { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:5px 14px; border-radius:20px; font-size:11px; cursor:pointer; transition:all 0.15s; }
   .filter-btn.active, .filter-btn:hover { border-color:var(--accent); color:var(--accent); }
 
-  /* SEARCH */
   .search-wrap { position:relative; margin-bottom:16px; }
   .search-input { width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 16px 10px 38px; border-radius:8px; font-size:13px; font-family:'Noto Sans KR',sans-serif; outline:none; }
   .search-input:focus { border-color:var(--accent); }
   .search-icon { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-dim); }
 
-  /* TABLE */
-  .table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:32px; overflow-x:auto; }
+  .table-wrap { background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:16px; overflow-x:auto; }
   table { width:100%; border-collapse:collapse; min-width:1000px; }
   thead tr { background:var(--surface2); border-bottom:1px solid var(--border); }
   thead th { text-align:left; padding:12px 16px; font-size:10px; font-weight:700; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; white-space:nowrap; }
@@ -92,7 +86,6 @@
   .link-cancel-btn { background:none; border:none; color:var(--text-dim); font-size:16px; cursor:pointer; }
   .empty-row td { text-align:center; padding:48px !important; color:var(--text-dim); font-size:13px; }
 
-  /* 체크박스 */
   .cb { width:15px; height:15px; cursor:pointer; accent-color:var(--accent); }
   .bulk-bar { display:none; align-items:center; gap:12px; background:rgba(224,92,92,0.1); border:1px solid rgba(224,92,92,0.3); border-radius:8px; padding:8px 16px; margin-bottom:12px; }
   .bulk-bar.show { display:flex; }
@@ -101,18 +94,15 @@
   .bulk-delete-btn:hover { opacity:0.85; }
   .bulk-cancel-btn { background:none; border:1px solid var(--border); color:var(--text-muted); padding:6px 12px; border-radius:6px; font-size:12px; cursor:pointer; }
 
-  /* LOADING */
   .loading-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center; flex-direction:column; gap:16px; }
   .loading-overlay.show { display:flex; }
   .spinner { width:36px; height:36px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
   .loading-text { font-size:13px; color:var(--text-muted); }
 
-  /* TOAST */
   .toast { position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 22px; border-radius:24px; font-size:13px; opacity:0; transition:all 0.3s; z-index:999; pointer-events:none; white-space:nowrap; }
   .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
-  /* MODAL */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); backdrop-filter:blur(4px); z-index:200; align-items:center; justify-content:center; }
   .modal-overlay.show { display:flex; }
   .modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; width:520px; max-width:95vw; animation:slideUp 0.2s ease; }
@@ -131,7 +121,6 @@
   .btn-save { background:var(--accent); border:none; color:#fff; padding:8px 20px; border-radius:7px; font-size:13px; font-weight:500; cursor:pointer; }
   .btn-save:hover { opacity:0.85; }
 
-  /* PIN */
   .pin-modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; width:340px; max-width:95vw; text-align:center; animation:slideUp 0.2s ease; }
   .pin-title { font-size:15px; font-weight:700; margin-bottom:6px; }
   .pin-sub { font-size:12px; color:var(--text-muted); margin-bottom:24px; }
@@ -147,95 +136,36 @@
   .pin-change-wrap { margin-top:12px; font-size:11px; color:var(--text-dim); }
   .pin-change-wrap a { color:var(--accent); cursor:pointer; text-decoration:underline; }
 
+  /* PAGINATION */
+  .pagination { display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:32px; flex-wrap:wrap; }
+  .page-btn { background:var(--surface); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:6px; font-size:13px; cursor:pointer; transition:all 0.15s; font-family:'DM Mono',monospace; }
+  .page-btn:hover:not(:disabled) { border-color:var(--accent); color:var(--accent); }
+  .page-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .page-btn:disabled { opacity:0.3; cursor:default; }
+  .page-info { font-size:11px; color:var(--text-muted); margin:0 8px; }
+  .page-size-select { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:5px 10px; border-radius:6px; font-size:12px; cursor:pointer; outline:none; }
+
+  /* 공지사항 패널 */
+  .notice-panel { position:fixed; left:20px; top:50%; transform:translateY(-50%); width:200px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; z-index:50; box-shadow:0 4px 24px rgba(0,0,0,0.3); }
+  .notice-title { font-size:11px; font-weight:700; color:var(--accent); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
+  .notice-edit-btn { background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:13px; padding:0; display:none; }
+  .notice-edit-btn:hover { color:var(--accent); }
+  .notice-body { font-size:12px; color:var(--text-muted); line-height:1.7; white-space:pre-wrap; word-break:break-word; min-height:60px; }
+  .notice-textarea { width:100%; background:var(--surface2); border:1px solid var(--accent); color:var(--text); border-radius:6px; padding:8px; font-size:12px; font-family:'Noto Sans KR',sans-serif; line-height:1.7; resize:vertical; outline:none; min-height:100px; }
+  .notice-save-btn { margin-top:8px; width:100%; background:var(--accent); border:none; color:#fff; padding:6px; border-radius:6px; font-size:12px; cursor:pointer; }
+  .notice-save-btn:hover { opacity:0.85; }
+
   @media (max-width:768px) {
     .stats-row { grid-template-columns:1fr 1fr; }
     .form-grid { grid-template-columns:1fr; }
     .topbar { padding:0 16px; }
     .main { padding:20px 16px; }
   }
-  /* 공지사항 패널 */
-  .notice-panel {
-    position: fixed;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 200px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    z-index: 50;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.3);
-  }
-  .notice-title {
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .notice-edit-btn {
-    background: none;
-    border: none;
-    color: var(--text-dim);
-    cursor: pointer;
-    font-size: 13px;
-    padding: 0;
-    display: none;
-  }
-  .notice-edit-btn:hover { color: var(--accent); }
-  .notice-body {
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.7;
-    white-space: pre-wrap;
-    word-break: break-word;
-    min-height: 60px;
-  }
-  .notice-textarea {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--accent);
-    color: var(--text);
-    border-radius: 6px;
-    padding: 8px;
-    font-size: 12px;
-    font-family: 'Noto Sans KR', sans-serif;
-    line-height: 1.7;
-    resize: vertical;
-    outline: none;
-    min-height: 100px;
-  }
-  .notice-save-btn {
-    margin-top: 8px;
-    width: 100%;
-    background: var(--accent);
-    border: none;
-    color: #fff;
-    padding: 6px;
-    border-radius: 6px;
-    font-size: 12px;
-    cursor: pointer;
-  }
-  .notice-save-btn:hover { opacity: 0.85; }
-  @media (max-width: 1400px) { .notice-panel { display: none; } }
-/* PAGINATION */
-.pagination { display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:32px; }
-.page-btn { background:var(--surface); border:1px solid var(--border); color:var(--text-muted); width:34px; height:34px; border-radius:6px; font-size:13px; cursor:pointer; transition:all 0.15s; font-family:'DM Mono',monospace; }
-.page-btn:hover { border-color:var(--accent); color:var(--accent); }
-.page-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
-.page-btn:disabled { opacity:0.3; cursor:default; }
-.page-info { font-size:11px; color:var(--text-muted); margin:0 8px; }
-.page-size-select { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:5px 10px; border-radius:6px; font-size:12px; cursor:pointer; outline:none; }
+  @media (max-width:1400px) { .notice-panel { display:none; } }
 </style>
 </head>
 <body>
 
-<!-- ✅ 여기에 Apps Script URL 붙여넣기 -->
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcZN9KBGeQ8_Wpyos_PaD9iY33zVjnDJT6C5cAuMxy49ku6GwBpnumaDuSgvVgcDyX/exec';
 </script>
@@ -245,7 +175,7 @@
   <div class="loading-text" id="loadingText">불러오는 중...</div>
 </div>
 <div class="toast" id="toast"></div>
-  <!-- 공지사항 패널 -->
+
 <div class="notice-panel" id="noticePanel">
   <div class="notice-title">
     📌 공지사항
@@ -293,21 +223,20 @@
     <button class="filter-btn active" id="status-btn-all" onclick="filterStatus('all',this)">전체</button>
     <button class="filter-btn" onclick="filterStatus('진행중',this)">진행중</button>
     <button class="filter-btn" onclick="filterStatus('신청',this)">신청</button>
-    </div>
+  </div>
 
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
     <input class="search-input" type="text" placeholder="제품명(제목), 국가, 담당자, 비고 검색..." oninput="searchRows(this.value)">
   </div>
 
-  <!-- 선택 삭제 바 (관리자 전용) -->
   <div class="bulk-bar" id="bulkBar">
     <span class="bulk-bar-text" id="bulkBarText">0개 선택됨</span>
     <button class="bulk-delete-btn" onclick="bulkDelete()">🗑 선택 삭제</button>
     <button class="bulk-cancel-btn" onclick="clearSelection()">취소</button>
   </div>
 
-  <div class="pagination" id="pagination"></div>
+  <div class="table-wrap">
     <table>
       <thead>
         <tr>
@@ -329,6 +258,8 @@
       </tbody>
     </table>
   </div>
+
+  <div class="pagination" id="pagination"></div>
 </div>
 
 <!-- 새 요청 모달 -->
@@ -406,23 +337,22 @@
 
 <script>
   // =============================================
-  // 상태
+  // 상태 변수
   // =============================================
   let data = [];
   let currentPage = 1;
-let pageSize = 20;
+  let pageSize = 20;
   let currentTypeFilter = 'all';
   let currentStatusFilter = 'all';
   let currentSearch = '';
   let isAdmin = false;
-  let selectedRows = new Set(); // 체크박스 선택
+  let selectedRows = new Set();
 
-  // PIN — localStorage 없이 메모리로만 (구글사이트/iframe 대응)
-  const ADMIN_PIN = '1234'; // ← 원하는 PIN으로 변경
+  const ADMIN_PIN = '1234';
   let pinBuffer = '';
   let pinMode = 'login';
   let changePinTemp = '';
-  let sessionPin = ADMIN_PIN; // 런타임 PIN (새로고침 시 초기화)
+  let sessionPin = ADMIN_PIN;
 
   // =============================================
   // 초기화
@@ -431,10 +361,10 @@ let pageSize = 20;
   document.getElementById('todayDate').textContent =
     today.toLocaleDateString('ko-KR', {year:'numeric', month:'2-digit', day:'2-digit'});
   const kstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000);
-document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
+  document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
 
   // =============================================
-  // API 통신
+  // API
   // =============================================
   function showLoading(text='처리 중...') {
     document.getElementById('loadingText').textContent = text;
@@ -495,7 +425,6 @@ document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
       thCb.style.display = 'none';
       thDel.style.display = 'none';
       noticeEditBtn.style.display = 'none';
-      // 수정 중이면 닫기
       document.getElementById('noticeTextarea').style.display = 'none';
       document.getElementById('noticeSaveBtn').style.display = 'none';
       document.getElementById('noticeBody').style.display = 'block';
@@ -511,7 +440,7 @@ document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
   }
 
   // =============================================
-  // PIN (localStorage 없이 메모리 기반)
+  // PIN
   // =============================================
   function openPinModal() {
     pinBuffer = ''; pinMode = 'login';
@@ -627,7 +556,6 @@ document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
     if (selectedRows.size === 0) return;
     if (!confirm(`선택한 ${selectedRows.size}개 항목을 삭제할까요?`)) return;
     showLoading('삭제 중...');
-    // rowIndex 내림차순으로 삭제 (시트 행 번호 밀림 방지)
     const indices = [...selectedRows].map(i => data[i]._rowIndex).sort((a,b)=>b-a);
     try {
       for (const rowIndex of indices) {
@@ -652,129 +580,129 @@ document.getElementById('f-date').value = kstToday.toISOString().slice(0,10);
     return 'foreign-reg';
   }
 
-  entById('tableBody');
-  const filtered = data.filter(r => {
-    const matchType   = currentTypeFilter === 'all' || r.type === currentTypeFilter;
-    const matchStatus = currentStatusFilter === 'all' || r.status === currentStatusFilter;
-    const q = currentSearch.toLowerCase();
-    const matchSearch = !q ||
-      String(r.product||'').toLowerCase().includes(q) ||
-      String(r.country||'').toLowerCase().includes(q) ||
-      String(r.manager||'').toLowerCase().includes(q) ||
-      String(r.remarks||'').toLowerCase().includes(q);
-    return matchType && matchStatus && matchSearch;
-  });
+  function render() {
+    const tbody = document.getElementById('tableBody');
 
-  document.getElementById('stat-total').textContent    = data.length;
-  document.getElementById('stat-domestic').textContent = data.filter(r=>r.type==='국내 품질서류요청').length;
-  document.getElementById('stat-fq').textContent       = data.filter(r=>r.type==='해외 품질서류요청').length;
-  document.getElementById('stat-fr').textContent       = data.filter(r=>r.type==='해외 인허가요청').length;
+    const filtered = data.filter(r => {
+      const matchType   = currentTypeFilter === 'all' || r.type === currentTypeFilter;
+      const matchStatus = currentStatusFilter === 'all' || r.status === currentStatusFilter;
+      const q = currentSearch.toLowerCase();
+      const matchSearch = !q ||
+        String(r.product||'').toLowerCase().includes(q) ||
+        String(r.country||'').toLowerCase().includes(q) ||
+        String(r.manager||'').toLowerCase().includes(q) ||
+        String(r.remarks||'').toLowerCase().includes(q);
+      return matchType && matchStatus && matchSearch;
+    });
 
-  // 페이지네이션 계산
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  if (currentPage > totalPages) currentPage = totalPages;
-  const start = (currentPage - 1) * pageSize;
-  const pageData = filtered.slice(start, start + pageSize);
+    document.getElementById('stat-total').textContent    = data.length;
+    document.getElementById('stat-domestic').textContent = data.filter(r=>r.type==='국내 품질서류요청').length;
+    document.getElementById('stat-fq').textContent       = data.filter(r=>r.type==='해외 품질서류요청').length;
+    document.getElementById('stat-fr').textContent       = data.filter(r=>r.type==='해외 인허가요청').length;
 
-  if (filtered.length === 0) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="9">📂 해당하는 요청이 없습니다.</td></tr>`;
-    document.getElementById('pagination').innerHTML = '';
-    return;
+    // 페이지네이션 계산
+    const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    if (currentPage > totalPages) currentPage = totalPages;
+    const start = (currentPage - 1) * pageSize;
+    const pageData = filtered.slice(start, start + pageSize);
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr class="empty-row"><td colspan="9">📂 해당하는 요청이 없습니다.</td></tr>`;
+      document.getElementById('pagination').innerHTML = '';
+      return;
+    }
+
+    tbody.innerHTML = pageData.map((r) => {
+      const actualIdx  = data.indexOf(r);
+      const dotClass   = r.status === '완료' ? 'green' : r.status === '진행중' ? 'yellow' : 'red';
+      const badgeClass = typeBadgeClass(r.type);
+      const isChecked  = selectedRows.has(actualIdx);
+
+      const linkHtml = r.link
+        ? `<a class="drive-link" href="${r.link}" target="_blank">📁 열기</a>`
+        : `<span style="color:var(--text-dim);font-size:12px;${isAdmin?'cursor:pointer;':''}">
+             ${isAdmin ? '+ 링크 추가' : '미첨부'}
+           </span>`;
+
+      const cbCell = isAdmin
+        ? `<td style="text-align:center;">
+             <input type="checkbox" class="cb row-cb" data-idx="${actualIdx}"
+               ${isChecked?'checked':''} onchange="toggleRowCheck(this, ${actualIdx})">
+           </td>`
+        : '';
+
+      const statusCell = isAdmin
+        ? `<td class="status-cell" onclick="toggleStatusEdit(this, ${actualIdx})">
+             <span class="status-dot"><span class="dot ${dotClass}"></span>${r.status}</span>
+           </td>`
+        : `<td><span class="status-dot"><span class="dot ${dotClass}"></span>${r.status}</span></td>`;
+
+      const linkCell = isAdmin
+        ? `<td class="link-cell" onclick="toggleLinkEdit(this, ${actualIdx})">${linkHtml}</td>`
+        : `<td>${linkHtml}</td>`;
+
+      const deleteCell = isAdmin
+        ? `<td style="text-align:center;">
+             <button class="delete-btn" onclick="deleteSingle(event, ${actualIdx})" title="삭제">×</button>
+           </td>`
+        : '';
+
+      return `<tr>
+        ${cbCell}
+        <td><span class="date-mono">${String(r.date).slice(0,10)}</span></td>
+        <td><b style="font-weight:500;">${r.product}</b></td>
+        <td><span class="country-badge">${r.country}</span></td>
+        <td><span class="type-badge ${badgeClass}">${r.type}</span></td>
+        <td style="color:var(--text-muted)">${r.manager||'-'}</td>
+        ${statusCell}
+        <td><span class="date-mono">${r.deadline ? String(r.deadline).slice(0,10) : '-'}</span></td>
+        <td><span class="remarks-text">${r.remarks||'-'}</span></td>
+        ${linkCell}
+        ${deleteCell}
+      </tr>`;
+    }).join('');
+
+    renderPagination(totalPages, filtered.length);
   }
 
-  tbody.innerHTML = pageData.map((r, fi) => {
-    const actualIdx  = data.indexOf(r);
-    const dotClass   = r.status === '완료' ? 'green' : r.status === '진행중' ? 'yellow' : 'red';
-    const badgeClass = typeBadgeClass(r.type);
-    const isChecked  = selectedRows.has(actualIdx);
+  function renderPagination(totalPages, totalCount) {
+    const el = document.getElementById('pagination');
+    if (totalPages <= 1) { el.innerHTML = ''; return; }
 
-    const linkHtml = r.link
-      ? `<a class="drive-link" href="${r.link}" target="_blank">📁 열기</a>`
-      : `<span style="color:var(--text-dim);font-size:12px;${isAdmin?'cursor:pointer;':''}">
-           ${isAdmin ? '+ 링크 추가' : '미첨부'}
-         </span>`;
+    let html = `
+      <select class="page-size-select" onchange="changePageSize(this.value)">
+        <option value="10"  ${pageSize===10 ?'selected':''}>10개씩</option>
+        <option value="20"  ${pageSize===20 ?'selected':''}>20개씩</option>
+        <option value="50"  ${pageSize===50 ?'selected':''}>50개씩</option>
+        <option value="100" ${pageSize===100?'selected':''}>100개씩</option>
+      </select>
+      <button class="page-btn" onclick="goPage(1)" ${currentPage===1?'disabled':''}>«</button>
+      <button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
 
-    const cbCell = isAdmin
-      ? `<td style="text-align:center;">
-           <input type="checkbox" class="cb row-cb" data-idx="${actualIdx}"
-             ${isChecked?'checked':''} onchange="toggleRowCheck(this, ${actualIdx})">
-         </td>`
-      : '';
+    const range = 2;
+    for (let p = Math.max(1, currentPage - range); p <= Math.min(totalPages, currentPage + range); p++) {
+      html += `<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    }
 
-    const statusCell = isAdmin
-      ? `<td class="status-cell" onclick="toggleStatusEdit(this, ${actualIdx})">
-           <span class="status-dot"><span class="dot ${dotClass}"></span>${r.status}</span>
-         </td>`
-      : `<td><span class="status-dot"><span class="dot ${dotClass}"></span>${r.status}</span></td>`;
+    html += `
+      <button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>›</button>
+      <button class="page-btn" onclick="goPage(${totalPages})" ${currentPage===totalPages?'disabled':''}>»</button>
+      <span class="page-info">총 ${totalCount}건 / ${totalPages}페이지</span>`;
 
-    const linkCell = isAdmin
-      ? `<td class="link-cell" onclick="toggleLinkEdit(this, ${actualIdx})">${linkHtml}</td>`
-      : `<td>${linkHtml}</td>`;
-
-    const deleteCell = isAdmin
-      ? `<td style="text-align:center;">
-           <button class="delete-btn" onclick="deleteSingle(event, ${actualIdx})" title="삭제">×</button>
-         </td>`
-      : '';
-
-    return `<tr>
-      ${cbCell}
-      <td><span class="date-mono">${String(r.date).slice(0,10)}</span></td>
-      <td><b style="font-weight:500;">${r.product}</b></td>
-      <td><span class="country-badge">${r.country}</span></td>
-      <td><span class="type-badge ${badgeClass}">${r.type}</span></td>
-      <td style="color:var(--text-muted)">${r.manager||'-'}</td>
-      ${statusCell}
-      <td><span class="date-mono">${r.deadline ? String(r.deadline).slice(0,10) : '-'}</span></td>
-      <td><span class="remarks-text">${r.remarks||'-'}</span></td>
-      ${linkCell}
-      ${deleteCell}
-    </tr>`;
-  }).join('');
-  }
-  // 페이지네이션 렌더
-  renderPagination(totalPages, filtered.length);
-}
-
-function renderPagination(totalPages, totalCount) {
-  const el = document.getElementById('pagination');
-  if (totalPages <= 1) { el.innerHTML = ''; return; }
-
-  let html = `
-    <select class="page-size-select" onchange="changePageSize(this.value)">
-      <option value="10"  ${pageSize===10 ?'selected':''}>10개씩</option>
-      <option value="20"  ${pageSize===20 ?'selected':''}>20개씩</option>
-      <option value="50"  ${pageSize===50 ?'selected':''}>50개씩</option>
-      <option value="100" ${pageSize===100?'selected':''}>100개씩</option>
-    </select>
-    <button class="page-btn" onclick="goPage(1)" ${currentPage===1?'disabled':''}>«</button>
-    <button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
-
-  // 페이지 번호 (최대 5개 표시)
-  const range = 2;
-  for (let p = Math.max(1, currentPage - range); p <= Math.min(totalPages, currentPage + range); p++) {
-    html += `<button class="page-btn ${p===currentPage?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    el.innerHTML = html;
   }
 
-  html += `
-    <button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>›</button>
-    <button class="page-btn" onclick="goPage(${totalPages})" ${currentPage===totalPages?'disabled':''}>»</button>
-    <span class="page-info">총 ${totalCount}건 / ${totalPages}페이지</span>`;
+  function goPage(p) {
+    currentPage = p;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-  el.innerHTML = html;
-}
-
-function goPage(p) {
-  currentPage = p;
-  render();
-  window.scrollTo({ top: 0, behavior: 'smooth' }); // 페이지 이동 시 상단으로
-}
-
-function changePageSize(val) {
-  pageSize = parseInt(val);
-  currentPage = 1;
-  render();
-}
+  function changePageSize(val) {
+    pageSize = parseInt(val);
+    currentPage = 1;
+    render();
+  }
 
   // =============================================
   // 단건 삭제
@@ -803,35 +731,35 @@ function changePageSize(val) {
     const current = data[idx].status;
     cell.innerHTML = `
       <select class="status-select" onchange="changeStatus(this, ${idx})">
-        <option value="진행중"  ${current==='진행중'  ?'selected':''}>진행중</option>
-        <option value="신청" ${current==='신청'?'selected':''}>신청</option>
-        <option value="완료"    ${current==='완료'   ?'selected':''}>완료</option>
+        <option value="신청"   ${current==='신청'  ?'selected':''}>신청</option>
+        <option value="진행중" ${current==='진행중'?'selected':''}>진행중</option>
+        <option value="완료"   ${current==='완료'  ?'selected':''}>완료</option>
       </select>`;
     cell.querySelector('.status-select').focus();
   }
 
   async function changeStatus(sel, idx) {
     const newStatus = sel.value;
-  const r = data[idx];
-  showLoading('저장 중...');
-  try {
-    await api({
-      action: 'updateStatus',
-      rowIndex: r._rowIndex,
-      status: newStatus,
-      email: r.email || '',
-      product: r.product || '',
-      country: r.country || '',
-      type: r.type || ''
-    });
-    data[idx].status = newStatus;
-    showToast('✅ 상태가 업데이트되었습니다.');
-    render();
-  } catch(e) {
-    showToast('❌ 저장 실패');
+    const r = data[idx];
+    showLoading('저장 중...');
+    try {
+      await api({
+        action: 'updateStatus',
+        rowIndex: r._rowIndex,
+        status: newStatus,
+        email: r.email || '',
+        product: r.product || '',
+        country: r.country || '',
+        type: r.type || ''
+      });
+      data[idx].status = newStatus;
+      showToast('✅ 상태가 업데이트되었습니다.');
+      render();
+    } catch(e) {
+      showToast('❌ 저장 실패');
+    }
+    hideLoading();
   }
-  hideLoading();
-}
 
   function toggleLinkEdit(cell, idx) {
     if (!isAdmin) return;
@@ -871,28 +799,28 @@ function changePageSize(val) {
 
   async function saveRow() {
     const date     = document.getElementById('f-date').value;
-  const product  = document.getElementById('f-product').value.trim();
-  const country  = document.getElementById('f-country').value.trim();
-  const type     = document.getElementById('f-type').value;
-  const manager  = document.getElementById('f-manager').value.trim();
-  const status   = document.getElementById('f-status').value;
-  const remarks  = document.getElementById('f-remarks').value.trim();
-  const link     = document.getElementById('f-link').value.trim();
-  const email    = document.getElementById('f-email').value.trim();
-  const deadline = document.getElementById('f-deadline').value;
-  if (!date || !product || !country) { alert('요청일자, 제품명, 국가는 필수입니다.'); return; }
-  showLoading('저장 중...');
-  try {
-    await api({ action:'add', date, product, country, type, manager, status, remarks, link, email, deadline });
-    showToast('✅ 새 요청이 등록되었습니다.');
-    closeModal();
-    ['f-product','f-country','f-link','f-manager','f-remarks','f-email','f-deadline'].forEach(id => document.getElementById(id).value = '');
-    await loadData();
-  } catch(e) {
-    showToast('❌ 저장 실패. 다시 시도해주세요.');
+    const product  = document.getElementById('f-product').value.trim();
+    const country  = document.getElementById('f-country').value.trim();
+    const type     = document.getElementById('f-type').value;
+    const manager  = document.getElementById('f-manager').value.trim();
+    const status   = document.getElementById('f-status').value;
+    const remarks  = document.getElementById('f-remarks').value.trim();
+    const link     = document.getElementById('f-link').value.trim();
+    const email    = document.getElementById('f-email').value.trim();
+    const deadline = document.getElementById('f-deadline').value;
+    if (!date || !product || !country) { alert('요청일자, 제품명, 국가는 필수입니다.'); return; }
+    showLoading('저장 중...');
+    try {
+      await api({ action:'add', date, product, country, type, manager, status, remarks, link, email, deadline });
+      showToast('✅ 새 요청이 등록되었습니다.');
+      closeModal();
+      ['f-product','f-country','f-link','f-manager','f-remarks','f-email','f-deadline'].forEach(id => document.getElementById(id).value = '');
+      await loadData();
+    } catch(e) {
+      showToast('❌ 저장 실패. 다시 시도해주세요.');
+    }
+    hideLoading();
   }
-  hideLoading();
-}
 
   // =============================================
   // 필터 / 검색
@@ -911,7 +839,8 @@ function changePageSize(val) {
     btn.classList.add('active');
     render();
   }
-  function searchRows(q) { currentSearch = q; render(); }
+  function searchRows(q) { currentSearch = q; currentPage = 1; render(); }
+
   // =============================================
   // 공지사항
   // =============================================
@@ -933,15 +862,15 @@ function changePageSize(val) {
 
   function saveNotice() {
     const textarea = document.getElementById('noticeTextarea');
-  const body = document.getElementById('noticeBody');
-  const saveBtn = document.getElementById('noticeSaveBtn');
-  noticeContent = textarea.value;
-  body.textContent = noticeContent;
-  body.style.display = 'block';
-  textarea.style.display = 'none';
-  saveBtn.style.display = 'none';
-  showToast('⚠️ 공지사항은 HTML 파일에 직접 저장해야 모든 사용자에게 표시됩니다.');
-}
+    const body = document.getElementById('noticeBody');
+    const saveBtn = document.getElementById('noticeSaveBtn');
+    noticeContent = textarea.value;
+    body.textContent = noticeContent;
+    body.style.display = 'block';
+    textarea.style.display = 'none';
+    saveBtn.style.display = 'none';
+    showToast('⚠️ 공지사항은 HTML 파일에 직접 저장해야 모든 사용자에게 표시됩니다.');
+  }
 
   initNotice();
 
