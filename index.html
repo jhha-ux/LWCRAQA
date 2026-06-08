@@ -165,7 +165,42 @@
 </style>
 </head>
 <body>
+<style>
+.kca-banner {
+  background: linear-gradient(135deg, #1a3c6e 0%, #2e5fa3 60%, #1a5c8a 100%);
+  padding: 14px 24px;
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap; cursor: pointer;
+  transition: filter .2s;
+}
+.kca-banner:hover { filter: brightness(1.07); }
+.kca-banner-icon { font-size: 28px; flex-shrink: 0; }
+.kca-banner-text { flex: 1; min-width: 180px; }
+.kca-banner-text strong {
+  color: #fff; font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px;
+}
+.kca-banner-text span { color: rgba(255,255,255,.75); font-size: 12px; }
+.kca-banner-btn {
+  background: #fff; color: #1a3c6e; font-weight: 700;
+  font-size: 13px; padding: 9px 18px; border-radius: 8px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: background .2s;
+}
+.kca-banner-btn:hover { background: #f0f4ff; }
+</style>
 
+<div class="kca-banner" onclick="window.open('./kca-search.html','_blank')">
+  <div class="kca-banner-icon">🔍</div>
+  <div class="kca-banner-text">
+    <strong>KCA 광고자문 부적합 표현 검색</strong>
+    <span>2014~2026년 1,034건 수록 · 키워드로 지적 사례를 즉시 확인</span>
+  </div>
+  <a class="kca-banner-btn" href="./kca-search.html" target="_blank" onclick="event.stopPropagation()">
+    검색하기 ↗
+  </a>
+</div>
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaXr35UIdF5jUUc60ukDPPJzskVLZqUF7DeGfDM4MQkIHKYqeaN3OPmamHtkWEPqA/exec';
 </script>
