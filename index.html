@@ -201,6 +201,39 @@
     검색하기 ↗
   </a>
 </div>
+  <style>
+.ingr-banner {
+  background: linear-gradient(135deg, #1a4a2e 0%, #1e6b40 60%, #1a4a35 100%);
+  padding: 14px 24px;
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap; cursor: pointer;
+  transition: filter .2s;
+}
+.ingr-banner:hover { filter: brightness(1.07); }
+.ingr-banner-icon { font-size: 28px; flex-shrink: 0; }
+.ingr-banner-text { flex: 1; min-width: 180px; }
+.ingr-banner-text strong { color: #fff; font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px; }
+.ingr-banner-text span { color: rgba(255,255,255,.75); font-size: 12px; }
+.ingr-banner-btn {
+  background: #fff; color: #1a4a2e; font-weight: 700;
+  font-size: 13px; padding: 9px 18px; border-radius: 8px;
+  text-decoration: none; white-space: nowrap; flex-shrink: 0;
+  display: inline-flex; align-items: center; gap: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: background .2s;
+}
+.ingr-banner-btn:hover { background: #f0fff4; }
+</style>
+
+<div class="ingr-banner" onclick="window.open('./ingredient-converter.html','_blank')">
+  <div class="ingr-banner-icon">🧪</div>
+  <div class="ingr-banner-text">
+    <strong>전성분 변환기</strong>
+    <span>세로형 성분표 → 가로형(콤마 구분) 즉시 변환 · 국문/영문 지원</span>
+  </div>
+  <a class="ingr-banner-btn" href="./ingredient-converter.html" target="_blank" onclick="event.stopPropagation()">
+    변환하기 ↗
+  </a>
+</div>
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaXr35UIdF5jUUc60ukDPPJzskVLZqUF7DeGfDM4MQkIHKYqeaN3OPmamHtkWEPqA/exec';
 </script>
