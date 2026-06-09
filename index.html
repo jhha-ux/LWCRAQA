@@ -165,75 +165,6 @@
 </style>
 </head>
 <body>
-<style>
-.kca-banner {
-  background: linear-gradient(135deg, #1a3c6e 0%, #2e5fa3 60%, #1a5c8a 100%);
-  padding: 14px 24px;
-  display: flex; align-items: center; gap: 16px;
-  flex-wrap: wrap; cursor: pointer;
-  transition: filter .2s;
-}
-.kca-banner:hover { filter: brightness(1.07); }
-.kca-banner-icon { font-size: 28px; flex-shrink: 0; }
-.kca-banner-text { flex: 1; min-width: 180px; }
-.kca-banner-text strong {
-  color: #fff; font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px;
-}
-.kca-banner-text span { color: rgba(255,255,255,.75); font-size: 12px; }
-.kca-banner-btn {
-  background: #fff; color: #1a3c6e; font-weight: 700;
-  font-size: 13px; padding: 9px 18px; border-radius: 8px;
-  text-decoration: none; white-space: nowrap; flex-shrink: 0;
-  display: inline-flex; align-items: center; gap: 5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  transition: background .2s;
-}
-.kca-banner-btn:hover { background: #f0f4ff; }
-</style>
-
-<div class="kca-banner" onclick="window.open('./kca-search.html?v=2','_blank')">
-  <div class="kca-banner-icon">🔍</div>
-  <div class="kca-banner-text">
-    <strong>KCA 광고자문 부적합 표현 검색</strong>
-    <span>2014~2026년 1,034건 수록 · 키워드로 지적 사례를 즉시 확인</span>
-  </div>
-  <a class="kca-banner-btn" href="./kca-search.html?v=2" target="_blank" onclick="event.stopPropagation()">
-    검색하기 ↗
-  </a>
-</div>
-  <style>
-.ingr-banner {
-  background: linear-gradient(135deg, #1a4a2e 0%, #1e6b40 60%, #1a4a35 100%);
-  padding: 14px 24px;
-  display: flex; align-items: center; gap: 16px;
-  flex-wrap: wrap; cursor: pointer;
-  transition: filter .2s;
-}
-.ingr-banner:hover { filter: brightness(1.07); }
-.ingr-banner-icon { font-size: 28px; flex-shrink: 0; }
-.ingr-banner-text { flex: 1; min-width: 180px; }
-.ingr-banner-text strong { color: #fff; font-size: 15px; font-weight: 700; display: block; margin-bottom: 2px; }
-.ingr-banner-text span { color: rgba(255,255,255,.75); font-size: 12px; }
-.ingr-banner-btn {
-  background: #fff; color: #1a4a2e; font-weight: 700;
-  font-size: 13px; padding: 9px 18px; border-radius: 8px;
-  text-decoration: none; white-space: nowrap; flex-shrink: 0;
-  display: inline-flex; align-items: center; gap: 5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: background .2s;
-}
-.ingr-banner-btn:hover { background: #f0fff4; }
-</style>
-
-<div class="ingr-banner" onclick="window.open('./ingredient-converter.html','_blank')">
-  <div class="ingr-banner-icon">🧪</div>
-  <div class="ingr-banner-text">
-    <strong>전성분 변환기</strong>
-    <span>세로형 성분표 → 가로형(콤마 구분) 즉시 변환 · 국문/영문 지원</span>
-  </div>
-  <a class="ingr-banner-btn" href="./ingredient-converter.html" target="_blank" onclick="event.stopPropagation()">
-    변환하기 ↗
-  </a>
-</div>
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaXr35UIdF5jUUc60ukDPPJzskVLZqUF7DeGfDM4MQkIHKYqeaN3OPmamHtkWEPqA/exec';
 </script>
@@ -253,7 +184,18 @@
   <textarea class="notice-textarea" id="noticeTextarea" style="display:none;"></textarea>
   <button class="notice-save-btn" id="noticeSaveBtn" style="display:none;" onclick="saveNotice()">저장</button>
 </div>
-
+<div class="notice-panel" style="top:calc(50% + 140px); border-color:var(--green);">
+  <div class="notice-title" style="color:var(--green);">
+    🧪 전성분 변환기
+  </div>
+  <div class="notice-body">
+    세로형 성분표를 가로형으로 즉시 변환
+  </div>
+  <a href="./ingredient-converter.html" target="_blank"
+    style="display:block; text-align:center; background:var(--green); color:#fff; padding:7px 0; border-radius:6px; font-size:12px; font-weight:500; text-decoration:none; margin-top:12px;">
+    변환하기 →
+  </a>
+</div>
 <div class="topbar">
   <div class="topbar-left">
     <div class="logo-dot"></div>
