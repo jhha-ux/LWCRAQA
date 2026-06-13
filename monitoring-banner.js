@@ -25,26 +25,24 @@
       gap: 0;
     }
     #mon-btn {
-      width: 44px;
+      width: auto;
       background: #1a2e50;
       border: 1px solid #2d5080;
       border-radius: 10px;
-      padding: 10px 0;
+      padding: 10px 16px;
       cursor: pointer;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       color: #5ba3f5;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       line-height: 1.3;
       letter-spacing: .02em;
       box-shadow: 0 4px 20px rgba(0,0,0,.5);
       transition: all .2s;
       font-family: 'Segoe UI', Arial, sans-serif;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
       white-space: nowrap;
     }
     #mon-btn:hover {
@@ -53,7 +51,7 @@
       box-shadow: 0 6px 24px rgba(58,123,213,.3);
       transform: scale(1.05);
     }
-    #mon-btn .icon { font-size: 18px; writing-mode: horizontal-tb; }
+    #mon-btn .icon { font-size: 16px; }
     #mon-overlay {
       display: none;
       position: fixed;
@@ -150,7 +148,7 @@
   fab.innerHTML = `
     <button id="mon-btn" title="과대광고 모니터링 입력">
       <span class="icon">📋</span>
-      모니터링입력
+      과대광고모니터링
     </button>
   `;
 
