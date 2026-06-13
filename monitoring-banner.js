@@ -9,7 +9,7 @@
 
 (function () {
   // ▼▼▼ 여기에 Apps Script 웹앱 배포 URL 붙여넣기 ▼▼▼
-  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwVMAi8LVsiZbihW6U03beXh1u1QOya5p2o9NvtazfXwJ-lRfWL4hPx5ixuBdk48h91/exec';
+  const WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbxlX0sJMeRvGv75HP_mQqrWPnzLt7i0vJbRaCQBs2jycal7L1weZHT6Prc-9tEUcmGl/exec';
   // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 
   const css = `
