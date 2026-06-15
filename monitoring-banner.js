@@ -26,6 +26,7 @@
       border: 1px solid #2d5080;
       border-radius: 10px;
       padding: 8px 14px;
+            width: 100%;
       cursor: pointer;
       display: flex;
       flex-direction: row;
@@ -55,6 +56,7 @@
       border: 1px solid #804020;
       border-radius: 10px;
       padding: 8px 14px;
+            width: 100%;
       cursor: pointer;
       display: flex;
       flex-direction: row;
