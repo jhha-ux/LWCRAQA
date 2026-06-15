@@ -4,7 +4,7 @@
 
 (function () {
   const WEBAPP_URL  = 'https://script.google.com/macros/s/AKfycbxlX0sJMeRvGv75HP_mQqrWPnzLt7i0vJbRaCQBs2jycal7L1weZHT6Prc-9tEUcmGl/exec';
-  const CLAIMS_URL  = 'https://script.google.com/macros/s/AKfycbydbV4phPgJ-nHxFG8NaVYIdRGwxA2MoHMRwnoX-JXYsGr8L063ISJBd1HgHNRmnKjgbw/exec';
+  const CLAIMS_URL  = 'https://script.google.com/macros/s/AKfycbz-3_mn7I163bUFyWGxZN5MeZo8FP8CuCTLy1h4Bo4fXnXuWEg6wBcjYjGZGc9lfnMetA/exec';
 
   const css = `
     /* ── 플로팅 컨테이너 ── */
