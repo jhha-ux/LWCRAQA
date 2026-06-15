@@ -22,14 +22,13 @@
 
     /* ── 과대광고 버튼 (파란색) ── */
     #mon-btn {
-      width: 44px;
       background: #1a2e50;
       border: 1px solid #2d5080;
       border-radius: 10px;
-      padding: 10px 0;
+      padding: 8px 14px;
       cursor: pointer;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       gap: 6px;
       color: #5ba3f5;
@@ -40,8 +39,6 @@
       box-shadow: 0 4px 20px rgba(0,0,0,.5);
       transition: all .2s;
       font-family: 'Segoe UI', Arial, sans-serif;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
       white-space: nowrap;
     }
     #mon-btn:hover {
@@ -50,18 +47,17 @@
       box-shadow: 0 6px 24px rgba(58,123,213,.3);
       transform: scale(1.05);
     }
-    #mon-btn .icon { font-size: 18px; writing-mode: horizontal-tb; }
+    #mon-btn .icon { font-size: 16px; }
 
     /* ── 클레임 버튼 (주황색) ── */
     #claim-btn {
-      width: 44px;
       background: #3a1a00;
       border: 1px solid #804020;
       border-radius: 10px;
-      padding: 10px 0;
+      padding: 8px 14px;
       cursor: pointer;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       gap: 6px;
       color: #f5a85b;
@@ -72,8 +68,6 @@
       box-shadow: 0 4px 20px rgba(0,0,0,.5);
       transition: all .2s;
       font-family: 'Segoe UI', Arial, sans-serif;
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
       white-space: nowrap;
     }
     #claim-btn:hover {
@@ -82,7 +76,7 @@
       box-shadow: 0 6px 24px rgba(213,120,58,.3);
       transform: scale(1.05);
     }
-    #claim-btn .icon { font-size: 18px; writing-mode: horizontal-tb; }
+    #claim-btn .icon { font-size: 16px; }
 
     /* ── 모달 공통 ── */
     .mon-overlay {
@@ -181,10 +175,10 @@
   fab.id = 'mon-fab';
   fab.innerHTML = `
     <button id="mon-btn" title="과대광고 모니터링 입력">
-      <span class="icon">📋</span>과대광고모니터링
+      <span class="icon">🚨</span>과대광고모니터링
     </button>
     <button id="claim-btn" title="클레임 접수 입력">
-      <span class="icon">🚨</span>클레임접수
+      <span class="icon">📋</span>클레임접수
     </button>
   `;
   document.body.appendChild(fab);
