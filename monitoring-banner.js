@@ -1,10 +1,12 @@
 // ============================================================
-//  과대광고 모니터링 + 클레임접수 배너 - jhha-ux.github.io/LWCRAQA
+//  과대광고 모니터링 + 클레임접수 + EU PPWR DoC 배너
+//  jhha-ux.github.io/LWCRAQA
 // ============================================================
 
 (function () {
   const WEBAPP_URL  = 'https://script.google.com/macros/s/AKfycbxlX0sJMeRvGv75HP_mQqrWPnzLt7i0vJbRaCQBs2jycal7L1weZHT6Prc-9tEUcmGl/exec';
     const CLAIMS_URL  = 'https://script.google.com/macros/s/AKfycbxImy7Di8kAB5zLbzaZGMjTKfdTzitrQxQWgkHHhCLnbzt5OACSnuk8w7dYFMfZBtaFjg/exec';
+  const DOC_URL     = 'https://script.google.com/macros/s/AKfycbzIrSFlDd3rOmF2U3MnkJOJ6usXcjfKhqGKRDNgIMwmhFKWiHZ5SygHbtY3_1_-MDyR/exec';
 
   const css = `
     /* ── 플로팅 컨테이너 ── */
@@ -80,6 +82,36 @@
     }
     #claim-btn .icon { font-size: 16px; }
 
+    /* ── DoC 버튼 (초록색) ── */
+    #doc-btn {
+      background: #0a2818;
+      border: 1px solid #1a5c3a;
+      border-radius: 10px;
+      padding: 8px 14px;
+      width: 100%;
+      cursor: pointer;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;
+      color: #3ecf8e;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: .02em;
+      box-shadow: 0 4px 20px rgba(0,0,0,.5);
+      transition: all .2s;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      white-space: nowrap;
+    }
+    #doc-btn:hover {
+      background: #0f3820;
+      border-color: #2a8a5a;
+      box-shadow: 0 6px 24px rgba(62,207,142,.3);
+      transform: scale(1.05);
+    }
+    #doc-btn .icon { font-size: 16px; }
+
     /* ── 모달 공통 ── */
     .mon-overlay {
       display: none;
@@ -130,6 +162,7 @@
     }
     .sub-blue  { color: #5ba3f5; background: #1a2e50; border: 1px solid #2d5080; }
     .sub-orange{ color: #f5a85b; background: #3a1a00; border: 1px solid #804020; }
+    .sub-green  { color: #3ecf8e; background: #0a2818; border: 1px solid #1a5c3a; }
     .mon-close {
       margin-left: auto;
       background: none;
@@ -182,6 +215,9 @@
     <button id="claim-btn" title="클레임 접수 입력">
       <span class="icon">📋</span>클레임접수
     </button>
+    <button id="doc-btn" title="EU PPWR DoC 발행">
+      <span class="icon">🇪🇺</span>DoC 발행
+    </button>
   `;
   document.body.appendChild(fab);
 
@@ -219,6 +255,23 @@
   `;
   document.body.appendChild(claimOverlay);
 
+  // ── DoC 모달 ──
+  const docOverlay = document.createElement('div');
+  docOverlay.id = 'doc-overlay';
+  docOverlay.className = 'mon-overlay';
+  docOverlay.innerHTML = `
+    <div class="mon-modal">
+      <div class="mon-modal-head">
+        <span>🇪🇺</span>
+        <span class="title">EU PPWR DoC 발행</span>
+        <span class="sub sub-green">Regulation (EU) 2025/40</span>
+        <button class="mon-close" title="닫기">✕</button>
+      </div>
+      <iframe id="doc-iframe" class="mon-iframe" src="" allow="clipboard-write"></iframe>
+    </div>
+  `;
+  document.body.appendChild(docOverlay);
+
   // ── 토스트 ──
   const toast = document.createElement('div');
   toast.id = 'mon-toast';
@@ -244,19 +297,29 @@
     claimOverlay.classList.add('open');
   });
 
+  // ── 이벤트: DoC 버튼 ──
+  document.getElementById('doc-btn').addEventListener('click', () => {
+    const iframe = document.getElementById('doc-iframe');
+    if (!iframe.src || iframe.src === window.location.href) iframe.src = DOC_URL;
+    docOverlay.classList.add('open');
+  });
+
   // ── 닫기 버튼 ──
   monOverlay.querySelector('.mon-close').addEventListener('click', () => monOverlay.classList.remove('open'));
   claimOverlay.querySelector('.mon-close').addEventListener('click', () => claimOverlay.classList.remove('open'));
+  docOverlay.querySelector('.mon-close').addEventListener('click', () => docOverlay.classList.remove('open'));
 
   // ── 배경 클릭으로 닫기 ──
   monOverlay.addEventListener('click', e => { if (e.target === monOverlay) monOverlay.classList.remove('open'); });
   claimOverlay.addEventListener('click', e => { if (e.target === claimOverlay) claimOverlay.classList.remove('open'); });
+  docOverlay.addEventListener('click', e => { if (e.target === docOverlay) docOverlay.classList.remove('open'); });
 
   // ── ESC 키 ──
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
       monOverlay.classList.remove('open');
       claimOverlay.classList.remove('open');
+      docOverlay.classList.remove('open');
     }
   });
 
