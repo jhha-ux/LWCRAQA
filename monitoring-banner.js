@@ -214,7 +214,7 @@
     <button id="claim-btn" title="클레임 접수 입력">
       <span class="icon">📋</span>클레임접수
     </button>
-    <button id="doc-btn" title="EU PPWR DoC 발행">
+    <button id="doc-btn" title="EU PPWR PPWR DoC 발행">
       <span class="icon">🇪🇺</span>DoC 발행
     </button>
   `;
