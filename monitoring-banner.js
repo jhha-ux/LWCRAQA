@@ -1,12 +1,11 @@
 // ============================================================
 //  과대광고 모니터링 + 클레임접수 + EU PPWR DoC 배너
-//  jhha-ux.github.io/LWCRAQA
 // ============================================================
 
 (function () {
   const WEBAPP_URL  = 'https://script.google.com/macros/s/AKfycbxlX0sJMeRvGv75HP_mQqrWPnzLt7i0vJbRaCQBs2jycal7L1weZHT6Prc-9tEUcmGl/exec';
     const CLAIMS_URL  = 'https://script.google.com/macros/s/AKfycbxImy7Di8kAB5zLbzaZGMjTKfdTzitrQxQWgkHHhCLnbzt5OACSnuk8w7dYFMfZBtaFjg/exec';
-  const DOC_URL     = 'https://script.google.com/macros/s/AKfycbxekopSXVzlVV9pG7MLGBtR5ZHwyQ9uw1rs4SYj-Ltza_gzAw5a0SJCfobFvJj0n6Gt/exec';
+  const DOC_URL     = 'https://script.google.com/macros/s/AKfycbwGlI8TD75fhHxhZPoicDoITUUbrOymsF0BdssvOsmObRofkfSm7OoTh2O0N0AuifxL/exec';
 
   const css = `
     /* ── 플로팅 컨테이너 ── */
