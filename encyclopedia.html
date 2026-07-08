@@ -136,9 +136,6 @@
   }
   .card-bullets li:last-child { border-bottom: none; }
   .card-bullets li::before { content: '•'; color: var(--teal); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
-  .bullet-extra { display: none; }
-  .card-bullets.expanded .bullet-extra { display: flex; }
-  .card-more { font-size: 11px; color: var(--teal); padding-top: 6px; opacity: 0.8; }
 
   /* Caution */
   .card-caution {
@@ -440,13 +437,11 @@ function renderCards() {
 
 function renderCard(d) {
   const bullets = (d.content || '').split('\n').filter(b => b.trim());
-  const limit = 3;
-  const hasMore = bullets.length > limit;
   const icon = CAT_ICONS[d.category] || '📌';
 
-  const bulletItems = bullets.map((b, i) => {
+  const bulletItems = bullets.map(b => {
     const text = b.trim().replace(/^[•\-*]\s*/, '');
-    return `<li class="${i >= limit ? 'bullet-extra' : ''}"><span>${text}</span></li>`;
+    return `<li><span>${text}</span></li>`;
   }).join('');
 
   const imageHTML = d.image_url
@@ -469,7 +464,7 @@ function renderCard(d) {
     : '';
 
   return `
-    <div class="card" onclick="toggleCard(this)">
+    <div class="card">
       <div class="card-top">
         <div class="card-breadcrumb">
           <span class="breadcrumb-item">${icon} ${d.category || '-'}</span>
@@ -477,8 +472,7 @@ function renderCard(d) {
         </div>
         <div class="card-title">${d.title}</div>
         ${imageHTML}
-        <ul class="card-bullets" data-expanded="false">${bulletItems}</ul>
-        ${hasMore ? `<div class="card-more" data-more="${bullets.length - limit}">+ ${bullets.length - limit}개 더 보기 ▾</div>` : ''}
+        <ul class="card-bullets">${bulletItems}</ul>
         ${cautionHTML}
       </div>
       ${(tagsHTML || refLinkHTML || updatedHTML) ? `
@@ -490,23 +484,6 @@ function renderCard(d) {
         </div>
       </div>` : ''}
     </div>`;
-}
-
-function toggleCard(card) {
-  const list = card.querySelector('.card-bullets');
-  const more = card.querySelector('.card-more');
-  const isExpanded = list.dataset.expanded === 'true';
-  if (isExpanded) {
-    list.classList.remove('expanded');
-    list.dataset.expanded = 'false';
-    if (more) { const n = more.dataset.more; more.textContent = `+ ${n}개 더 보기 ▾`; }
-    card.classList.remove('expanded');
-  } else {
-    list.classList.add('expanded');
-    list.dataset.expanded = 'true';
-    if (more) { const n = more.dataset.more; more.textContent = `▴ 접기`; }
-    card.classList.add('expanded');
-  }
 }
 
 // =============================================
