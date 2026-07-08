@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>화장품 성분·용기 지식 백과</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117; --surface: #171b26; --surface2: #1e2334;
+    --border: #2a3050; --accent: #4f8ef7; --accent2: #7c5cbf;
+    --green: #34c98a; --yellow: #f5c842; --red: #e05c5c;
+    --teal: #34c9c9;
+    --text: #e8eaf2; --text-muted: #7a84a0; --text-dim: #4a5270;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Noto Sans KR', sans-serif; font-size: 14px; min-height: 100vh; }
+
+  /* TOPBAR */
+  .topbar {
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    padding: 0 32px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 12px; }
+  .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); box-shadow: 0 0 8px var(--teal); }
+  .logo-text { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; letter-spacing: 0.08em; }
+  .logo-sub { font-size: 11px; color: var(--text-muted); letter-spacing: 0.04em; }
+  .back-btn {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-muted); padding: 7px 14px; border-radius: 6px;
+    font-size: 12px; cursor: pointer; text-decoration: none;
+    display: flex; align-items: center; gap: 6px; transition: all 0.2s;
+  }
+  .back-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* HERO SEARCH */
+  .hero {
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 40px 24px 28px; text-align: center;
+  }
+  .hero-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+  .hero-title span { color: var(--teal); }
+  .hero-sub { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+  .search-wrap { position: relative; max-width: 600px; margin: 0 auto; }
+  .search-input {
+    width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
+    color: var(--text); padding: 14px 48px 14px 50px;
+    border-radius: 50px; font-size: 15px;
+    font-family: 'Noto Sans KR', sans-serif; outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(52,201,201,0.12); }
+  .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); font-size: 18px; color: var(--text-dim); }
+  .search-clear {
+    position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--text-dim); font-size: 20px;
+    cursor: pointer; display: none; line-height: 1; padding: 4px;
+  }
+  .search-clear.show { display: block; }
+
+  /* CATEGORY TAGS */
+  .category-tags {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 8px; max-width: 700px; margin: 16px auto 0;
+  }
+  .cat-tag {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-muted); padding: 5px 14px; border-radius: 20px;
+    font-size: 12px; cursor: pointer; transition: all 0.15s;
+  }
+  .cat-tag:hover { border-color: var(--teal); color: var(--teal); }
+  .cat-tag.active { background: rgba(52,201,201,0.12); border-color: var(--teal); color: var(--teal); font-weight: 500; }
+
+  /* MAIN LAYOUT */
+  .main-layout { display: flex; max-width: 1240px; margin: 0 auto; padding: 24px; gap: 24px; }
+
+  /* SIDEBAR */
+  .sidebar { width: 210px; flex-shrink: 0; position: sticky; top: 80px; align-self: flex-start; }
+  .sidebar-section { margin-bottom: 24px; }
+  .sidebar-title {
+    font-size: 10px; font-weight: 700; color: var(--text-dim);
+    letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 8px; padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  .sidebar-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 6px 10px; border-radius: 6px; cursor: pointer;
+    font-size: 12px; color: var(--text-muted); margin-bottom: 2px; transition: all 0.15s;
+  }
+  .sidebar-item:hover { background: var(--surface); color: var(--text); }
+  .sidebar-item.active { background: rgba(52,201,201,0.1); color: var(--teal); font-weight: 500; }
+  .sidebar-count {
+    background: var(--surface2); border: 1px solid var(--border);
+    color: var(--text-dim); padding: 1px 7px; border-radius: 10px;
+    font-size: 10px; font-family: 'DM Mono', monospace; flex-shrink: 0;
+  }
+  .sidebar-item.active .sidebar-count { border-color: var(--teal); color: var(--teal); }
+
+  /* CONTENT AREA */
+  .content-area { flex: 1; min-width: 0; }
+  .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+  .result-count { font-size: 12px; color: var(--text-muted); }
+  .result-count b { color: var(--teal); }
+
+  /* CARDS */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s;
+    cursor: pointer; display: flex; flex-direction: column;
+  }
+  .card:hover { border-color: rgba(52,201,201,0.5); box-shadow: 0 4px 20px rgba(52,201,201,0.06); }
+  .card.expanded { border-color: var(--teal); }
+  .card-top { padding: 16px 18px 14px; flex: 1; }
+  .card-breadcrumb { display: flex; align-items: center; gap: 4px; margin-bottom: 10px; flex-wrap: wrap; }
+  .breadcrumb-item {
+    font-size: 10px; color: var(--text-dim); background: var(--surface2);
+    border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px;
+    font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .breadcrumb-sep { font-size: 10px; color: var(--text-dim); }
+  .card-title { font-size: 15px; font-weight: 700; margin-bottom: 12px; color: var(--text); line-height: 1.35; }
+
+  /* Image */
+  .card-image-wrap { margin-bottom: 12px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
+  .card-image { width: 100%; max-height: 200px; object-fit: cover; display: block; }
+
+  /* Bullets */
+  .card-bullets { list-style: none; padding: 0; margin-bottom: 0; }
+  .card-bullets li {
+    display: flex; gap: 8px; font-size: 12.5px; color: var(--text-muted);
+    line-height: 1.65; padding: 3px 0; border-bottom: 1px solid rgba(42,48,80,0.5);
+  }
+  .card-bullets li:last-child { border-bottom: none; }
+  .card-bullets li::before { content: '•'; color: var(--teal); font-weight: 700; flex-shrink: 0; margin-top: 2px; }
+  .bullet-extra { display: none; }
+  .card-bullets.expanded .bullet-extra { display: flex; }
+  .card-more { font-size: 11px; color: var(--teal); padding-top: 6px; opacity: 0.8; }
+
+  /* Caution */
+  .card-caution {
+    margin-top: 12px; background: rgba(245,200,66,0.06);
+    border: 1px solid rgba(245,200,66,0.2); border-radius: 8px;
+    padding: 10px 14px; font-size: 12px; color: var(--yellow);
+    display: flex; gap: 8px; align-items: flex-start; line-height: 1.6;
+  }
+  .caution-icon { flex-shrink: 0; }
+
+  /* Card footer */
+  .card-footer {
+    border-top: 1px solid var(--border); padding: 10px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface2); gap: 8px; flex-wrap: wrap;
+  }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 4px; flex: 1; }
+  .card-tag {
+    font-size: 10px; color: var(--text-dim); background: var(--bg);
+    border: 1px solid var(--border); padding: 2px 7px; border-radius: 4px;
+  }
+  .card-ref-link {
+    display: flex; align-items: center; gap: 4px; color: var(--accent);
+    text-decoration: none; font-size: 11px; white-space: nowrap;
+    padding: 4px 8px; border-radius: 5px; border: 1px solid rgba(79,142,247,0.3);
+    background: rgba(79,142,247,0.06); flex-shrink: 0; transition: background 0.15s;
+  }
+  .card-ref-link:hover { background: rgba(79,142,247,0.15); }
+  .card-updated { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); white-space: nowrap; }
+
+  /* EMPTY / LOADING */
+  .empty-state { text-align: center; padding: 60px 24px; color: var(--text-dim); }
+  .empty-icon { font-size: 48px; margin-bottom: 16px; }
+  .empty-title { font-size: 15px; color: var(--text-muted); margin-bottom: 8px; }
+  .empty-sub { font-size: 12px; }
+  .loading-state { text-align: center; padding: 60px 24px; color: var(--text-dim); }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--teal); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* SETUP NOTICE */
+  .setup-notice {
+    background: rgba(124,92,191,0.08); border: 1px solid rgba(124,92,191,0.25);
+    border-radius: 12px; padding: 20px 24px; margin-bottom: 20px;
+  }
+  .setup-notice-title { font-size: 13px; font-weight: 700; color: var(--accent2); margin-bottom: 6px; }
+  .setup-notice-text { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+  .setup-notice code {
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    color: var(--yellow); background: var(--bg); padding: 1px 5px; border-radius: 3px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--surface); border: 1px solid var(--border); color: var(--text);
+    padding: 10px 22px; border-radius: 24px; font-size: 13px;
+    opacity: 0; transition: all 0.3s; z-index: 999; pointer-events: none; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 900px) { .sidebar { display: none; } }
+  @media (max-width: 600px) {
+    .cards-grid { grid-template-columns: 1fr; }
+    .hero { padding: 24px 16px 20px; }
+    .hero-title { font-size: 18px; }
+    .main-layout { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<script>
+  // ⚠️ Apps Script 배포 후 여기에 URL을 붙여넣으세요
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzMa2ifg19T2E5D0e2aCeVoxIIZv4hS5iVRirElYzYkmhXorP2I-O5O_a8Y7a9WfsqL/exec';
+</script>
+
+<div class="toast" id="toast"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="logo-dot"></div>
+    <div>
+      <div class="logo-text">화장품 성분·용기 지식 백과</div>
+      <div class="logo-sub">Cosmetic R&D Reference Encyclopedia</div>
+    </div>
+  </div>
+  <a class="back-btn" href="./index.html">← 메인으로</a>
+</div>
+
+<!-- HERO SEARCH -->
+<div class="hero">
+  <div class="hero-title">🔬 <span>성분 · 용기</span> 지식 백과</div>
+  <div class="hero-sub">성분, 용기, 규정 등 신제품 개발 시 참고할 핵심 정보를 키워드로 검색하세요</div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="searchInput"
+      placeholder="예: 색소, 방부제, 유리용기, EU 규정..."
+      oninput="onSearch(this.value)"
+    >
+    <button class="search-clear" id="searchClear" onclick="clearSearch()">×</button>
+  </div>
+  <div class="category-tags" id="categoryTags"></div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="main-layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-title">대분류</div>
+      <div id="sidebarCategories"></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-title">중분류</div>
+      <div id="sidebarSubcategories"></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content-area">
+    <div id="setupNotice" class="setup-notice" style="display:none;">
+      <div class="setup-notice-title">⚙️ Apps Script URL 설정 필요</div>
+      <div class="setup-notice-text">
+        현재 <code>encyclopedia.html</code> 상단의 <code>SCRIPT_URL</code>이 설정되지 않았습니다.<br>
+        Apps Script를 배포한 뒤 URL을 교체하면 실제 Google Sheets 데이터가 표시됩니다.<br>
+        지금은 <b>샘플 데이터</b>로 표시 중입니다.
+      </div>
+    </div>
+
+    <div class="result-header">
+      <div class="result-count" id="resultCount"></div>
+    </div>
+
+    <div id="contentArea">
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <div>데이터를 불러오는 중...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// =============================================
+// 상태 변수
+// =============================================
+let allData = [];
+let selectedCategory = 'all';
+let selectedSubcategory = 'all';
+let searchQuery = '';
+
+const CAT_ICONS = {
+  '성분/원료': '🧪', '용기/포장': '📦',
+  '규정/법규': '📋', '제형': '💧', '기타': '📌',
+};
+
+// =============================================
+// 초기화
+// =============================================
+async function init() {
+  if (!SCRIPT_URL || SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzMa2ifg19T2E5D0e2aCeVoxIIZv4hS5iVRirElYzYkmhXorP2I-O5O_a8Y7a9WfsqL/exec') {
+    document.getElementById('setupNotice').style.display = 'block';
+    allData = getSampleData();
+    renderAll();
+    return;
+  }
+  try {
+    const res = await fetch(SCRIPT_URL + '?action=getAll');
+    const json = await res.json();
+    if (json.success) {
+      allData = json.data;
+    } else throw new Error('API error');
+  } catch (e) {
+    showToast('⚠️ 데이터 로딩 실패. 샘플 데이터로 표시합니다.', 4000);
+    allData = getSampleData();
+  }
+  renderAll();
+}
+
+// =============================================
+// 검색 / 필터
+// =============================================
+function onSearch(val) {
+  searchQuery = val.trim();
+  document.getElementById('searchClear').classList.toggle('show', !!searchQuery);
+  renderAll();
+}
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  onSearch('');
+}
+function selectCategory(cat) {
+  selectedCategory = cat;
+  selectedSubcategory = 'all';
+  renderAll();
+}
+function selectSubcategory(sub) {
+  selectedSubcategory = sub;
+  renderAll();
+}
+function getFiltered() {
+  let items = allData;
+  if (selectedCategory !== 'all') items = items.filter(d => d.category === selectedCategory);
+  if (selectedSubcategory !== 'all') items = items.filter(d => d.subcategory === selectedSubcategory);
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    items = items.filter(d =>
+      String(d.title || '').toLowerCase().includes(q) ||
+      String(d.subcategory || '').toLowerCase().includes(q) ||
+      String(d.category || '').toLowerCase().includes(q) ||
+      String(d.content || '').toLowerCase().includes(q) ||
+      String(d.caution || '').toLowerCase().includes(q) ||
+      (d.keywords || []).some(k => k.toLowerCase().includes(q))
+    );
+  }
+  return items;
+}
+
+// =============================================
+// 렌더링
+// =============================================
+function renderAll() {
+  renderCategoryTags();
+  renderSidebar();
+  renderCards();
+}
+
+function renderCategoryTags() {
+  const cats = [...new Set(allData.map(d => d.category).filter(Boolean))];
+  document.getElementById('categoryTags').innerHTML = [
+    `<button class="cat-tag ${selectedCategory === 'all' ? 'active' : ''}" onclick="selectCategory('all')">전체</button>`,
+    ...cats.map(c =>
+      `<button class="cat-tag ${selectedCategory === c ? 'active' : ''}" onclick="selectCategory(${JSON.stringify(c)})">${CAT_ICONS[c] || '📌'} ${c}</button>`
+    )
+  ].join('');
+}
+
+function renderSidebar() {
+  const cats = [...new Set(allData.map(d => d.category).filter(Boolean))];
+  const catCounts = {};
+  cats.forEach(c => { catCounts[c] = allData.filter(d => d.category === c).length; });
+
+  document.getElementById('sidebarCategories').innerHTML = [
+    `<div class="sidebar-item ${selectedCategory === 'all' ? 'active' : ''}" onclick="selectCategory('all')"><span>전체</span><span class="sidebar-count">${allData.length}</span></div>`,
+    ...cats.map(c =>
+      `<div class="sidebar-item ${selectedCategory === c ? 'active' : ''}" onclick="selectCategory(${JSON.stringify(c)})"><span>${CAT_ICONS[c] || '📌'} ${c}</span><span class="sidebar-count">${catCounts[c]}</span></div>`
+    )
+  ].join('');
+
+  const pool = selectedCategory === 'all' ? allData : allData.filter(d => d.category === selectedCategory);
+  const subs = [...new Set(pool.map(d => d.subcategory).filter(Boolean))];
+  const subCounts = {};
+  subs.forEach(s => { subCounts[s] = pool.filter(d => d.subcategory === s).length; });
+
+  document.getElementById('sidebarSubcategories').innerHTML = subs.length === 0 ? '<div style="font-size:11px;color:var(--text-dim);padding:4px 10px;">대분류를 선택하세요</div>' : [
+    `<div class="sidebar-item ${selectedSubcategory === 'all' ? 'active' : ''}" onclick="selectSubcategory('all')"><span>전체</span><span class="sidebar-count">${pool.length}</span></div>`,
+    ...subs.map(s =>
+      `<div class="sidebar-item ${selectedSubcategory === s ? 'active' : ''}" onclick="selectSubcategory(${JSON.stringify(s)})"><span>${s}</span><span class="sidebar-count">${subCounts[s]}</span></div>`
+    )
+  ].join('');
+}
+
+function renderCards() {
+  const filtered = getFiltered();
+  const container = document.getElementById('contentArea');
+  const countEl = document.getElementById('resultCount');
+
+  if (searchQuery || selectedCategory !== 'all' || selectedSubcategory !== 'all') {
+    countEl.innerHTML = filtered.length > 0
+      ? `총 <b>${filtered.length}</b>개 항목${searchQuery ? ` — "<b>${searchQuery}</b>" 검색 결과` : ''}`
+      : '';
+  } else {
+    countEl.innerHTML = `총 <b>${allData.length}</b>개 항목`;
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <div class="empty-title">검색 결과가 없습니다</div>
+        <div class="empty-sub">다른 키워드나 카테고리를 선택해보세요</div>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = `<div class="cards-grid">${filtered.map(renderCard).join('')}</div>`;
+}
+
+function renderCard(d) {
+  const bullets = (d.content || '').split('\n').filter(b => b.trim());
+  const limit = 3;
+  const hasMore = bullets.length > limit;
+  const icon = CAT_ICONS[d.category] || '📌';
+
+  const bulletItems = bullets.map((b, i) => {
+    const text = b.trim().replace(/^[•\-*]\s*/, '');
+    return `<li class="${i >= limit ? 'bullet-extra' : ''}"><span>${text}</span></li>`;
+  }).join('');
+
+  const imageHTML = d.image_url
+    ? `<div class="card-image-wrap"><img class="card-image" src="${d.image_url}" alt="${d.title}" onerror="this.parentElement.style.display='none'"></div>`
+    : '';
+
+  const cautionHTML = d.caution
+    ? `<div class="card-caution"><span class="caution-icon">⚠️</span><span>${d.caution}</span></div>`
+    : '';
+
+  const keywords = (d.keywords || []).slice(0, 5);
+  const tagsHTML = keywords.map(k => `<span class="card-tag">#${k}</span>`).join('');
+
+  const refLinkHTML = d.ref_link
+    ? `<a class="card-ref-link" href="${d.ref_link}" target="_blank" onclick="event.stopPropagation()">🔗 참고자료</a>`
+    : '';
+
+  const updatedHTML = d.updated
+    ? `<span class="card-updated">${d.updated}</span>`
+    : '';
+
+  return `
+    <div class="card" onclick="toggleCard(this)">
+      <div class="card-top">
+        <div class="card-breadcrumb">
+          <span class="breadcrumb-item">${icon} ${d.category || '-'}</span>
+          ${d.subcategory ? `<span class="breadcrumb-sep">›</span><span class="breadcrumb-item">${d.subcategory}</span>` : ''}
+        </div>
+        <div class="card-title">${d.title}</div>
+        ${imageHTML}
+        <ul class="card-bullets" data-expanded="false">${bulletItems}</ul>
+        ${hasMore ? `<div class="card-more" data-more="${bullets.length - limit}">+ ${bullets.length - limit}개 더 보기 ▾</div>` : ''}
+        ${cautionHTML}
+      </div>
+      ${(tagsHTML || refLinkHTML || updatedHTML) ? `
+      <div class="card-footer">
+        <div class="card-tags">${tagsHTML}</div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          ${refLinkHTML}
+          ${updatedHTML}
+        </div>
+      </div>` : ''}
+    </div>`;
+}
+
+function toggleCard(card) {
+  const list = card.querySelector('.card-bullets');
+  const more = card.querySelector('.card-more');
+  const isExpanded = list.dataset.expanded === 'true';
+  if (isExpanded) {
+    list.classList.remove('expanded');
+    list.dataset.expanded = 'false';
+    if (more) { const n = more.dataset.more; more.textContent = `+ ${n}개 더 보기 ▾`; }
+    card.classList.remove('expanded');
+  } else {
+    list.classList.add('expanded');
+    list.dataset.expanded = 'true';
+    if (more) { const n = more.dataset.more; more.textContent = `▴ 접기`; }
+    card.classList.add('expanded');
+  }
+}
+
+// =============================================
+// Toast
+// =============================================
+function showToast(msg, dur = 2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+// =============================================
+// 샘플 데이터 (SCRIPT_URL 미설정 시)
+// =============================================
+function getSampleData() {
+  return [
+    {
+      category: '성분/원료', subcategory: '색소',
+      title: '자연유래색소',
+      keywords: ['색소', '천연', '안료', '빨강', '카르민'],
+      content: '색빠짐(Fading) — 자외선·산화에 약해 변색 빠름. 빛 차단 용기 권장\n투명 PET 용기 주의 — 빛 노출로 색소 분해 가능. 갈색 유리·차광 용기 검토\n카르민(연지벌레 추출) — 비건/할랄 인증 제품에 사용 불가\n클로로필 계열 — 산성 조건에서 황록색으로 변색\nβ-카로틴 — 지용성, 유화계 안정성 및 색 균일성 확인 필수\n비트루트(Betanin) — 고온·강산에서 분해, 처방 pH 및 공정 온도 주의',
+      caution: '수출 국가별 허용 색소 목록이 상이함. 특히 중국·EU·미국 규정을 각각 확인하세요.',
+      image_url: '', ref_link: '', updated: '2026-07-08'
+    },
+    {
+      category: '성분/원료', subcategory: '색소',
+      title: '인공색소 (타르색소)',
+      keywords: ['색소', '인공', '타르', 'CI', 'FD&C'],
+      content: '국내 법정 색소 번호 확인 필수 — 식약처 고시 색소 리스트 기준\n눈주위 사용 제한 — 가능 여부 별도 확인 필요\nCI 42090 (Blue 1) — EU 립 제품 사용 불가\nCI 15985 (Yellow 6) — 일부 국가 사용 금지\nCI 45430 (Red 27) — 국내 눈주위 사용 불가\n수출용 색조는 국가별 금지·제한 목록 전수 검토 필수',
+      caution: '중국(NMPA), EU, 미국(FDA), 일본(MHLW) 각각 허용 색소 리스트가 다름. 수출 전 반드시 확인.',
+      image_url: '', ref_link: '', updated: '2026-07-08'
+    },
+    {
+      category: '성분/원료', subcategory: '방부제',
+      title: '파라벤류 (Parabens)',
+      keywords: ['방부제', '파라벤', '메틸파라벤', 'EU', '영유아'],
+      content: '메틸파라벤 — EU 허용: 단독 0.4%, 혼합 0.8% 이하\n프로필·부틸파라벤 — EU 기저귀 부위(영유아) 사용 금지\n이소부틸·이소프로필파라벤 — EU 사용 금지\n일본 — 전성분 표시 의무 성분 (부위 표기 필요)\n파라벤프리 마케팅 시 — 대체 방부제 효력·안정성 검증 필수',
+      caution: 'EU Regulation 1223/2009 Annex V 참조. 주기적 개정 있으므로 최신 법규 확인 권장.',
+      image_url: '', ref_link: 'https://ec.europa.eu/growth/sectors/cosmetics/legislation_en', updated: '2026-07-08'
+    },
+    {
+      category: '성분/원료', subcategory: '계면활성제',
+      title: '음이온 계면활성제 (Anionic Surfactant)',
+      keywords: ['계면활성제', '음이온', 'SLS', 'SLES', '세정'],
+      content: 'SLS (Sodium Lauryl Sulfate) — 세정력 강하나 점막·피부 자극 주의\nSLES (Sodium Laureth Sulfate) — SLS 대비 자극 완화, 범용 세정제\nDEA (Diethanolamine) — EU 사용 금지 (발암 우려)\nEO 부가 성분 — 1,4-다이옥세인 불순물 한도 관리 필요\n영유아 제품 — SLS 사용 지양, 저자극 계면활성제 선택',
+      caution: 'SLS는 점막 자극 보고 사례 있음. 영유아·민감성 제품에는 더욱 신중한 선택 필요.',
+      image_url: '', ref_link: '', updated: '2026-07-08'
+    },
+    {
+      category: '용기/포장', subcategory: '용기 재질',
+      title: '유리 용기 (Glass)',
+      keywords: ['유리', '용기', '포장', '재질', '중금속', '납'],
+      content: '화학적 안정성 최고 — 산성·알칼리 처방 모두 적합\n투명 유리 — 광분해 우려 성분은 갈색 유리 사용 권장\n납 용출 테스트 — EU/미국 수출 시 중금속 용출 기준 확인 필수\n내열성 유리 — 고온 충진(hot fill) 제품에 적합\n항공 화물 시 — 파손 방지 포장 규정 별도 확인\n무게 — 물류비 증가 요인. 타 용기 대비 비용 검토 필요',
+      caution: '재생 유리(PCR Glass) 사용 시 불순물·기포 QC 강화. 납·카드뮴 용출 시험 별도 진행 권장.',
+      image_url: '', ref_link: '', updated: '2026-07-08'
+    },
+    {
+      category: '용기/포장', subcategory: '용기 재질',
+      title: 'PET / PETG 용기',
+      keywords: ['PET', 'PETG', '플라스틱', '용기', '재활용', '환경'],
+      content: '가볍고 파손 위험 낮아 범용적으로 사용\nPETG — 투명도 높고 내화학성 우수, 고급 스킨케어용 적합\n알코올 고함량 (50% 이상) — 용해 우려, 호환성 테스트 필수\n에센셜오일 고함량 — PET 균열 발생 가능. 재질 확인 필수\n색소 성분 — 색 배어남(Migration) 테스트 필수\nISO 재활용 마크 — EU 환경규제 대응 시 PCR 원료 사용 여부 검토',
+      caution: 'EU 플라스틱 규제(Single-Use Plastics) 강화 중. 재활용 가능 포장 설계 권장.',
+      image_url: '', ref_link: '', updated: '2026-07-08'
+    },
+    {
+      category: '규정/법규', subcategory: 'EU 규정',
+      title: 'EU 화장품 규정 (EC 1223/2009)',
+      keywords: ['EU', '규정', '유럽', 'CPNP', '금지성분', 'Responsible Person'],
+      content: 'CPNP 등록 필수 — Cosmetic Products Notification Portal\n금지 성분 (Annex II) — 1,300+ 항목, 전성분 전수 확인\n제한 성분 (Annex III) — 농도·용도 제한 준수\nINCItrade 표기 의무 — INCI명 사용 전성분 표시\nResponsible Person(RP) — EU 내 법인 또는 지정 대리인 필수\nPIF(Product Information File) — 작성 및 10년 보관 의무',
+      caution: 'Brexit 이후 영국은 별도 SCPN 등록 및 UK Responsible Person 지정 필요.',
+      image_url: '', ref_link: 'https://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2009:342:0059:0209:en:PDF', updated: '2026-07-08'
+    },
+    {
+      category: '제형', subcategory: '에멀젼',
+      title: 'O/W 에멀젼 (Oil-in-Water Emulsion)',
+      keywords: ['제형', '에멀젼', 'O/W', '크림', '로션', '유화'],
+      content: '수분 함량 높아 가벼운 사용감 — 일반 스킨케어 크림/로션의 대표 제형\nHLB 8~18 계면활성제 사용 권장\n유화 안정성 테스트 — 45°C 6주 기본 (원심분리 병행 권장)\n점도 조절 — 카보머, 잔탄검, 하이드록시에틸셀룰로스 등 활용\n방부 효력 — 수분 함량 높아 미생물 오염 위험 큼. PET(방부효력시험) 필수\n분리 방지 — 생산 후 온도 관리 및 운송 조건 확인 필요',
+      caution: '고온 다습 물류 환경에서 분리 위험. 안정성 시험 조건을 실제 유통 환경에 맞게 설계 필요.',
+      image_url: '', ref_link: '', updated: '2026-07-08'
+    }
+  ];
+}
+
+// 시작
+init();
+</script>
+</body>
+</html>
