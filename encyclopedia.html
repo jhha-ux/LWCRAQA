@@ -299,24 +299,34 @@ const CAT_ICONS = {
 // =============================================
 // 초기화
 // =============================================
-async function init() {
-  if (!SCRIPT_URL || SCRIPT_URL === 'https://script.google.com/macros/s/AKfycbzMa2ifg19T2E5D0e2aCeVoxIIZv4hS5iVRirElYzYkmhXorP2I-O5O_a8Y7a9WfsqL/exec') {
+function init() {
+  if (!SCRIPT_URL || SCRIPT_URL === 'SCRIPT_URL_HERE') {
     document.getElementById('setupNotice').style.display = 'block';
     allData = getSampleData();
     renderAll();
     return;
   }
-  try {
-    const res = await fetch(SCRIPT_URL + '?action=getAll');
-    const json = await res.json();
-    if (json.success) {
-      allData = json.data;
-    } else throw new Error('API error');
-  } catch (e) {
-    showToast('⚠️ 데이터 로딩 실패. 샘플 데이터로 표시합니다.', 4000);
+  // fetch() 대신 XHR 사용 (Google Apps Script CORS redirect 호환)
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', SCRIPT_URL + '?action=getAll', true);
+  xhr.onload = function() {
+    try {
+      const json = JSON.parse(xhr.responseText);
+      if (json.success) {
+        allData = json.data;
+      } else throw new Error(json.error || 'API error');
+    } catch (e) {
+      showToast('⚠️ 데이터 로딩 실패. 샘플 데이터로 표시합니다.', 4000);
+      allData = getSampleData();
+    }
+    renderAll();
+  };
+  xhr.onerror = function() {
+    showToast('⚠️ 네트워크 오류. 샘플 데이터로 표시합니다.', 4000);
     allData = getSampleData();
-  }
-  renderAll();
+    renderAll();
+  };
+  xhr.send();
 }
 
 // =============================================
