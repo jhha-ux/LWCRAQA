@@ -379,7 +379,7 @@ function renderCategoryTags() {
   document.getElementById('categoryTags').innerHTML = [
     `<button class="cat-tag ${selectedCategory === 'all' ? 'active' : ''}" onclick="selectCategory('all')">전체</button>`,
     ...cats.map(c =>
-      `<button class="cat-tag ${selectedCategory === c ? 'active' : ''}" onclick="selectCategory(${JSON.stringify(c)})">${CAT_ICONS[c] || '📌'} ${c}</button>`
+      `<button class="cat-tag ${selectedCategory === c ? 'active' : ''}" data-cat="${c}" onclick="selectCategory(this.dataset.cat)">${CAT_ICONS[c] || '📌'} ${c}</button>`
     )
   ].join('');
 }
@@ -392,7 +392,7 @@ function renderSidebar() {
   document.getElementById('sidebarCategories').innerHTML = [
     `<div class="sidebar-item ${selectedCategory === 'all' ? 'active' : ''}" onclick="selectCategory('all')"><span>전체</span><span class="sidebar-count">${allData.length}</span></div>`,
     ...cats.map(c =>
-      `<div class="sidebar-item ${selectedCategory === c ? 'active' : ''}" onclick="selectCategory(${JSON.stringify(c)})"><span>${CAT_ICONS[c] || '📌'} ${c}</span><span class="sidebar-count">${catCounts[c]}</span></div>`
+      `<div class="sidebar-item ${selectedCategory === c ? 'active' : ''}" data-cat="${c}" onclick="selectCategory(this.dataset.cat)"><span>${CAT_ICONS[c] || '📌'} ${c}</span><span class="sidebar-count">${catCounts[c]}</span></div>`
     )
   ].join('');
 
@@ -404,7 +404,7 @@ function renderSidebar() {
   document.getElementById('sidebarSubcategories').innerHTML = subs.length === 0 ? '<div style="font-size:11px;color:var(--text-dim);padding:4px 10px;">대분류를 선택하세요</div>' : [
     `<div class="sidebar-item ${selectedSubcategory === 'all' ? 'active' : ''}" onclick="selectSubcategory('all')"><span>전체</span><span class="sidebar-count">${pool.length}</span></div>`,
     ...subs.map(s =>
-      `<div class="sidebar-item ${selectedSubcategory === s ? 'active' : ''}" onclick="selectSubcategory(${JSON.stringify(s)})"><span>${s}</span><span class="sidebar-count">${subCounts[s]}</span></div>`
+      `<div class="sidebar-item ${selectedSubcategory === s ? 'active' : ''}" data-sub="${s}" onclick="selectSubcategory(this.dataset.sub)"><span>${s}</span><span class="sidebar-count">${subCounts[s]}</span></div>`
     )
   ].join('');
 }
