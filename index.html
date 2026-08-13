@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>인허가 자료 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -11,7 +13,7 @@
     --border: #2a3050; --accent: #4f8ef7; --accent2: #7c5cbf;
     --green: #34c98a; --yellow: #f5c842; --red: #e05c5c;
     --text: #e8eaf2; --text-muted: #7a84a0; --text-dim: #4a5270;
-  
+  }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:'Noto Sans KR',sans-serif; font-size:14px; min-height:100vh; }
 
@@ -22,7 +24,7 @@
   .logo-sub { font-size:11px; color:var(--text-muted); letter-spacing:0.04em; }
   .topbar-right { display:flex; align-items:center; gap:12px; }
   .date-chip { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-muted); background:var(--surface2); border:1px solid var(--border); padding:4px 12px; border-radius:20px; }
-  .add-btn { background:var(--yellow); color:var(--bg); border:none; padding:7px 18px; border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; }
+  .add-btn { background:var(--accent); color:#fff; border:none; padding:7px 18px; border-radius:6px; font-size:12px; font-weight:500; cursor:pointer; }
   .add-btn:hover { opacity:0.85; }
   .admin-btn { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:7px 14px; border-radius:6px; font-size:12px; cursor:pointer; transition:all 0.2s; }
   .admin-btn.active { background:rgba(52,201,138,0.12); border-color:var(--green); color:var(--green); }
@@ -121,7 +123,8 @@
   .btn-save { background:var(--accent); border:none; color:#fff; padding:8px 20px; border-radius:7px; font-size:13px; font-weight:500; cursor:pointer; }
   .btn-save:hover { opacity:0.85; }
 
-@media (max-width:1400px) { .notice-panels-wrap { display:none; } }  .pin-title { font-size:15px; font-weight:700; margin-bottom:6px; }
+  .pin-modal { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:32px; width:340px; max-width:95vw; text-align:center; animation:slideUp 0.2s ease; }
+  .pin-title { font-size:15px; font-weight:700; margin-bottom:6px; }
   .pin-sub { font-size:12px; color:var(--text-muted); margin-bottom:24px; }
   .pin-dots { display:flex; justify-content:center; gap:12px; margin-bottom:24px; }
   .pin-dot-display { width:14px; height:14px; border-radius:50%; border:2px solid var(--border); background:transparent; transition:all 0.15s; }
@@ -145,11 +148,11 @@
   .page-size-select { background:var(--surface2); border:1px solid var(--border); color:var(--text-muted); padding:5px 10px; border-radius:6px; font-size:12px; cursor:pointer; outline:none; }
 
   /* 공지사항 패널 */
-  .notice-panels-wrap { position:fixed; left:20px; top:200px; display:flex; flex-direction:column; gap:10px; z-index:50; }  .notice-panel { width:190px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 12px; box-shadow:0 4px 24px rgba(0,0,0,0.3); }
-  .notice-title { font-size:11px; font-weight:700; color:var(--accent); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:5px; display:flex; align-items:center; justify-content:space-between; }
+  .notice-panel { position:fixed; left:20px; top:50%; transform:translateY(-50%); width:200px; background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:16px; z-index:50; box-shadow:0 4px 24px rgba(0,0,0,0.3); }
+  .notice-title { font-size:11px; font-weight:700; color:var(--accent); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; }
   .notice-edit-btn { background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:13px; padding:0; display:none; }
   .notice-edit-btn:hover { color:var(--accent); }
-  .notice-body { font-size:11px; color:var(--text-muted); line-height:1.5; white-space:pre-wrap; word-break:break-word; }
+  .notice-body { font-size:12px; color:var(--text-muted); line-height:1.7; white-space:pre-wrap; word-break:break-word; min-height:60px; }
   .notice-textarea { width:100%; background:var(--surface2); border:1px solid var(--accent); color:var(--text); border-radius:6px; padding:8px; font-size:12px; font-family:'Noto Sans KR',sans-serif; line-height:1.7; resize:vertical; outline:none; min-height:100px; }
   .notice-save-btn { margin-top:8px; width:100%; background:var(--accent); border:none; color:#fff; padding:6px; border-radius:6px; font-size:12px; cursor:pointer; }
   .notice-save-btn:hover { opacity:0.85; }
@@ -165,7 +168,7 @@
 </head>
 <body>
 <script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvanDCAZ_gNk0PCq8SROJcA_SADDpzhtG6RnCfXUy-HUsf2z4QnaL5_uEWOhRrGt0U/exec';
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaXr35UIdF5jUUc60ukDPPJzskVLZqUF7DeGfDM4MQkIHKYqeaN3OPmamHtkWEPqA/exec';
 </script>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -174,7 +177,7 @@
 </div>
 <div class="toast" id="toast"></div>
 
-<div class="notice-panels-wrap"><div class="notice-panel" id="noticePanel">
+<div class="notice-panel" id="noticePanel">
   <div class="notice-title">
     📌 공지사항
     <button class="notice-edit-btn" id="noticeEditBtn" onclick="toggleNoticeEdit()" title="수정">✏️</button>
@@ -183,7 +186,7 @@
   <textarea class="notice-textarea" id="noticeTextarea" style="display:none;"></textarea>
   <button class="notice-save-btn" id="noticeSaveBtn" style="display:none;" onclick="saveNotice()">저장</button>
 </div>
-<div class="notice-panel" style="border-color:var(--green);">
+<div class="notice-panel" style="top:calc(50% + 140px); border-color:var(--green);">
   <div class="notice-title" style="color:var(--green);">
     🧪 전성분 변환기
   </div>
@@ -193,30 +196,6 @@
   <a href="./ingredient-converter.html" target="_blank"
     style="display:block; text-align:center; background:var(--green); color:#fff; padding:7px 0; border-radius:6px; font-size:12px; font-weight:500; text-decoration:none; margin-top:12px;">
     변환하기 →
-  </a>
-</div>
-  <div class="notice-panel" style="border-color:var(--accent);">
-  <div class="notice-title" style="color:var(--accent);">
-    📗 국/영문 표준명 찾기
-  </div>
-  <div class="notice-body">
-    표준화 전성분 국/영문 변환기
-  </div>
-  <a href="https://docs.google.com/spreadsheets/d/1daOupmtaVY0AKvslLMwIPUKhzO5L9-q_kHqTVpWzwBw/edit?gid=1486257250"
-    target="_blank"
-    style="display:block; text-align:center; background:var(--accent); color:#fff; padding:7px 0; border-radius:6px; font-size:12px; font-weight:500; text-decoration:none; margin-top:12px;">
-    열기 ↗
-  </a>
-</div>
-  </div><div style="background:linear-gradient(135deg,#0d3a2e 0%,#1a6e52 60%,#0d4a38 100%); padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;" onclick="window.open('./encyclopedia.html','_blank')">
-  <span style="font-size:22px;">🔬</span>
-  <div style="flex:1; min-width:180px;">
-    <strong style="color:#fff; font-size:14px; display:block; margin-bottom:2px;">화장품 성분·용기 지식 백과</strong>
-    <span style="color:rgba(255,255,255,.75); font-size:12px;">성분, 용기, 규정 등 신제품 개발 필수 정보 · 키워드로 즉시 검색</span>
-  </div>
-  <a href="./encyclopedia.html" target="_blank" onclick="event.stopPropagation()"
-    style="background:#fff; color:#0d3a2e; font-weight:700; font-size:13px; padding:8px 18px; border-radius:8px; text-decoration:none; white-space:nowrap;">
-    검색하기 ↗
   </a>
 </div>
   <div style="background:linear-gradient(135deg,#1a3c6e 0%,#2e5fa3 60%,#1a5c8a 100%); padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;" onclick="window.open('./kca-search.html?v=2','_blank')">
@@ -277,7 +256,7 @@
   <div class="bulk-bar" id="bulkBar">
     <span class="bulk-bar-text" id="bulkBarText">0개 선택됨</span>
     <button class="bulk-delete-btn" onclick="bulkDelete()">🗑 선택 삭제</button>
-    <button class="bulk-cancel-btn" onclick="clearSelection()">취소</button>
+    <button class="bulk-cancel-btn" onclick="clearSelection()">취셬</button>
   </div>
 
   <div class="table-wrap">
@@ -429,12 +408,28 @@
     return res.json();
   }
 
+  // =============================================
+  // 캐시 설정
+  // =============================================
+  const CACHE_KEY = 'lwcraqa_cache';
+  const CACHE_TTL = 5 * 60 * 1000; // 5분
+
   async function loadData() {
+    try {
+      const cached = JSON.parse(localStorage.getItem(CACHE_KEY));
+      if (cached && (Date.now() - cached.ts < CACHE_TTL)) {
+        data = cached.data;
+        render();
+        refreshBackground();
+        return;
+      }
+    } catch(e) {}
     showLoading('데이터 불러오는 중...');
     try {
       const result = await api({ action: 'getAll' });
       if (result.success) {
         data = result.data;
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
         render();
       } else {
         showToast('❌ 데이터 로딩 실패');
@@ -445,6 +440,17 @@
         `<tr class="empty-row"><td colspan="9">⚠️ 서버 연결 실패.<br><small>SCRIPT_URL이 올바르게 설정되었는지 확인하세요.</small></td></tr>`;
     }
     hideLoading();
+  }
+
+  async function refreshBackground() {
+    try {
+      const result = await api({ action: 'getAll' });
+      if (result.success) {
+        data = result.data;
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+        render();
+      }
+    } catch(e) {}
   }
 
   // =============================================
@@ -605,8 +611,9 @@
       for (const rowIndex of indices) {
         await api({ action: 'delete', rowIndex });
       }
-      showToast(`✅ ${selectedRows.size}개 항목이 삭제되었습니다.`);
+      showToast(`✅ ${selectedRows.size}z�� 항목이 삭제되었습니다.`);
       selectedRows.clear();
+      localStorage.removeItem(CACHE_KEY);
       await loadData();
     } catch(e) {
       showToast('❌ 삭제 중 오류가 발생했습니다.');
@@ -759,6 +766,7 @@
     try {
       await api({ action: 'delete', rowIndex: data[idx]._rowIndex });
       showToast('✅ 삭제되었습니다.');
+      localStorage.removeItem(CACHE_KEY);
       await loadData();
     } catch(e) {
       showToast('❌ 삭제 중 오류가 발생했습니다.');
@@ -859,6 +867,7 @@
       showToast('✅ 새 요청이 등록되었습니다.');
       closeModal();
       ['f-product','f-country','f-link','f-manager','f-remarks','f-email','f-deadline'].forEach(id => document.getElementById(id).value = '');
+      localStorage.removeItem(CACHE_KEY);
       await loadData();
     } catch(e) {
       showToast('❌ 저장 실패. 다시 시도해주세요.');
@@ -924,6 +933,5 @@
   updateAdminUI();
   loadData();
 </script>
-<script src="monitoring-banner.js"></script>
 </body>
 </html>
