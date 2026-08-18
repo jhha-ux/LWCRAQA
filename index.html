@@ -409,7 +409,15 @@ let sessionPin = ADMIN_PIN;
 // =============================================
 // 초기화
 // =============================================
-const today = new Date();
+  function fmtDate(val) {
+    if (!val || val === '-') return val || '-';
+    var s = String(val);
+    if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+    try { return new Date(val).toLocaleDateString('sv-SE', { timeZone: 'Asia/Seoul' }); }
+    catch(e) { return s.slice(0, 10); }
+  }
+
+  const today = new Date();
 document.getElementById('todayDate').textContent =
   today.toLocaleDateString('ko-KR', {year:'numeric', month:'2-digit', day:'2-digit'});
 const kstToday = new Date(today.getTime() + 9 * 60 * 60 * 1000);
@@ -728,13 +736,13 @@ function render() {
 
     return `<tr>
       ${cbCell}
-      <td><span class="date-mono">${String(r.date).slice(0,10)}</span></td>
+      <td><span class="date-mono">${fmtDate(r.date)}</span></td>
       <td><b style="font-weight:500;">${r.product}</b></td>
       <td><span class="country-badge">${r.country}</span></td>
       <td><span class="type-badge ${badgeClass}">${r.type}</span></td>
       <td style="color:var(--text-muted)">${r.manager||'-'}</td>
       ${statusCell}
-      <td><span class="date-mono">${r.deadline ? String(r.deadline).slice(0,10) : '-'}</span></td>
+      <td><span class="date-mono">${fmtDate(r.deadline)}</span></td>
       <td><span class="remarks-text">${r.remarks||'-'}</span></td>
       ${linkCell}
       ${deleteCell}
