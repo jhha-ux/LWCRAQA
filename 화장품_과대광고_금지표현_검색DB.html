@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>화장품 광고 위반표현 검색 DB</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:#f0f4f8;color:#1e293b;font-size:14px}
+
+  /* ── 헤더 ── */
+  .header{background:linear-gradient(135deg,#14532d 0%,#16a34a 100%);color:#fff;padding:24px 32px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
+  .header-left h1{font-size:22px;font-weight:700;margin-bottom:6px}
+  .header-left .sub{font-size:12px;opacity:.85;line-height:1.6}
+  .header-right{text-align:right;font-size:12px;opacity:.85;white-space:nowrap;padding-top:4px}
+  .badge-law{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);border-radius:20px;padding:3px 12px;font-size:11px;margin-bottom:8px}
+
+  /* ── 검색 박스 ── */
+  .search-wrap{background:#fff;border-bottom:1px solid #e2e8f0;padding:20px 32px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .search-row{display:flex;gap:10px;align-items:center;max-width:900px}
+  .search-input{flex:1;padding:10px 16px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;font-family:inherit;outline:none;transition:border-color .2s}
+  .search-input:focus{border-color:#16a34a}
+  .search-btn{padding:10px 22px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:14px;font-family:inherit;cursor:pointer;font-weight:600;white-space:nowrap}
+  .search-btn:hover{background:#15803d}
+  .clear-btn{padding:10px 14px;background:#f1f5f9;color:#64748b;border:1px solid #e2e8f0;border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer}
+
+  /* ── 필터 ── */
+  .filter-wrap{padding:14px 32px 0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  .filter-label{font-size:12px;color:#64748b;font-weight:600;margin-right:4px}
+  .filter-btn{padding:5px 14px;border:1.5px solid #cbd5e1;border-radius:20px;background:#fff;color:#475569;font-size:12px;font-family:inherit;cursor:pointer;transition:all .15s;white-space:nowrap}
+  .filter-btn:hover{border-color:#16a34a;color:#16a34a}
+  .filter-btn.active{background:#16a34a;border-color:#16a34a;color:#fff;font-weight:600}
+  .filter-sep{width:1px;height:22px;background:#e2e8f0;margin:0 4px}
+
+  /* ── 결과 요약 ── */
+  .result-summary{padding:12px 32px 8px;font-size:13px;color:#64748b}
+  .result-summary strong{color:#1e293b}
+
+  /* ── 카드 그리드 ── */
+  .container{padding:0 32px 40px;display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:14px;margin-top:16px}
+
+  .card{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.07);padding:18px 20px;border-left:4px solid #e2e8f0;transition:box-shadow .2s}
+  .card:hover{box-shadow:0 4px 12px rgba(0,0,0,.11)}
+  .card.forbidden{border-left-color:#dc2626}
+  .card.conditional{border-left-color:#d97706}
+  .card.evidence{border-left-color:#0891b2}
+
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+  .category-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+  .cat-C1{background:#fef2f2;color:#b91c1c}
+  .cat-C2{background:#fff7ed;color:#c2410c}
+  .cat-C3{background:#fdf4ff;color:#7e22ce}
+  .cat-C4{background:#f0fdf4;color:#166534}
+  .cat-C5{background:#eff6ff;color:#1d4ed8}
+  .cat-C6{background:#fefce8;color:#854d0e}
+  .cat-C7{background:#f0fdfa;color:#0f766e}
+  .cat-C8{background:#fff1f2;color:#9f1239}
+  .cat-C9{background:#f8fafc;color:#475569}
+  .cat-C10{background:#ecfdf5;color:#065f46}
+
+  .status-badge{font-size:11px;font-weight:700;padding:3px 10px;border-radius:6px}
+  .status-forbidden{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+  .status-conditional{background:#fff7ed;color:#c2410c;border:1px solid #fed7aa}
+  .status-evidence{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+
+  .card-expression{font-size:15px;font-weight:700;color:#1e293b;line-height:1.5;margin-bottom:8px;word-break:keep-all}
+  .highlight{background:#fef08a;border-radius:3px;padding:0 2px}
+
+  .card-examples{font-size:12px;color:#64748b;background:#f8fafc;border-radius:6px;padding:8px 10px;margin-bottom:8px;line-height:1.6}
+  .card-examples span{color:#0f766e;font-weight:600}
+
+  .card-exception{font-size:12px;color:#065f46;background:#f0fdf4;border-radius:6px;padding:7px 10px;margin-bottom:8px;line-height:1.6}
+  .card-exception::before{content:"✅ 예외: ";font-weight:700}
+
+  .card-footer{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid #f1f5f9}
+  .law-tag{font-size:11px;color:#475569;background:#f1f5f9;border-radius:4px;padding:3px 8px}
+  .penalty-tag{font-size:11px;color:#7c3aed;background:#f5f3ff;border-radius:4px;padding:3px 8px;font-weight:600}
+  .source-tag{font-size:10px;color:#94a3b8;margin-left:auto}
+
+  /* ── 빈 결과 ── */
+  .empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:#94a3b8}
+  .empty .emoji{font-size:40px;display:block;margin-bottom:12px}
+
+  /* ── 출처 안내 ── */
+  .source-bar{background:#fff;border-top:1px solid #e2e8f0;padding:16px 32px;font-size:12px;color:#64748b;display:flex;gap:20px;flex-wrap:wrap}
+  .source-bar strong{color:#1e293b}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="badge-law">화장품법 제13조 · 시행규칙 [별표5] · 민원인안내서 [별표1]</div>
+    <h1>🚫 화장품 광고 위반표현 검색 DB</h1>
+    <div class="sub">
+      키워드 입력 → 금지 여부 · 위반 유형 · 법적 근거 · 처분 기준 즉시 확인<br>
+      마케팅 문구 사전 검토 및 대내외 근거 제시용 | 출처: 식품의약품안전처 / 서울지방식약청
+    </div>
+  </div>
+  <div class="header-right">
+    수록 DB<br><strong style="font-size:22px">80건</strong><br>
+    최종 업데이트<br><strong>2026.10</strong>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <div class="search-row">
+    <input class="search-input" id="searchInput" type="text" placeholder="검색어 입력 (예: 줄기세포, 보톡스, 피부재생, 아토피, 미백...)" oninput="doSearch()">
+    <button class="clear-btn" onclick="clearSearch()">초기화</button>
+  </div>
+</div>
+
+<div class="filter-wrap">
+  <span class="filter-label">카테고리</span>
+  <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
+  <button class="filter-btn" onclick="setFilter('C1',this)">의약품 오인</button>
+  <button class="filter-btn" onclick="setFilter('C2',this)">기능성 오인</button>
+  <button class="filter-btn" onclick="setFilter('C3',this)">신체 개선</button>
+  <button class="filter-btn" onclick="setFilter('C4',this)">의사·기관 공인</button>
+  <button class="filter-btn" onclick="setFilter('C5',this)">범위 초과</button>
+  <button class="filter-btn" onclick="setFilter('C6',this)">인체유래 성분</button>
+  <button class="filter-btn" onclick="setFilter('C7',this)">사용법 오인</button>
+  <button class="filter-btn" onclick="setFilter('C8',this)">저속·혐오</button>
+  <button class="filter-btn" onclick="setFilter('C9',this)">기타 오인</button>
+  <div class="filter-sep"></div>
+  <button class="filter-btn" onclick="setStatusFilter('forbidden',this)">❌ 절대금지</button>
+  <button class="filter-btn" onclick="setStatusFilter('conditional',this)">⚠️ 조건부금지</button>
+  <button class="filter-btn" onclick="setStatusFilter('evidence',this)">📋 실증자료 필요</button>
+</div>
+
+<div class="result-summary" id="resultSummary">전체 <strong>80건</strong> 표시 중</div>
+
+<div class="container" id="cardGrid"></div>
+
+<div class="source-bar">
+  <span><strong>주요 출처</strong></span>
+  <span>📄 2026 화장품 표시광고지침 및 관리사례 (서울지방식약청, 2026.6.30)</span>
+  <span>📄 화장품 표시·광고 관리 지침 민원인안내서 [별표1] (식약처)</span>
+  <span>📄 화장품법 제13조, 시행규칙 제22조·[별표5]</span>
+  <span>📄 2025 화장품 정책설명회 표시·광고 지침 개정사항 (식약처 화장품정책과)</span>
+  <span>📄 2024 화장품 표시·광고 웨비나 (대한화장품협회)</span>
+  <span>📄 화장품·의료기기·의약외품 허위과대광고 질의응답집 (식약처)</span>
+  <span>📄 인체적용시험결과를 활용한 표시·광고 위반사례 (식약처, 2025.11)</span>
+  <span>📄 2015 화장품 광고 표시 위반사례집 (식약처)</span>
+  <span>📄 올리브영 협력사 품질교육 표시광고 가이드 (2026.01)</span>
+  <span style="margin-left:auto;color:#94a3b8">※ 본 DB는 내부 참고용이며 법적 효력이 없습니다. 최신 개정 법규 확인 필수.</span>
+</div>
+
+<script>
+// ────────────────────────────────────────────────
+// 금지표현 데이터베이스
+// ────────────────────────────────────────────────
+const DB = [
+  // ── C1: 의약품 오인 (절대금지) ──────────────────
+  {id:1, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"아토피 · 건선 · 소양증",
+   keywords:["아토피","건선","소양증"],
+   examples:"아토피 피부 개선, 건선 케어, 소양증 완화",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가 · 민원인안내서 [별표1]",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:2, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"살균 · 소독 · 항균",
+   keywords:["살균","소독","항균","항바이러스","항진균"],
+   examples:"살균 효과, 소독 기능, 항균 성분 함유",
+   exception:"인체세정용 제품(액체비누 등)에 한해 '항균' 표현은 조건부 허용 (단, 비교우위 표현 불가)",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:3, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"항염 · 진통 · 이뇨 · 해독 · 항암",
+   keywords:["항염","진통","이뇨","해독","항암","항알레르기","면역 강화","면역강화"],
+   examples:"항염 성분, 진통 효과, 해독 케어, 항암 원료 함유",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:4, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"근육 이완 · 통증 경감",
+   keywords:["근육 이완","근육이완","통증 경감","통증경감","통증"],
+   examples:"근육 이완 크림, 통증 경감 패치",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:5, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"찰과상 · 화상 치료·회복",
+   keywords:["찰과상","화상","치료","회복","상처 치료","화상 치료"],
+   examples:"찰과상 회복 크림, 화상 치료 겔",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:6, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"기저귀 발진",
+   keywords:["기저귀 발진","기저귀발진","발진"],
+   examples:"기저귀 발진 완화 크림",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:7, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"여드름 (관련 표현)",
+   keywords:["여드름","acne"],
+   examples:"여드름 개선, 여드름 치료, 여드름 예방",
+   exception:"'여드름성 피부에 사용에 적합' 표현은 기능성화장품 심사(보고) 시 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"조건 미충족 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:8, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"기미 · 주근깨 (단독 표현)",
+   keywords:["기미","주근깨","과색소침착"],
+   examples:"기미 제거, 주근깨 없애기, 과색소침착증 개선",
+   exception:"'기미·주근깨 완화에 도움' 표현은 미백 기능성화장품 심사(보고) 시 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"기능성 미심사 제품 사용 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:9, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"디톡스 · detox · 피부 독소 제거",
+   keywords:["디톡스","detox","독소","피부 독소","해독"],
+   examples:"디톡스 크림, detox 세럼, 피부 독소 제거",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:10, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"상처 반흔 제거·완화",
+   keywords:["반흔","흉터","상처 흔적","흉터 제거","흔적 제거"],
+   examples:"흉터 제거 크림, 상처 흔적 완화, 여드름 흉터 없애기",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:11, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"가려움 완화·개선·해결",
+   keywords:["가려움","가렵다","소양","가려움증"],
+   examples:"가려움 완화, 가려움 해결, 가렵지 않게",
+   exception:"'보습을 통해 피부건조에 기인한 가려움의 일시적 완화에 도움' → 허용 (단, 보습·일시적 조건 필수)",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"조건 미충족 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:12, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"홍조 · 홍반 개선·제거",
+   keywords:["홍조","홍반","붉음증","붉어짐","적면증"],
+   examples:"홍조 개선 크림, 홍반 제거, 붉음증 케어",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:13, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"뾰루지 개선",
+   keywords:["뾰루지"],
+   examples:"뾰루지 개선 패치, 뾰루지 제거",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:14, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"임신선 · 튼살",
+   keywords:["임신선","튼살","스트레치마크","stretch mark"],
+   examples:"임신선 제거, 튼살 크림, 스트레치마크 완화",
+   exception:"기능성화장품 심사(보고)된 효능효과 표현은 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"기능성 미심사 제품 사용 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:15, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"메디슨 · 드럭 · 코스메슈티컬 · 치유",
+   keywords:["메디슨","medicine","드럭","drug","코스메슈티컬","cosmeceutical","치유"],
+   examples:"메디슨 스킨케어, 드럭 코스메틱, 코스메슈티컬 제품, 치유 크림",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  // ── C1: 의약품 오인 - 생리활성 ──────────────────
+  {id:16, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"혈액순환",
+   keywords:["혈액순환","혈액 순환","혈행"],
+   examples:"혈액순환 개선, 혈행 촉진 크림",
+   exception:"단, '피부 혈행 개선'은 인체적용시험 자료로 입증 시 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:17, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"피부재생 · 세포 재생",
+   keywords:["피부재생","세포재생","세포 재생","피부 재생","재생"],
+   examples:"피부 재생 크림, 세포 재생 앰플, 재생 효과",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:18, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"호르몬 분비촉진 · 내분비 작용",
+   keywords:["호르몬","내분비","호르몬 분비","분비촉진"],
+   examples:"호르몬 밸런스 크림, 내분비 기능 개선",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:19, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"세포 성장 촉진 · DNA 활성화",
+   keywords:["세포 성장","세포 활력","세포 활성","DNA 활성","유전자 활성화","세포 성장 촉진"],
+   examples:"세포 성장 촉진 세럼, DNA 활성화 크림, 세포 활력 증가",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:20, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"땀 발생 억제",
+   keywords:["땀 억제","발한 억제","땀 발생","데오도란트 땀"],
+   examples:"땀 발생 억제 크림, 발한 억제 기능",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  // ── C1: 피부·모발 관련 ──────────────────
+  {id:21, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"피부노화 관련 표현",
+   keywords:["피부노화","노화","안티에이징","anti-aging","피부 나이"],
+   examples:"피부노화 방지, 노화 억제, 피부 나이 10년 감소",
+   exception:"'피부노화 완화', '안티에이징', '피부노화 징후 감소'는 인체적용시험 자료로 허용. 단, '피부 나이 n세 감소' 등 기간 단위 수치 표현은 절대 불가",
+   law:"화장품법 제13조 제1항 1호·4호", rule:"시행규칙 [별표5] 가·사",
+   penalty:"광고업무정지", penaltyDetail:"수치형 피부나이 표현 → 즉시 행정처분",
+   source:"서울청 2026"},
+
+  {id:22, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"셀룰라이트",
+   keywords:["셀룰라이트","cellulite","셀룰라이트 감소"],
+   examples:"셀룰라이트 분해, 셀룰라이트 제거",
+   exception:"'일시적 셀룰라이트 감소'는 인체적용시험 자료로 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"조건 미충족 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:23, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"붓기 · 다크서클",
+   keywords:["붓기","부종","다크서클","dark circle","눈 부기"],
+   examples:"붓기 제거, 다크서클 없애기",
+   exception:"'붓기 완화', '다크서클 완화'는 인체적용시험 자료로 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"조건 미충족 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:24, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"콜라겐·효소 증감·활성화",
+   keywords:["콜라겐","효소","콜라겐 증가","효소 활성","collagen"],
+   examples:"콜라겐 생성 촉진, 효소 활성화 크림",
+   exception:"주름개선 기능성화장품 심사 자료 또는 별도 실증자료로 입증 시 '콜라겐·효소 증감·활성화' 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"미입증 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:25, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"발모 · 육모 · 양모 · 탈모방지",
+   keywords:["발모","육모","양모","탈모방지","탈모 치료","발모제"],
+   examples:"발모 촉진, 육모 크림, 탈모방지 샴푸",
+   exception:"탈모 증상 완화 기능성화장품 심사(보고) 시 '탈모 증상 완화에 도움' 표현 허용",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"기능성 미심사 제품 사용 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:26, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"속눈썹·눈썹이 자란다 / 모발 성장·두께 증가",
+   keywords:["속눈썹","눈썹","모발 성장","모발 두께","속눈썹이 자란다","눈썹이 길어"],
+   examples:"속눈썹이 자랍니다, 눈썹 성장 세럼, 모발 두께 증가",
+   exception:"",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  // ── C2: 기능성 오인 ──────────────────
+  {id:27, catCode:"C2", category:"기능성 오인", status:"conditional",
+   expression:"미백 · 화이트닝 (기능성 미심사 제품)",
+   keywords:["미백","화이트닝","whitening","브라이트닝","brightening"],
+   examples:"미백 크림, 화이트닝 세럼, 피부 하얗게",
+   exception:"미백 기능성화장품 심사(보고) 완료 제품만 허용. 미심사 제품에서 '식약처 미백 고시 성분 OO 함유' 등도 금지",
+   law:"화장품법 제13조 제1항 2호", rule:"시행규칙 [별표5] 나",
+   penalty:"광고업무정지", penaltyDetail:"기능성 미심사 제품 사용 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:28, catCode:"C2", category:"기능성 오인", status:"conditional",
+   expression:"주름 개선 · 링클 (기능성 미심사 제품)",
+   keywords:["주름","링클","wrinkle","주름 개선","주름 완화","안티링클"],
+   examples:"주름 개선 크림, 링클 세럼, anti-wrinkle",
+   exception:"주름개선 기능성화장품 심사(보고) 완료 제품만 허용. '주름 완화·개선'도 해당 자료 없으면 금지",
+   law:"화장품법 제13조 제1항 2호", rule:"시행규칙 [별표5] 나",
+   penalty:"광고업무정지", penaltyDetail:"기능성 미심사 제품 사용 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:29, catCode:"C2", category:"기능성 오인", status:"conditional",
+   expression:"자외선(UV) 차단 (기능성 미심사 제품)",
+   keywords:["자외선","UV","SPF","PA","선크림","선케어","자외선 차단"],
+   examples:"자외선 차단 모이스처라이저 (SPF 표기 없는 일반 제품), UV 차단 성분 함유",
+   exception:"자외선차단 기능성화장품 심사(보고) 완료 후 SPF/PA 수치 및 관련 표현 허용",
+   law:"화장품법 제13조 제1항 2호", rule:"시행규칙 [별표5] 나",
+   penalty:"광고업무정지", penaltyDetail:"기능성 미심사 제품 사용 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:30, catCode:"C2", category:"기능성 오인", status:"forbidden",
+   expression:"기능성 원료로 완제품 효능 오인 표현",
+   keywords:["고시 성분","기능성 원료","주름개선 효과가 있는","미백 성분"],
+   examples:"식약처 미백 고시 성분 OO 함유, 주름개선 효과가 있는 레티놀 함유",
+   exception:"",
+   law:"화장품법 제13조 제1항 2호", rule:"시행규칙 [별표5] 나·사",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  // ── C3: 신체 개선 표현 ──────────────────
+  {id:31, catCode:"C3", category:"신체 개선", status:"forbidden",
+   expression:"다이어트 · 체중감량 · 피하지방 분해",
+   keywords:["다이어트","체중감량","체중 감량","지방 분해","피하지방","슬리밍","slimming"],
+   examples:"다이어트 바디크림, 지방 분해 마사지젤, 슬리밍 크림",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:32, catCode:"C3", category:"신체 개선", status:"forbidden",
+   expression:"체형변화 · 몸매 개선 · 날씬하게",
+   keywords:["체형","체형변화","몸매","날씬","바디쉐이핑","body shaping"],
+   examples:"체형 변화 바디오일, 몸매 개선 크림, 날씬하게 해주는",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:33, catCode:"C3", category:"신체 개선", status:"forbidden",
+   expression:"가슴 탄력·확대 · 가슴 성장",
+   keywords:["가슴","버스트","bust","가슴 탄력","가슴 확대","가슴 성장"],
+   examples:"가슴에 탄력을 주는 크림, 버스트업 크림",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:34, catCode:"C3", category:"신체 개선", status:"conditional",
+   expression:"얼굴 윤곽 개선 · V라인",
+   keywords:["얼굴 윤곽","윤곽","v라인","V라인","얼굴 크기","소얼굴"],
+   examples:"V라인 크림, 얼굴 윤곽 개선 마스크, 얼굴 크기가 작아진다",
+   exception:"색조 화장품 등에서 '연출한다'는 의미의 표현을 함께 나타내는 경우 제외",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"조건 미충족 시 행정처분",
+   source:"서울청 2026"},
+
+  // ── C4: 의사·기관 공인 ──────────────────
+  {id:35, catCode:"C4", category:"의사·기관 공인", status:"forbidden",
+   expression:"병원용 · 피부과전용 · 약국전용",
+   keywords:["병원용","병원전용","피부과전용","피부과시술용","약국용","약국전용","클리닉","clinic"],
+   examples:"피부과전용 크림, 약국전용 화장품, 병원용 스킨케어",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 다",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:36, catCode:"C4", category:"의사·기관 공인", status:"forbidden",
+   expression:"의사·의료기관 개발·추천·공인",
+   keywords:["의사","피부과","병원","의료기관","공인","인증","추천","개발한","출신 의사"],
+   examples:"OO 의사가 개발한 화장품, OO 병원에서 추천, OO 아토피 협회 인증, 의대 출신 의사 공동 개발",
+   exception:"인체 적용시험 결과가 학회 발표 등을 통해 공인된 경우 인용 가능 (단, 출처 명시 의무)",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 다",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  // ── C5: 화장품 범위 초과 ──────────────────
+  {id:37, catCode:"C5", category:"범위 초과 광고", status:"forbidden",
+   expression:"보톡스 · 필러 · 레이저 · 시술 관련",
+   keywords:["보톡스","botox","필러","filler","레이저","카복시","시술","인젝션","injection"],
+   examples:"보톡스 효과, 필러 대신, 레이저 없이, 카복시 대체",
+   exception:"필러(filler)는 색조 화장품에서 '채워준다', '연출한다' 의미의 표현과 함께 사용 시 제외",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:38, catCode:"C5", category:"범위 초과 광고", status:"forbidden",
+   expression:"체내 노폐물 제거",
+   keywords:["체내 노폐물","노폐물 제거","체내 독소","내부 독소"],
+   examples:"체내 노폐물 제거 크림, 내부 독소 배출",
+   exception:"단, '피부·모공 노폐물 제거' 관련 표현은 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:39, catCode:"C5", category:"범위 초과 광고", status:"forbidden",
+   expression:"부작용이 전혀 없다 · 먹을 수 있다",
+   keywords:["부작용 없다","부작용이 없","먹을 수 있다","먹어도 되는","무부작용"],
+   examples:"부작용이 전혀 없는 화장품, 먹어도 되는 성분, 안전하여 부작용 없음",
+   exception:"배합금지 원료를 사용하지 않았다는 표현도 금지",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:40, catCode:"C5", category:"범위 초과 광고", status:"forbidden",
+   expression:"명현현상 (일시적 악화)",
+   keywords:["명현현상","일시적 악화","호전반응","악화 후 개선"],
+   examples:"처음에 명현현상이 있을 수 있습니다, 일시적 악화는 효능의 증거",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  // ── C6: 인체유래 성분 ──────────────────
+  {id:41, catCode:"C6", category:"인체유래 성분", status:"conditional",
+   expression:"줄기세포 · stem cell · ○억 세포",
+   keywords:["줄기세포","stem cell","엑소좀","exosome","세포 배양","배양액"],
+   examples:"줄기세포 화장품, stem cell 크림, 엑소좀 앰플, 5억 세포 함유",
+   exception:"식물 등 인체 외 유래 성분은 허용 (우유 엑소좀, 식물 엑소좀 등). 인체세포·조직 배양액은 「화장품 안전기준 등에 관한 규정」[별표3] 적합 원료 사용 시 불특정인의 표현만 가능",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 사",
+   penalty:"광고업무정지", penaltyDetail:"특정인 기원 표현 → 즉시 행정처분. 조건 미충족 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:42, catCode:"C6", category:"인체유래 성분", status:"forbidden",
+   expression:"특정인의 인체 세포·조직 배양액 기원 표현",
+   keywords:["특정인","○○씨","특정인 배양액","개인 줄기세포"],
+   examples:"OO 씨의 줄기세포 배양액 함유, 특정인 기증 세포 배양",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 사",
+   penalty:"광고업무정지", penaltyDetail:"즉시 행정처분",
+   source:"서울청 2026"},
+
+  // ── C7: 사용법 오인 ──────────────────
+  {id:43, catCode:"C7", category:"사용법 오인", status:"forbidden",
+   expression:"마이크로니들 · 미세침 · 니들 · MTS",
+   keywords:["마이크로니들","미세침","니들","needle","MTS","마이크로 니들"],
+   examples:"마이크로니들 패치, 미세침 앰플, 니들 롤러 화장품, MTS 효과",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 사",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:44, catCode:"C7", category:"사용법 오인", status:"forbidden",
+   expression:"이너케어 · 질 내 주입 (외음부세정제)",
+   keywords:["이너케어","inner care","질 내","질내","주입","삽입"],
+   examples:"외음부세정제 이너케어, 질 내 주입 가능, 질 내부 사용",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 사",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:45, catCode:"C7", category:"사용법 오인", status:"conditional",
+   expression:"천연 · 유기농 · Natural · Organic",
+   keywords:["천연","유기농","natural","organic","천연화장품","유기농화장품"],
+   examples:"100% 천연 화장품, 유기농 성분 함유, All Natural",
+   exception:"「천연화장품 및 유기농화장품 표시·광고 안내서」(대한화장품협회) 적합 제품만 허용. ISO 16128 지수 표시 시 '천연·유기농 화장품에 해당한다는 의미가 아님' 문구 필수",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 사",
+   penalty:"광고업무정지", penaltyDetail:"인증 미취득 시 행정처분",
+   source:"서울청 2026"},
+
+  // ── C8: 저속·혐오 ──────────────────
+  {id:46, catCode:"C8", category:"저속·혐오 표현", status:"forbidden",
+   expression:"성생활 암시 · 성 윤활 · 쾌감 증대",
+   keywords:["성생활","윤활","쾌감","질 수축","성 기능"],
+   examples:"성 윤활작용 크림, 쾌감을 증대시키는, 질 수축 크림",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 자",
+   penalty:"광고업무정지", penaltyDetail:"즉시 행정처분",
+   source:"서울청 2026"},
+
+  // ── C9: 기타 오인 ──────────────────
+  {id:47, catCode:"C9", category:"기타 오인", status:"forbidden",
+   expression:"피부 나이 n세 감소 · 어려진다",
+   keywords:["피부 나이","피부나이","나이","세 감소","살 어려진다","피부나이 10년"],
+   examples:"피부나이 10년 감소, 피부나이 5세 어려짐, 피부나이 -3살",
+   exception:"수치·기간 단위 없는 '피부노화 완화', '안티에이징'은 인체적용시험자료로 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 사",
+   penalty:"광고업무정지", penaltyDetail:"즉시 행정처분",
+   source:"서울청 2026"},
+
+  {id:48, catCode:"C9", category:"기타 오인", status:"forbidden",
+   expression:"식약처 허가·인증 받은 제품",
+   keywords:["식약처 허가","식약처 인증","식품의약품안전처 허가","식약처 승인"],
+   examples:"식품의약품안전처 허가 제품임, 식약처 인증 화장품",
+   exception:"기능성화장품 심사(보고) 관련 표현은 제외",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 사",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:49, catCode:"C9", category:"기타 오인", status:"forbidden",
+   expression:"외국·기술제휴 오인 표현",
+   keywords:["기술제휴","외국제품","국내제품","수입산","made in","해외직수입"],
+   examples:"○○ 기술제휴 제품 (실제 제휴 없음), 외국제품으로 오인 가능 표현",
+   exception:"",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 라·마",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"서울청 2026"},
+
+  {id:50, catCode:"C9", category:"기타 오인", status:"forbidden",
+   expression:"최고·최상 등 배타적 절대 표현",
+   keywords:["최고","최상","최초","유일한","세계 최고","국내 최초","넘버원","1위"],
+   examples:"대한민국 최고의 화장품, 세계 최초 기술, 유일한 성분",
+   exception:"비교 대상 및 기준을 분명히 밝히고 객관적 실증자료 구비 시 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 바",
+   penalty:"광고업무정지", penaltyDetail:"미입증 시 행정처분",
+   source:"서울청 2026"},
+
+  // ── C10: 실증자료 필요 (조건부 허용) ──────────────────
+  {id:51, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"수분감/피부결/피부톤 수치 비교 표현",
+   keywords:["수분감","피부결","피부톤","% 개선","2주 후","4주 후"],
+   examples:"수분감 30% 개선, 피부결 20% 개선, 2주 후 피부톤 개선",
+   exception:"인체 적용시험 자료 또는 인체 외 시험 자료 구비 필수",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"실증자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:52, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"피부과 테스트 완료 · OO기관 효과 입증",
+   keywords:["피부과 테스트","피부과 검증","dermatologist tested","임상","인체시험","피부과 확인"],
+   examples:"피부과 테스트 완료, OO시험기관 효과 입증, 피부과 전문의 확인",
+   exception:"인체 적용시험 자료 또는 인체 외 시험 자료 구비 필수 (출처 명시 의무)",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:53, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"무(無) OO · 특정 성분 미함유 표현",
+   keywords:["무향","무파라벤","무방부제","무알코올","프리","free","무첨가","함유하지 않은"],
+   examples:"파라벤 프리, 알코올 무첨가, 방부제 없는",
+   exception:"배합금지 원료 '무첨가' 표현은 금지. 그 외 시험분석 자료 (제조관리기록서·원료시험성적서) 필요",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:54, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"타 제품과 비교 광고",
+   keywords:["비교","대비","OO보다","배 높은","더 효과적","경쟁사"],
+   examples:"OO보다 지속력이 5배 높음, 타사 제품 대비 2배 효과",
+   exception:"비교 대상 및 기준을 분명히 밝히고 인체 적용시험 자료 구비 필수",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 바·아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:55, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"미세먼지 차단·흡착 방지",
+   keywords:["미세먼지","미세먼지 차단","먼지 차단","대기오염","PM"],
+   examples:"미세먼지 차단 선크림, 대기오염 방어 크림",
+   exception:"인체 적용시험 자료 또는 인체 외 시험 자료 구비 필수",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:56, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"피부 혈행 개선",
+   keywords:["혈행 개선","혈액 순환 개선","혈액순환 좋아지는","혈행"],
+   examples:"피부 혈행 개선 크림, 혈액순환 도움",
+   exception:"인체 적용시험 자료 구비 시 '피부 혈행 개선' 표현 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:57, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"피부 피지분비 조절",
+   keywords:["피지","피지 조절","피지 억제","모공","sebum"],
+   examples:"피지 분비 조절 토너, 피지 억제 크림",
+   exception:"인체 적용시험 자료 구비 시 '피부 피지분비 조절' 표현 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  {id:58, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"모발 손상 개선",
+   keywords:["모발 손상","모발 손상 개선","손상 모발","헤어 리페어","hair repair"],
+   examples:"모발의 손상을 개선한다, 손상 모발 케어",
+   exception:"인체 적용시험 자료 또는 인체 외 시험 자료 구비 필수",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"서울청 2026"},
+
+  // ── 추가: C1 의약품 오인 – 소염·진정 (의약적 의미) ──
+  {id:59, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"소염 효과 · 피부 진정 (의약적 의미)",
+   keywords:["소염","진정","피부 진정","항염증","염증 억제","red out","inflammation"],
+   examples:"소염 효과가 있는 크림, 피부 염증 억제, 피부 진정 치료",
+   exception:"'피부를 진정시켜 준다', '피부 자극 완화' 등 화장품 표현 범위 내 사용은 가능. 단, '소염', '항염증' 등 의학적 용어 사용 불가",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"2015 위반사례집 적발 항목. 1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"과대광고사례집 2015/Q&A집"},
+
+  // ── 추가: C1 이중턱·사각턱 개선 ──
+  {id:60, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"이중턱 제거·개선 · 사각턱 개선",
+   keywords:["이중턱","사각턱","턱선","턱 라인","턱 개선","이중턱 제거","얼굴뼈"],
+   examples:"이중턱을 없애주는 크림, 사각턱 개선 리프팅, 이중턱 제거 마사지젤",
+   exception:"색조 화장품에서 연출·시각적 효과를 명확히 표현하는 경우 제외",
+   law:"화장품법 제13조 제1항 1호·4호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"Q&A집 Q7"},
+
+  // ── 추가: C1 입술 볼륨·풍성한 입술 ──
+  {id:61, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"입술 볼륨·풍성·확대 효능",
+   keywords:["입술 볼륨","입술 확대","입술 풍성","입술 두께","lip plump","립 볼륨"],
+   examples:"입술을 볼륨감 있게 해주는 립글로스, 입술 풍성 효과, lip plump 세럼",
+   exception:"색조 립 제품에서 시각적 연출 의미임을 명확히 표현 시 조건부 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"조건 미충족 시 행정처분",
+   source:"Q&A집 Q21"},
+
+  // ── 추가: C1 진피 관련 표현 ──
+  {id:62, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"진피 침투·활성화 · 진피까지 흡수",
+   keywords:["진피","dermis","진피 침투","진피 흡수","진피 활성화","피부 깊숙이","진피층"],
+   examples:"진피까지 침투하는 크림, 진피 활성화 세럼, 피부 진피층 도달",
+   exception:"화장품은 인체의 외부에만 작용 가능. 진피는 의약품·의료기기 영역. 표현 자체 금지",
+   law:"화장품법 제13조 제1항 1호·4호", rule:"시행규칙 [별표5] 가·아",
+   penalty:"광고업무정지", penaltyDetail:"즉시 행정처분",
+   source:"Q&A집 Q61·Q73"},
+
+  // ── 추가: C1 의약외품 오인 표기 ──
+  {id:63, catCode:"C1", category:"의약품 오인", status:"forbidden",
+   expression:"의약외품 오인 표기 (OTC 혼용)",
+   keywords:["의약외품","OTC","약국","의약","약효","치료용","멸균","살균제"],
+   examples:"'의약외품' 표시 또는 동등 효능 암시 광고. 샴푸에 '의약외품' 문구 병기",
+   exception:"실제 의약외품으로 허가된 제품은 가능. 화장품에 의약외품 오인 표기는 전면 금지",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"2015년 샴푸 11개 품목 행정처분 사례(발모·양모·모발굵기 증가 광고 병행). 즉시 행정처분",
+   source:"과대광고사례집 2015"},
+
+  // ── 추가: C4 FDA·해외기관 허가·인증 오인 ──
+  {id:64, catCode:"C4", category:"의사·기관 공인", status:"forbidden",
+   expression:"FDA · 해외기관 허가·인증·승인 표현",
+   keywords:["FDA","미국 FDA","KFDA","CE인증","미국 허가","해외 인증","글로벌 공인"],
+   examples:"미국 FDA 허가 성분 함유, FDA 승인 기술, 미국 FDA 인증 제품",
+   exception:"원료의 FDA 등재(INCI 등록) 사실을 허가·인증으로 오해하게 표현하는 것 금지. 단, 실제 허가 사실을 근거를 제시하여 정확하게 표현하는 것은 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 다·라",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"Q&A집 Q26·Q84"},
+
+  // ── 추가: C9 Before/After 이미지 비교 광고 ──
+  {id:65, catCode:"C9", category:"기타 오인", status:"conditional",
+   expression:"화장품 사용 전후(Before/After) 이미지 광고",
+   keywords:["before after","비포 애프터","사용 전","사용 후","전후 비교","before","after"],
+   examples:"1주 후 피부 변화, Before/After 사진 비교, 사용 전·후 피부 상태",
+   exception:"인체적용시험 결과 등 실증 자료가 있고, 광고 내 비교 이미지가 실제 시험 결과와 일치하는 경우 허용. 연출 이미지 단독 사용 금지",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"실증자료 없는 연출 이미지 사용 시 행정처분",
+   source:"Q&A집 Q64"},
+
+  // ── 추가: C9 EWG 등급 표시광고 ──
+  {id:66, catCode:"C9", category:"기타 오인", status:"conditional",
+   expression:"EWG 등급(녹색·1등급) 표시광고",
+   keywords:["EWG","EWG 1등급","EWG 녹색","ewg 안전","ewg 등급"],
+   examples:"EWG 1등급 인증 성분만 사용, EWG 그린(녹색) 등급, EWG 안전 성분",
+   exception:"EWG는 미국 환경단체 자체 평가 시스템으로 식약처 공인기관이 아님. 허가·인증으로 오인하지 않도록 출처·성격을 명확히 표기하는 경우 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 다·바",
+   penalty:"광고업무정지", penaltyDetail:"공인기관 인증처럼 표현 시 행정처분",
+   source:"Q&A집 Q49"},
+
+  // ── 추가: C10 피부장벽 손상 개선 ──
+  {id:67, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"피부장벽 손상 개선",
+   keywords:["피부장벽","장벽 손상","피부장벽 개선","피부장벽 강화","skin barrier"],
+   examples:"피부장벽 손상의 개선에 도움, 피부장벽을 튼튼하게, 장벽 케어 크림",
+   exception:"인체적용시험 자료 또는 인체 외 시험 자료(제조관리 기록서 등) 구비 필수",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"인체적용시험위반사례 2025"},
+
+  // ── 추가: C10 모발 탈락 수 감소 ──
+  {id:68, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"빠지는 모발 감소 · 모발 탈락 수 감소",
+   keywords:["모발 탈락","탈모 감소","빠지는 모발","모발 빠짐","hair loss"],
+   examples:"빠지는 모발을 감소시킨다, 탈모 증상을 줄여주는 샴푸",
+   exception:"탈모 증상 완화 기능성화장품 심사(보고) 시 허용. 단, 대조군 설정 및 숙련된 전문가 검증 등 인체적용시험 자료 필요",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"실증자료 타당성 부족 시 행정처분 (대조군 미설정 등)",
+   source:"인체적용시험위반사례 2025"},
+
+  // ── 추가: C10 체험단·설문조사 결과 광고 ──
+  {id:69, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"체험단·설문조사 결과를 효능으로 표현",
+   keywords:["체험단","설문조사","소비자 평가","고객 후기","사용자 평가","만족도","체험 후기"],
+   examples:"OO명 체험단 90% 만족, 설문조사 결과 97% 피부개선 경험",
+   exception:"임상시험·인체적용시험과 동등 수준의 객관적 설계(통계처리, 대조군 등)가 적용된 경우에만 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"통계적 근거 없는 단순 설문·체험 결과 사용 시 행정처분",
+   source:"Q&A집 Q77"},
+
+  // ── 추가: C10 ISO 천연·유기농 지수 표시광고 ──
+  {id:70, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"ISO 천연·유기농 지수 표시광고",
+   keywords:["ISO 지수","ISO 천연지수","ISO 유기농지수","천연지수","유기농지수","ISO 16128"],
+   examples:"ISO 천연지수 95%, 유기농 지수 80%, ISO 16128 기반 천연 성분",
+   exception:"ISO 16128 지수는 '천연화장품 또는 유기농화장품에 해당한다는 의미가 아님' 문구를 반드시 병기. 단순 수치만 표시 시 소비자 오인 우려",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아·사",
+   penalty:"광고업무정지", penaltyDetail:"필수 문구 미표기 시 행정처분",
+   source:"인체적용시험위반사례 2025"},
+
+  // ── 추가: C10 특허 출원·등록 내용 효능 표현 ──
+  {id:71, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"특허 출원·등록 내용을 효능·안전성으로 광고",
+   keywords:["특허","특허 출원","특허 등록","patent","특허 성분","특허 기술"],
+   examples:"특허 성분 함유로 피부 개선 효과 탁월, 특허 받은 안전 기술",
+   exception:"특허 사실 자체 표기는 가능. 단, 특허 기술의 안전성·효능·효과를 입증·보증하는 표현은 별도 실증자료 필요",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"자료 미구비 시 행정처분",
+   source:"Q&A집 Q65"},
+
+  // ── 추가: C10 프로바이오틱스 의약적 효능 ──
+  {id:72, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"프로바이오틱스 · 유산균 관련 의약적 효능 표현",
+   keywords:["프로바이오틱스","유산균","마이크로바이옴","microbiome","lactobacillus"],
+   examples:"프로바이오틱스가 피부 면역력 강화, 유산균으로 피부 균형 치료",
+   exception:"단순 성분 함유 표시는 가능. 피부에 대한 의약적 효능(면역 강화, 균형 치료 등) 주장 시 실증자료 필요",
+   law:"화장품법 제13조 제1항 1호·4호", rule:"시행규칙 [별표5] 가·아",
+   penalty:"광고업무정지", penaltyDetail:"의약적 효능 주장 시 행정처분",
+   source:"Q&A집 Q53"},
+
+  // ── 추가: C10 점막 자극테스트 안구자극 관련 ──
+  {id:73, catCode:"C10", category:"실증자료 필요", status:"evidence",
+   expression:"눈 자극테스트·티어프리(tear free) 광고",
+   keywords:["티어프리","tear free","눈 자극","안자극","ophthalmologist tested","점막자극"],
+   examples:"눈에 자극이 없습니다(티어프리), 안자극 테스트 완료, 점막자극 없음",
+   exception:"인체적용시험 자료 구비 필수. 제품 적용부위와 티어프리(눈 자극) 연관성이 시험설계에서 확인되어야 함",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"적용부위 연관성 미확인 시 행정처분",
+   source:"인체적용시험위반사례 2025"},
+
+  // ── 추가: C9 슈퍼푸드·먹는 성분 오인 ──
+  {id:74, catCode:"C9", category:"기타 오인", status:"forbidden",
+   expression:"슈퍼푸드 · 먹는 화장품 · 내복용 화장품",
+   keywords:["슈퍼푸드","superfood","먹을 수 있는","내복","먹는","식용 성분만","edible"],
+   examples:"슈퍼푸드 성분으로 만든 크림, 먹어도 될 만큼 안전한, 내복 가능 성분",
+   exception:"화장품은 외용 제품. '먹을 수 있는 수준의 안전성'이라는 의미로도 오인 표현 금지",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"1차 시정조치 → 반복 시 해당 품목 광고업무 정지",
+   source:"Q&A집 Q82"},
+
+  // ── 추가: C1 한방·고려약초 의약적 효능 ──
+  {id:75, catCode:"C1", category:"의약품 오인", status:"conditional",
+   expression:"한방 · 고려약초 · 한의학 의약적 효능 표현",
+   keywords:["한방","한의학","고려약초","약초","본초","한약재","oriental medicine"],
+   examples:"한방 성분으로 피부질환 치료, 고려약초의 약효 성분, 한의학 처방 기반",
+   exception:"단순 한방 성분 함유 또는 한방 컨셉 표현은 가능. 의약품 효능(치료·처방·약효 등) 표현은 금지",
+   law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+   penalty:"광고업무정지", penaltyDetail:"의약적 효능 표현 시 행정처분",
+   source:"Q&A집 Q58"},
+
+  // ── 추가: C7 추출물 범위 초과 효능 ──
+  {id:76, catCode:"C7", category:"사용법 오인", status:"conditional",
+   expression:"추출물 화장품의 범위 초과 효능 표현",
+   keywords:["추출물","extract","성분 추출","활성 성분","천연 추출물","식물 추출물"],
+   examples:"OO 추출물이 피부를 치료한다, 식물 추출물의 항암 효과, 특정 추출물 의약 작용",
+   exception:"추출물 성분 함유 사실과 화장품 효능 범위 내 표현(보습, 피부 컨디션 개선 등)은 허용",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+   penalty:"광고업무정지", penaltyDetail:"범위 초과 효능 표현 시 행정처분",
+   source:"과대광고사례베이스자료08 2024"},
+
+  // ── 추가: C4 연예인·유명인 추천 광고 ──
+  {id:77, catCode:"C4", category:"의사·기관 공인", status:"conditional",
+   expression:"유명 연예인·인플루언서 추천 광고",
+   keywords:["연예인 추천","셀럽","인플루언서","유명인","celebrity","추천","사용중"],
+   examples:"OO 연예인이 실제 사용하는 화장품, 인플루언서 OO 추천",
+   exception:"실제 사용하고 있으며 경험에 근거한 추천임을 명확히 할 경우 허용. 단, 허위 추천·과장 효능 포함 시 금지",
+   law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 다",
+   penalty:"광고업무정지", penaltyDetail:"허위 추천 또는 효능 과장 표현 포함 시 행정처분",
+   source:"Q&A집 Q24"},
+
+  // ── 추가: C2 탈모 샴푸 기능성 미신고 ──
+  {id:78, catCode:"C2", category:"기능성 오인", status:"conditional",
+   expression:"탈모 샴푸 · 탈모 완화 샴푸 (기능성 미신고)",
+   keywords:["탈모 샴푸","탈모 케어","탈모 방지 샴푸","탈모 증상 완화 샴푸","anti hair loss"],
+   examples:"탈모 방지 샴푸, 탈모 케어 헤어 세럼, 탈모 완화 두피 앰플",
+   exception:"탈모 증상의 완화에 도움을 주는 기능성화장품으로 보고(심사) 완료 시 '탈모 증상 완화에 도움' 표현 허용. 단, '탈모 치료', '발모 효과' 등은 기능성 범위 초과로 금지",
+   law:"화장품법 제13조 제1항 2호", rule:"시행규칙 [별표5] 나",
+   penalty:"광고업무정지", penaltyDetail:"기능성 미신고 제품의 탈모 효능 표현 시 행정처분",
+   source:"Q&A집 Q29 / 과대광고사례집 2015"},
+
+  // ── 추가: C9 식품 모방 용기·명칭 사용 ──
+  {id:79, catCode:"C9", category:"기타 오인", status:"forbidden",
+   expression:"식품 모방 화장품 – 식품으로 오인되는 용기·명칭·형태",
+   keywords:["젤리","음료","소주","식품","과자","캔디","먹는","비누 젤리","음료 모양","식품 오인"],
+   examples:"젤리 모양 비누, 음료캔 디자인 클렌저, 소주병 모양 디퓨저, 식품 명칭 사용 화장품",
+   exception:"",
+   law:"화장품법 제15조 제10호", rule:"화장품법 시행규칙 제20조",
+   penalty:"판매금지·폐기·형사처벌", penaltyDetail:"식품으로 오인할 우려가 있는 용기·포장 사용 시 화장품법 제15조에 따라 판매 금지 및 행정처분",
+   source:"OY협력사 표시광고가이드 2026"},
+
+  // ── 추가: C5 비방적 광고 – 타사 근거 없는 비방 ──
+  {id:80, catCode:"C5", category:"범위 초과 광고", status:"forbidden",
+   expression:"타사 제품 비방적 광고",
+   keywords:["다른 제품과 달리","타사와 달리","경쟁사 비방","근거 없는 비방","다른 OO와 달리"],
+   examples:"'다른 OO와 달리 이 제품은 △△을 첨가하지 않습니다' (비교 기준 불명확), 경쟁사 제품의 불리한 사실만 표시",
+   exception:"비교 대상·기준을 명시하고 객관적 근거가 있는 경우 허용. 단, 근거 없이 타사 불리한 사실만 강조하는 표현은 금지",
+   law:"표시광고법 제3조 제1항 제4호", rule:"표시광고법 제3조 제1항",
+   penalty:"시정명령·과징금·형사처벌", penaltyDetail:"공정거래위원회 시정조치 + 2년 이하 징역 또는 1억 5천만 원 이하 벌금",
+   source:"OY협력사 표시광고가이드 2026"},
+];
+
+// ────────────────────────────────────────────────
+// 상태 및 필터
+// ────────────────────────────────────────────────
+let currentCat = 'all';
+let currentStatus = 'all';
+
+function setFilter(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    if(['forbidden','conditional','evidence'].some(s => b.onclick?.toString().includes(s))) return;
+    b.classList.remove('active');
+  });
+  btn.classList.add('active');
+  render();
+}
+
+function setStatusFilter(status, btn) {
+  if(currentStatus === status) {
+    currentStatus = 'all';
+    btn.classList.remove('active');
+  } else {
+    currentStatus = status;
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      if(b.onclick?.toString().includes('setStatusFilter')) b.classList.remove('active');
+    });
+    btn.classList.add('active');
+  }
+  render();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  currentCat = 'all';
+  currentStatus = 'all';
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.filter-btn').classList.add('active');
+  render();
+}
+
+function highlight(text, query) {
+  if(!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return text.replace(new RegExp(escaped,'gi'), m => `<span class="highlight">${m}</span>`);
+}
+
+function render() {
+  const query = document.getElementById('searchInput').value.trim().toLowerCase();
+  const grid = document.getElementById('cardGrid');
+  const summary = document.getElementById('resultSummary');
+
+  let results = DB.filter(item => {
+    const catMatch = currentCat === 'all' || item.catCode === currentCat;
+    const statusMatch = currentStatus === 'all' || item.status === currentStatus;
+    const textMatch = !query || [
+      item.expression, item.category,
+      ...item.keywords,
+      item.examples, item.exception
+    ].some(t => t.toLowerCase().includes(query));
+    return catMatch && statusMatch && textMatch;
+  });
+
+  const statusMap = {forbidden:'❌ 절대금지', conditional:'⚠️ 조건부금지', evidence:'📋 실증자료 필요'};
+  const statusClass = {forbidden:'status-forbidden', conditional:'status-conditional', evidence:'status-evidence'};
+  const cardClass = {forbidden:'forbidden', conditional:'conditional', evidence:'evidence'};
+  const catColorClass = {C1:'cat-C1',C2:'cat-C2',C3:'cat-C3',C4:'cat-C4',C5:'cat-C5',C6:'cat-C6',C7:'cat-C7',C8:'cat-C8',C9:'cat-C9',C10:'cat-C10'};
+
+  summary.innerHTML = query
+    ? `"<strong>${query}</strong>" 검색 결과: <strong>${results.length}건</strong>`
+    : `전체 <strong>${results.length}건</strong> 표시 중`;
+
+  if(results.length === 0) {
+    grid.innerHTML = `<div class="empty"><span class="emoji">🔍</span>검색 결과가 없습니다.<br><small>다른 키워드로 검색해 보세요.</small></div>`;
+    return;
+  }
+
+  grid.innerHTML = results.map(item => `
+    <div class="card ${cardClass[item.status]}">
+      <div class="card-top">
+        <span class="category-badge ${catColorClass[item.catCode]}">${item.category}</span>
+        <span class="status-badge ${statusClass[item.status]}">${statusMap[item.status]}</span>
+      </div>
+      <div class="card-expression">${highlight(item.expression, query)}</div>
+      ${item.examples ? `<div class="card-examples"><span>예시:</span> ${highlight(item.examples, query)}</div>` : ''}
+      ${item.exception ? `<div class="card-exception">${item.exception}</div>` : ''}
+      <div class="card-footer">
+        <span class="law-tag">${item.law}</span>
+        <span class="law-tag">${item.rule}</span>
+        <span class="penalty-tag">⚖️ ${item.penalty}</span>
+        <span class="source-tag">${item.source}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function doSearch() { render(); }
+
+// 초기 렌더
+render();
+</script>
+</body>
+</html>
