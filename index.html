@@ -274,7 +274,12 @@ style="background:#fff; color:#1a3c6e; font-weight:700; font-size:13px; padding:
 <button class="filter-btn active" id="status-btn-all" onclick="filterStatus('all',this)">전체</button>
 <button class="filter-btn" onclick="filterStatus('진행중',this)">진행중</button>
 <button class="filter-btn" onclick="filterStatus('신청',this)">신청</button>
-</div>
+
+      <span style="width:1px;height:18px;background:var(--border);margin:0 4px;"></span>
+      <span style="font-size:11px;color:var(--text-muted);">정렬</span>
+      <button class="filter-btn active" id="sort-btn-newest" onclick="sortBy('newest',this)">최신순 ↓</button>
+      <button class="filter-btn" id="sort-btn-oldest" onclick="sortBy('oldest',this)">오래된순 ↑</button>
+    </div>
 
 <div class="search-wrap">
 <span class="search-icon">🔍</span>
@@ -396,6 +401,7 @@ let pageSize = 20;
 let currentTypeFilter = 'all';
 let currentStatusFilter = 'all';
 let currentSearch = '';
+let currentSort = 'newest';
 let isAdmin = false;
 let selectedRows = new Set();
 
@@ -687,7 +693,8 @@ document.getElementById('stat-domestic').textContent = data.filter(r=>r.type==='
 document.getElementById('stat-fq').textContent = data.filter(r=>r.type==='해외 품질서류요청').length;
 document.getElementById('stat-fr').textContent = data.filter(r=>r.type==='해외 인허가요청').length;
 
-const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+filtered.sort((a,b)=>{const da=new Date(a.date||0),db=new Date(b.date||0);return currentSort==='newest'?db-da:da-db;});
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
 if (currentPage > totalPages) currentPage = totalPages;
 const start = (currentPage - 1) * pageSize;
 const pageData = filtered.slice(start, start + pageSize);
@@ -928,6 +935,7 @@ btn.classList.add('active');
 render();
 }
 function searchRows(q) { currentSearch = q; currentPage = 1; render(); }
+    function sortBy(val,btn){currentSort=val;currentPage=1;document.querySelectorAll('[id^="sort-btn"]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();}
 
 // =============================================
 // 공지사항
