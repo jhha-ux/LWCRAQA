@@ -19,7 +19,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .tdate{font-size:11px;color:rgba(255,255,255,0.6)}
 
 /* Layout */
-.body{padding:12px 16px 20px;display:flex;flex-direction:column;gap:32px;max-width:1100px;margin:0 auto}
+.portal-layout{display:grid;grid-template-columns:262px 1fr;gap:16px;max-width:1420px;margin:0 auto;padding:14px 16px 24px;align-items:start}
+.portal-main{display:flex;flex-direction:column;gap:32px;min-width:0}
+.portal-sidebar{position:sticky;top:52px}
+.sidebar-box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden}
+.sidebar-hd{background:#0d5349;color:#fff;padding:9px 14px;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.sidebar-hd-cnt{background:rgba(255,255,255,0.25);border-radius:10px;padding:1px 7px;font-size:10px}
+.sidebar-item{padding:9px 13px;border-bottom:1px solid #f3f4f6;display:block;text-decoration:none;color:#111827}
+.sidebar-item:last-child{border-bottom:none}
+.sidebar-item:hover{background:#f9fafb}
+.sidebar-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px}
+.sidebar-title{font-size:11.5px;font-weight:500;color:#111827;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
+.sidebar-manager{font-size:10px;color:#9ca3af}
+.dday{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;flex-shrink:0}
+.dday.red{background:#fef2f2;color:#dc2626;border:1px solid #fecaca}
+.dday.orange{background:#fff7ed;color:#ea580c;border:1px solid #fed7aa}
+.dday.green{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.dday.over{background:#f3f4f6;color:#6b7280;border:1px solid #e5e7eb}
+.sidebar-empty{padding:28px 14px;text-align:center;font-size:12px;color:#9ca3af}
+.sidebar-link{display:block;text-align:center;padding:8px;font-size:11px;color:#0d5349;border-top:1px solid #e5e7eb;text-decoration:none;font-weight:500}
+.sidebar-link:hover{background:#f9fafb}
+@media(max-width:1100px){.portal-layout{grid-template-columns:1fr}.portal-sidebar{display:none}}
 
 /* Section */
 .sec{display:flex;flex-direction:column;gap:6px}
@@ -85,7 +105,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
   </div>
 </div>
 
-<div class="body">
+<div class="portal-layout">
+<div class="portal-sidebar">
+  <div class="sidebar-box">
+    <div class="sidebar-hd">
+      ⏱ 진행 현황
+      <span class="sidebar-hd-cnt" id="sb-count">-</span>
+    </div>
+    <div id="sb-list"><div class="sidebar-empty">불러오는 중...</div></div>
+    <a class="sidebar-link" href="https://jhha-ux.github.io/LWCRAQA/" target="_blank">전체 보기 →</a>
+  </div>
+</div>
+
+
+<div class="portal-main">
 
   <!-- 해외인허가 -->
   <div class="sec">
@@ -325,13 +358,78 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
     </div>
   </div>
 
-</div>
+</div><!-- /portal-main -->
+
+</div><!-- /portal-layout -->
 
 <script>
 const d = new Date();
 const days = ['일','월','화','수','목','금','토'];
 document.getElementById('today-date').textContent =
   d.getFullYear() + '년 ' + (d.getMonth()+1) + '월 ' + d.getDate() + '일 (' + days[d.getDay()] + ')';
+
+// =============================================
+// 사이드바 D-day 위젯
+// =============================================
+(async function() {
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaXr35UIdF5jUUc60ukDPPJzskVLZqUF7DeGfDM4MQkIHKYqeaN3OPmamHtkWEPqA/exec';
+  const list = document.getElementById('sb-list');
+  const cnt  = document.getElementById('sb-count');
+
+  function dday(deadlineStr) {
+    if (!deadlineStr || deadlineStr === '-') return null;
+    const d = new Date(deadlineStr);
+    if (isNaN(d)) return null;
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    d.setHours(0,0,0,0);
+    return Math.round((d - today) / 86400000);
+  }
+
+  function ddayBadge(n) {
+    if (n === null) return '';
+    if (n < 0)  return '<span class="dday over">D+' + Math.abs(n) + '</span>';
+    if (n === 0) return '<span class="dday red">D-0</span>';
+    if (n <= 3)  return '<span class="dday red">D-' + n + '</span>';
+    if (n <= 7)  return '<span class="dday orange">D-' + n + '</span>';
+    return '<span class="dday green">D-' + n + '</span>';
+  }
+
+  try {
+    const res  = await fetch(SCRIPT_URL + '?action=getAll');
+    const json = await res.json();
+    if (!json.success) throw new Error('fail');
+
+    const items = json.data
+      .filter(r => r.status === '진행중' || r.status === '신청')
+      .map(r => ({ ...r, _d: dday(r.deadline) }))
+      .sort((a, b) => {
+        if (a._d === null && b._d === null) return 0;
+        if (a._d === null) return 1;
+        if (b._d === null) return -1;
+        return a._d - b._d;
+      });
+
+    cnt.textContent = items.length;
+
+    if (items.length === 0) {
+      list.innerHTML = '<div class="sidebar-empty">진행 중인 항목이 없습니다</div>';
+      return;
+    }
+
+    list.innerHTML = items.map(r => {
+      const badge = ddayBadge(r._d);
+      const title = (r.product || '-').replace(/</g,'&lt;');
+      const mgr   = (r.manager || '').replace(/</g,'&lt;');
+      return '<a class="sidebar-item" href="https://jhha-ux.github.io/LWCRAQA/" target="_blank">' +
+             '<div class="sidebar-top"><span class="sidebar-title">' + title + '</span>' + badge + '</div>' +
+             '<span class="sidebar-manager">' + mgr + (r.type ? ' · ' + r.type.replace('요청','') : '') + '</span>' +
+             '</a>';
+    }).join('');
+  } catch(e) {
+    list.innerHTML = '<div class="sidebar-empty">불러오기 실패</div>';
+  }
+})();
 </script>
 </body>
 </html>
