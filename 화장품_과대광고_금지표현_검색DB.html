@@ -98,7 +98,7 @@
     </div>
   </div>
   <div class="header-right">
-    수록 DB<br><strong style="font-size:22px">299건</strong><br>
+    수록 DB<br><strong style="font-size:22px">320건<strong><br>
     최종 업데이트<br><strong>2026.10</strong>
   </div>
 </div>
@@ -128,12 +128,13 @@
   <button class="filter-btn" onclick="setStatusFilter('evidence',this)">📋 실증자료 필요</button>
 </div>
 
-<div class="result-summary" id="resultSummary">전체 <strong>299건</strong> 표시 중</div>
+<div class="result-summary" id="resultSummary">전체 <strong>320건</strong> 표시 중</div>
 
 <div class="container" id="cardGrid"></div>
 
 <div class="source-bar">
   <span><strong>주요 출처</strong></span>
+  <span>📄 2026년 10월 화장품 행정처분 사례 (서울지방식약청, 2026.10)</span>
   <span>📄 2026 화장품 표시광고지침 및 관리사례 (서울지방식약청, 2026.6.30)</span>
   <span>📄 화장품 표시·광고 관리 지침 민원인안내서 [별표1] (식약처)</span>
   <span>📄 화장품법 제13조, 시행규칙 제22조·[별표5]</span>
@@ -2811,6 +2812,203 @@ const DB = [
  law:"화장품법 제13조 제1항 5호", rule:"시행규칙 [별표5] 마",
  penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2024.12",
  source:"서울청 행정처분 2024.12"},
+
+// ── 서울청 행정처분 사례 (2026년 10월) - 의약품 오인 ──────────────────
+
+{id:300, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"속기미 뿌리 제거 · 코직산 진피 침투 · 약국·피부과 완판",
+ keywords:["속기미","기미 뿌리","코직산","진피 침투","약국 완판","피부과 완판"],
+ examples:"속기미 뿌리 제거 세럼, 코직산이 진피까지 침투, 약국·피부과에서 완판된 제품",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:301, catCode:"C8", category:"저속·혐오 표현", status:"forbidden",
+ expression:"남성 성기능 암시 광고 (크기·굵기 관련)",
+ keywords:["크기 개선","굵기 증가","남성 크기","size up","남성 케어"],
+ examples:"사용 후 크기·굵기 개선 암시 광고, 남성 전용 크기 케어 세럼",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 자",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:302, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"진피층 MTS 수직 침투 (의약품 오인)",
+ keywords:["진피층 MTS","MTS 수직 침투","진피층 도달","진피 MTS"],
+ examples:"MTS 수직 침투 방식으로 진피층까지 도달하는 세럼",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:303, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"탈모 근본원인 해결 · 모발 재성장",
+ keywords:["탈모 근본원인","모발 재성장","탈모 해결","탈모 근본 치료"],
+ examples:"탈모의 근본 원인을 해결하는 샴푸, 모발이 재성장되는 두피 앰플",
+ exception:"탈모 증상 완화 기능성화장품 심사(보고) 시 '탈모 증상 완화에 도움' 표현 허용",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:304, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"관절주사 대체 · 목디스크 복원술 · 뿌리는 인공디스크",
+ keywords:["관절주사","목디스크 복원","인공디스크","디스크 복원술","관절 주사 대체"],
+ examples:"관절주사 대신 뿌리세요, 목디스크 복원술 효과 화장품, 뿌리는 인공디스크",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:305, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"시술 후 피부흔적 케어 · 멍크림 · 붓기제거",
+ keywords:["시술 후 피부흔적","멍크림","붓기제거","시술 후 케어","시술 회복 크림"],
+ examples:"시술 후 피부흔적 케어 크림, 멍크림, 시술 후 붓기 제거 세럼",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:306, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"칸디다균·대장균·황색포도상구균 99.9% 제거",
+ keywords:["칸디다균","대장균","황색포도상구균","병원균 제거","균 99.9% 제거"],
+ examples:"칸디다균·대장균·황색포도상구균 99.9% 제거 클렌저",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:307, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"두피 냄새 유발균 99.9% 감소",
+ keywords:["두피 냄새 유발균","두피균 감소","두피 냄새균 99.9%"],
+ examples:"두피 냄새 유발균 99.9% 감소 샴푸",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:308, catCode:"C1", category:"의약품 오인", status:"conditional",
+ expression:"기미 · 주근깨 (단독 표현, 2026.10 처분 사례)",
+ keywords:["기미","주근깨"],
+ examples:"기미, 주근깨 단독 표현 (기능성 미심사 제품에서 단어 그대로 사용)",
+ exception:"기능성화장품 심사(보고) 완료 제품은 '기미·주근깨 완화에 도움' 표현 허용",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10 – 단어 단독 사용도 처분 대상",
+ source:"서울청 행정처분 2026.10"},
+
+{id:309, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"기미씨앗 박멸 · 기미뿌리 추출 · 피부과 입점 화장품",
+ keywords:["기미씨앗","기미 박멸","기미뿌리","기미 뿌리 뽑음","피부과 입점"],
+ examples:"기미씨앗 박멸 세럼, 기미뿌리까지 뽑아주는 크림, 피부과 입점 화장품",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:310, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"모발 굵기 개선 수치 광고 · 모발 성장인자 VEGF 증가",
+ keywords:["모발 굵기 개선","VEGF","모발 성장인자","굵기 개선율","VEGF 증가"],
+ examples:"모발 굵기 개선 13.4%, 모발 성장인자 VEGF 146.1% 증가 광고",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:311, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"항균 99% · 편백 피톤치드 살균·항염",
+ keywords:["항균 99%","피톤치드 살균","피톤치드 항염","편백 살균","편백 항균"],
+ examples:"항균 99% 클렌저, 편백 피톤치드 살균 효과, 피톤치드 항염 작용 세럼",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:312, catCode:"C1", category:"의약품 오인", status:"forbidden",
+ expression:"백선균 감소 99.9%",
+ keywords:["백선균","백선균 감소","무좀균","피부 곰팡이균","백선균 제거"],
+ examples:"백선균 감소 99.9% 풋크림, 백선균 제거 로션",
+ exception:"",
+ law:"화장품법 제13조 제1항 1호", rule:"시행규칙 [별표5] 가",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+// ── 서울청 행정처분 사례 (2026년 10월) - 허위·소비자 오인 ──────────────────
+
+{id:313, catCode:"C9", category:"기타 오인", status:"forbidden",
+ expression:"SCI 논문 기미 레시피 · 발효누룩 고농도 ppm 허위 표기",
+ keywords:["SCI 논문 기미","기미 레시피","발효누룩 ppm","논문 기반 기미"],
+ examples:"SCI 논문에서 증명된 기미 레시피, 발효누룩 1,465,000ppm 함유 광고",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:314, catCode:"C9", category:"기타 오인", status:"forbidden",
+ expression:"MTS 수직 침투로 두피 30층 도달",
+ keywords:["두피 30층","MTS 수직침투 두피","두피층 도달","두피 30층 침투"],
+ examples:"MTS 수직 침투 방식으로 두피 30층까지 도달하는 세럼",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:315, catCode:"C9", category:"기타 오인", status:"forbidden",
+ expression:"미세침·바늘 이미지를 활용한 화장품 광고",
+ keywords:["미세침 이미지","바늘 이미지","니들 이미지","침 삽입 이미지"],
+ examples:"화장품 광고에 미세침·바늘이 피부에 삽입되는 이미지 사용",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:316, catCode:"C9", category:"기타 오인", status:"forbidden",
+ expression:"국내 유일 미백기능성 5종 · 하버드 논문 기반",
+ keywords:["국내 유일 미백","미백기능성 5종","하버드 논문","하버드 기반 화장품"],
+ examples:"국내 유일 미백기능성 성분 5종 함유, 하버드 논문에 기반한 미백 처방",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:317, catCode:"C9", category:"기타 오인", status:"forbidden",
+ expression:"제품만족도 100% · 체취제거 99.7%",
+ keywords:["제품만족도 100%","체취제거 99.7%","만족도 100","체취 제거율"],
+ examples:"제품만족도 100%, 체취제거율 99.7% 데오도란트",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+{id:318, catCode:"C9", category:"기타 오인", status:"forbidden",
+ expression:"임상 결과 1회 사용 팔자주름 119% 개선",
+ keywords:["팔자주름 119%","1회 사용 팔자주름","팔자주름 임상","주름 119%"],
+ examples:"임상 결과 단 1회 사용으로 팔자주름 119% 개선",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+// ── 서울청 행정처분 사례 (2026년 10월) - 기능성화장품 오인 ──────────────────
+
+{id:319, catCode:"C2", category:"기능성 오인", status:"conditional",
+ expression:"살성(스트레치마크) 완화 · 튼살 크림 (기능성 미신고)",
+ keywords:["살성","스크레치 완화","튼살 크림","스트레치마크 완화","튼살"],
+ examples:"살성(스트레치마크) 완화 크림, 튼살 케어 로션 (기능성 미신고 제품)",
+ exception:"튼살 완화는 기능성화장품 심사(보고) 완료 제품만 허용",
+ law:"화장품법 제13조 제1항 2호", rule:"시행규칙 [별표5] 나",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
+
+// ── 서울청 행정처분 사례 (2026년 10월) - 객관적 미확인 광고 ──────────────────
+
+{id:320, catCode:"C10", category:"실증자료 필요", status:"forbidden",
+ expression:"척추 깊숙이 스며드는 미세침 · 미세냉침 50만개",
+ keywords:["척추 깊숙이","미세냉침","미세냉침 50만개","척추 미세침","냉침 광고"],
+ examples:"척추 깊숙이 스며드는 미세침 패치, 미세냉침 50만개 함유 광고",
+ exception:"",
+ law:"화장품법 제13조 제1항 4호", rule:"시행규칙 [별표5] 아",
+ penalty:"광고업무정지", penaltyDetail:"서울청 행정처분 2026.10",
+ source:"서울청 행정처분 2026.10"},
 ];
 
 // ────────────────────────────────────────────────
