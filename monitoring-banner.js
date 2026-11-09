@@ -60,6 +60,6 @@
   document.body.appendChild(fab);
 
   document.getElementById('db-btn').addEventListener('click', () => {
-    window.open('./kca-search.html?v=2', '_blank');
+    window.open('./화장품_과대광고_금지표현_검색DB.html', '_blank');
   });
 })();
