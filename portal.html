@@ -53,7 +53,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .card-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
 .card-grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .card-grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-.lc{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;transition:border-color 0.12s,box-shadow 0.12s}
+.lc{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:9px 11px;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;transition:border-color 0.12s,box-shadow 0.12s;font-family:inherit;font-size:inherit;text-align:left;width:100%}
 .lc:hover{border-color:#0d5349;box-shadow:0 0 0 2px rgba(13,83,73,0.1)}
 .lc-icon{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .lc-icon svg{width:13px;height:13px}
@@ -90,6 +90,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
 .c-bom{fill:#7c3aed}
 .c-label{fill:#db2777}
 .c-voucher{fill:#0369a1}
+
+/* ── 팝업 모달 ── */
+.p-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center}
+.p-overlay.open{display:flex}
+.p-modal{background:#fff;border-radius:12px;overflow:hidden;width:min(860px,96vw);height:min(620px,90vh);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.25);animation:p-fadein .2s ease}
+@keyframes p-fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.p-modal-head{background:#0d5349;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.p-modal-title{font-size:14px;font-weight:700;flex:1;letter-spacing:0.02em}
+.p-modal-sub{font-size:11px;color:rgba(255,255,255,0.65)}
+.p-modal-close{background:rgba(255,255,255,0.15);border:none;color:#fff;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.p-modal-close:hover{background:rgba(255,255,255,0.3)}
+.p-modal-iframe{flex:1;border:none;width:100%}
 </style>
 </head>
 <body>
@@ -125,7 +137,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
     <div class="sec-hd">
       <div class="sec-hd-dot" style="background:#0d5349"></div>
       <span class="sec-hd-label">해외 인허가</span>
-      <span class="sec-hd-count">8</span>
+      <span class="sec-hd-count">9</span>
     </div>
     <div class="card-grid-4">
       <a class="lc" href="https://drive.google.com/drive/folders/1huJ1GKRj_0IhDu8qpuDTxn4dpkNE7H1_" target="_blank">
@@ -160,6 +172,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
         <div class="lc-icon i-hs"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" fill="#fefce8"/><text x="12" y="16" text-anchor="middle" font-size="9" font-weight="700" fill="#ca8a04">HS</text></svg></div>
         <span class="lc-txt">HS Code 조회</span>
       </a>
+      <button class="lc" onclick="openPModal('doc')">
+        <div class="lc-icon i-dash"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="#0d5349" stroke-width="1.8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#0d5349" stroke-width="1.8" stroke-linecap="round"/><text x="12" y="22" text-anchor="middle" font-size="5" fill="#0d5349">EU</text></svg></div>
+        <span class="lc-txt">DoC 발행</span>
+      </button>
     </div>
   </div>
 
@@ -168,7 +184,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
     <div class="sec-hd">
       <div class="sec-hd-dot" style="background:#16a34a"></div>
       <span class="sec-hd-label">품질 관리</span>
-      <span class="sec-hd-count">13</span>
+      <span class="sec-hd-count">15</span>
     </div>
     <div class="card-grid-6">
       <a class="lc" href="https://drive.google.com/drive/folders/1SEQi3Zc-ZcA-IE0YVaLSiaYeLv_N1nlt" target="_blank">
@@ -223,6 +239,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans KR',sans
         <div class="lc-icon i-dash"><svg viewBox="0 0 24 24" fill="none"><rect x="4" y="3" width="16" height="18" rx="2" stroke="#ea580c" stroke-width="1.8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="#ea580c" stroke-width="1.8" stroke-linecap="round"/></svg></div>
         <span class="lc-txt">CT 의뢰서</span>
       </a>
+      <button class="lc" onclick="openPModal('mon')">
+        <div class="lc-icon i-dash"><svg viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="#ea580c" stroke-width="1.8" stroke-linejoin="round"/></svg></div>
+        <span class="lc-txt">과대광고모니터링</span>
+      </button>
+      <button class="lc" onclick="openPModal('claim')">
+        <div class="lc-icon i-dash"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="2" stroke="#ea580c" stroke-width="1.8"/><path d="M9 7h6M9 11h6M9 15h4" stroke="#ea580c" stroke-width="1.8" stroke-linecap="round"/></svg></div>
+        <span class="lc-txt">클레임 접수</span>
+      </button>
     </div>
   </div>
 
@@ -449,6 +473,69 @@ document.getElementById('today-date').textContent =
     list.innerHTML = '<div class="sidebar-empty">불러오기 실패</div>';
   }
 })();
+</script>
+
+<!-- 팝업 모달 -->
+<div class="p-overlay" id="p-overlay-mon" onclick="closePModal(event,'mon')">
+  <div class="p-modal">
+    <div class="p-modal-head">
+      <span class="p-modal-title">과대광고 모니터링</span>
+      <span class="p-modal-sub">식약처 민원 내역</span>
+      <button class="p-modal-close" onclick="closePModalDirect('mon')">✕</button>
+    </div>
+    <iframe class="p-modal-iframe" id="p-iframe-mon" src="" allow="clipboard-write"></iframe>
+  </div>
+</div>
+
+<div class="p-overlay" id="p-overlay-claim" onclick="closePModal(event,'claim')">
+  <div class="p-modal">
+    <div class="p-modal-head">
+      <span class="p-modal-title">클레임 접수</span>
+      <span class="p-modal-sub">클레임 처리 내역</span>
+      <button class="p-modal-close" onclick="closePModalDirect('claim')">✕</button>
+    </div>
+    <iframe class="p-modal-iframe" id="p-iframe-claim" src="" allow="clipboard-write"></iframe>
+  </div>
+</div>
+
+<div class="p-overlay" id="p-overlay-doc" onclick="closePModal(event,'doc')">
+  <div class="p-modal">
+    <div class="p-modal-head">
+      <span class="p-modal-title">EU PPWR DoC 발행</span>
+      <span class="p-modal-sub">Regulation (EU) 2025/40</span>
+      <button class="p-modal-close" onclick="closePModalDirect('doc')">✕</button>
+    </div>
+    <iframe class="p-modal-iframe" id="p-iframe-doc" src="" allow="clipboard-write"></iframe>
+  </div>
+</div>
+
+<script>
+const P_URLS = {
+  mon:   'https://script.google.com/macros/s/AKfycbxlX0sJMeRvGv75HP_mQqrWPnzLt7i0vJbRaCQBs2jycal7L1weZHT6Prc-9tEUcmGl/exec',
+  claim: 'https://script.google.com/macros/s/AKfycbxImy7Di8kAB5zLbzaZGMjTKfdTzitrQxQWgkHHhCLnbzt5OACSnuk8w7dYFMfZBtaFjg/exec',
+  doc:   'https://script.google.com/macros/s/AKfycbxKQYCQIneUT_7UwCMkFfq0AyKg-GjQI53DB6RIsW2eB6pne7MLM6FguPAfvEoEAqSx/exec'
+};
+function openPModal(key) {
+  const iframe = document.getElementById('p-iframe-'+key);
+  if (!iframe.src || iframe.src === window.location.href) iframe.src = P_URLS[key];
+  document.getElementById('p-overlay-'+key).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closePModal(e, key) {
+  if (e.target === e.currentTarget) closePModalDirect(key);
+}
+function closePModalDirect(key) {
+  document.getElementById('p-overlay-'+key).classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    ['mon','claim','doc'].forEach(k => {
+      document.getElementById('p-overlay-'+k).classList.remove('open');
+    });
+    document.body.style.overflow = '';
+  }
+});
 </script>
 </body>
 </html>
