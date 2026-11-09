@@ -424,7 +424,7 @@ function navAC(e, inp) {
     else { drop.style.display = 'none'; }
   } else if (e.key === 'Escape') { drop.style.display = 'none'; }
 }
-function escHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>\/g,'&gt;'); }
+function escHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 (function(){
   const d = new Date();
   const pad = n => String(n).padStart(2,'0');
