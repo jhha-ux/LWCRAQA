@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CT 의뢰서 | LWC 품질인허가팀</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;font-size:13px;background:#f5f7fa;color:#111827;min-height:100vh}
+
+/* ── 화면 레이아웃 ── */
+.page-wrap{max-width:820px;margin:0 auto;padding:24px 16px 60px}
+
+.top-bar{background:#0d5349;border-radius:10px 10px 0 0;padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+.top-bar-title{color:#fff;font-size:17px;font-weight:700;letter-spacing:0.03em}
+.top-bar-sub{color:rgba(255,255,255,0.7);font-size:11px}
+.top-bar-right{display:flex;gap:8px;align-items:center}
+
+.print-btn{background:#fff;color:#0d5349;border:none;padding:8px 20px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
+.print-btn:hover{background:#e0ede9}
+.reset-btn{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.4);padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer}
+.reset-btn:hover{background:rgba(255,255,255,0.25)}
+
+.form-card{background:#fff;border:1px solid #e5e7eb;border-top:none;border-radius:0 0 10px 10px;padding:28px 32px}
+
+/* ── 섹션 ── */
+.sec{margin-bottom:24px}
+.sec-title{font-size:11px;font-weight:700;color:#0d5349;text-transform:uppercase;letter-spacing:0.08em;padding-bottom:7px;border-bottom:2px solid #0d5349;margin-bottom:14px}
+
+/* ── 그리드 폼 ── */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 20px}
+.form-grid.cols3{grid-template-columns:1fr 1fr 1fr}
+.form-group{display:flex;flex-direction:column;gap:4px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:10.5px;font-weight:600;color:#6b7280;letter-spacing:0.04em}
+.form-input,.form-select,.form-textarea{border:1px solid #d1d5db;border-radius:6px;padding:7px 10px;font-size:13px;font-family:inherit;color:#111827;background:#fff;outline:none;transition:border-color 0.15s}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:#0d5349}
+.form-textarea{resize:vertical;min-height:60px;line-height:1.6}
+.form-textarea.large{min-height:120px}
+.input-unit{display:flex;align-items:center;gap:0}
+.input-unit .form-input{border-radius:6px 0 0 6px;flex:1}
+.unit-tag{background:#f3f4f6;border:1px solid #d1d5db;border-left:none;padding:7px 10px;border-radius:0 6px 6px 0;font-size:12px;color:#6b7280;white-space:nowrap}
+
+/* ── 재질 테이블 ── */
+.mat-header{display:grid;grid-template-columns:1fr 1fr 1fr 36px;gap:8px;padding:0 2px 6px;border-bottom:2px solid #e5e7eb;margin-bottom:8px}
+.mat-header span{font-size:10.5px;font-weight:600;color:#6b7280;letter-spacing:0.04em}
+.mat-row{display:grid;grid-template-columns:1fr 1fr 1fr 36px;gap:8px;align-items:center;margin-bottom:6px}
+.mat-del{background:#fee2e2;color:#dc2626;border:none;border-radius:6px;width:32px;height:34px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1}
+.mat-del:hover{background:#fecaca}
+.mat-add-btn{margin-top:10px;background:#f0fdf4;color:#0d5349;border:1px dashed #6ee7b7;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;width:100%}
+.mat-add-btn:hover{background:#dcfce7}
+
+/* ── 체크리스트 ── */
+.checklist{display:flex;flex-direction:column;gap:6px}
+.check-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;cursor:pointer;transition:background 0.1s}
+.check-item:hover{background:#f9fafb}
+.check-item input[type=checkbox]{width:15px;height:15px;margin-top:1px;cursor:pointer;accent-color:#0d5349;flex-shrink:0}
+.check-text{font-size:12.5px;color:#374151;line-height:1.5;flex:1}
+.check-item.checked{background:#f0fdf4;border-color:#bbf7d0}
+.check-item.checked .check-text{color:#14532d}
+.check-add{display:flex;gap:8px;margin-top:8px}
+.check-add input{flex:1;border:1px dashed #d1d5db;border-radius:6px;padding:7px 10px;font-size:12px;font-family:inherit;outline:none;color:#374151}
+.check-add input:focus{border-color:#0d5349;border-style:solid}
+.check-add button{background:#0d5349;color:#fff;border:none;padding:7px 14px;border-radius:6px;font-size:12px;cursor:pointer;white-space:nowrap}
+.check-add button:hover{background:#0a3d35}
+
+/* ── 서명란 ── */
+.sign-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:8px}
+.sign-box{border:1px solid #e5e7eb;border-radius:6px;padding:10px 14px}
+.sign-box-label{font-size:10px;color:#9ca3af;font-weight:600;letter-spacing:0.06em;margin-bottom:6px}
+.sign-img-area{height:52px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.sign-img-area img{max-height:50px;max-width:100%;object-fit:contain}
+.sign-upload-lbl{display:block;text-align:center;font-size:10px;color:#9ca3af;border:1px dashed #d1d5db;background:#f9fafb;border-radius:4px;padding:4px 8px;cursor:pointer;transition:all 0.15s}
+.sign-upload-lbl:hover{border-color:#0d5349;color:#0d5349;background:#f0fdf4}
+.sign-clear-btn{display:none;width:100%;margin-top:3px;background:none;border:none;font-size:10px;color:#dc2626;cursor:pointer;padding:2px 0}
+.sign-clear-btn:hover{text-decoration:underline}
+.sign-box-name{font-size:12px;color:#374151;font-weight:500;margin-top:6px;border-top:1px solid #e5e7eb;padding-top:6px}
+
+/* ── 푸터 ── */
+.doc-footer{margin-top:28px;text-align:center;font-size:11px;color:#9ca3af}
+
+/* ── 인쇄 CSS ── */
+@media print{
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#fff;font-size:12px}
+  .page-wrap{padding:0;max-width:100%}
+  .no-print{display:none!important}
+  .top-bar{border-radius:0;background:#0d5349!important;color:#fff!important;-webkit-print-color-adjust:exact}
+  .form-card{border:none;padding:20px 24px}
+  .form-input,.form-select,.form-textarea{border:none;border-bottom:1px solid #d1d5db;border-radius:0;padding:4px 2px;background:transparent}
+  .form-textarea.large{min-height:80px}
+  .check-add{display:none}
+  .check-item:not(.checked){display:none!important}
+  .check-item{border:none;padding:4px 0}
+  .mat-del{display:none}
+  .mat-add-btn{display:none}
+  .check-item:hover{background:transparent}
+  .doc-footer{display:block}
+  .sign-row{margin-top:16px}
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- 상단 헤더 -->
+  <div class="top-bar">
+    <div>
+      <div class="top-bar-title">CT 의뢰서</div>
+      <div class="top-bar-sub">Compatibility Test Request · LWC 품질인허가팀</div>
+    </div>
+    <div class="top-bar-right">
+      <button class="reset-btn no-print" onclick="resetForm()">초기화</button>
+      <button class="print-btn no-print" onclick="window.print()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" stroke="#0d5349" stroke-width="2" stroke-linecap="round"/><rect x="6" y="14" width="12" height="8" rx="1" stroke="#0d5349" stroke-width="2"/></svg>
+        PDF 저장
+      </button>
+    </div>
+  </div>
+
+  <div class="form-card">
+
+    <!-- 1. 의뢰 기본 정보 -->
+    <div class="sec">
+      <div class="sec-title">의뢰 기본 정보</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">요청일자</label>
+          <input class="form-input" type="date" id="f-reqdate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">회신기한</label>
+          <input class="form-input" type="date" id="f-deadline">
+        </div>
+        <div class="form-group">
+          <label class="form-label">요청자 / 담당자</label>
+          <input class="form-input" type="text" id="f-manager" placeholder="예: 홍길동 / 품질인허가팀">
+        </div>
+        <div class="form-group">
+          <label class="form-label">수령 주소</label>
+          <input class="form-input" type="text" id="f-address" placeholder="CT 완료 후 자재 반환 주소">
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 제품 정보 -->
+    <div class="sec">
+      <div class="sec-title">제품 정보</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">제조사명</label>
+          <input class="form-input" type="text" id="f-maker" placeholder="예: (주)노디너리">
+        </div>
+        <div class="form-group">
+          <label class="form-label">LAB NO</label>
+          <input class="form-input" type="text" id="f-labno" placeholder="예: LGT01-C1-1AWA">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">제품명</label>
+          <input class="form-input" type="text" id="f-product" placeholder="예: [피캄] 나이아신아마이드비5핑크토너">
+        </div>
+        <div class="form-group">
+          <label class="form-label">자재 수량</label>
+          <div class="input-unit">
+            <input class="form-input" type="text" id="f-qty" placeholder="예: 20">
+            <span class="unit-tag">EA</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">타겟 용량</label>
+          <div class="input-unit">
+            <input class="form-input" type="text" id="f-vol" placeholder="예: 200">
+            <select class="form-select" id="f-vol-unit" style="border-radius:0 6px 6px 0;border-left:none;width:72px;flex-shrink:0">
+              <option value="mL">mL</option>
+              <option value="g">g</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">보관 조건</label>
+          <select class="form-select" id="f-storage">
+            <option value="">선택</option>
+            <option>실온 (15~25°C)</option>
+            <option>냉장 (2~8°C)</option>
+            <option>차광 보관</option>
+            <option>냉동 (-20°C)</option>
+            <option>기타</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 용기 재질 -->
+    <div class="sec">
+      <div class="sec-title">용기 재질</div>
+      <div class="mat-header">
+        <span>용기명칭</span>
+        <span>용기재질·색상</span>
+        <span>용기업체명</span>
+        <span></span>
+      </div>
+      <div id="mat-list"></div>
+      <button class="mat-add-btn no-print" onclick="addMaterialRow()">+ 용기 추가</button>
+    </div>
+
+    <!-- 4. 요청사항 체크리스트 -->
+    <div class="sec">
+      <div class="sec-title">요청사항</div>
+      <div class="checklist" id="checklist">
+        <label class="check-item"><input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">용기 라벨 부착 사양 확인 부탁드립니다.</span></label>
+        <label class="check-item"><input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">내용물 용량 확인 부탁드립니다.</span></label>
+        <label class="check-item"><input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">힌지 부분 내구성 확인 부탁드립니다.</span></label>
+        <label class="check-item"><input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">실링지 누액 / 터짐 이슈 체크 부탁드립니다.</span></label>
+        <label class="check-item"><input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">내용물 흐름 확인 부탁드립니다. (내용물 점도)</span></label>
+        <label class="check-item"><input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">내용물 침전 확인 부탁드립니다.</span></label>
+        <label class="check-item"><input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">내용물 광 조건에 의한 색빠짐 확인 부탁드립니다.</span></label>
+      </div>
+      <div class="check-add no-print">
+        <input type="text" id="new-check-input" placeholder="요청사항 직접 추가…" onkeydown="if(event.key==='Enter')addCheck()">
+        <button onclick="addCheck()">+ 추가</button>
+      </div>
+    </div>
+
+    <!-- 5. 비고 -->
+    <div class="sec">
+      <div class="sec-title">비고 / 특이사항</div>
+      <textarea class="form-textarea large" id="f-remarks" rows="6"
+        placeholder="추가 전달 사항, 특이 용기 구조, 이전 테스트 이슈, 참고 사항 등을 자유롭게 작성해 주세요."></textarea>
+    </div>
+
+    <!-- 6. 서명란 -->
+    <div class="sec">
+      <div class="sec-title">서명 / 확인</div>
+      <div class="sign-row">
+        <div class="sign-box">
+          <div class="sign-box-label">작성자</div>
+          <div class="sign-img-area" id="simg-0"></div>
+          <input type="file" accept="image/*" id="sfile-0" style="display:none" onchange="loadSign(this,0)">
+          <label for="sfile-0" class="sign-upload-lbl no-print" id="slbl-0">+ 서명 이미지 첨부</label>
+          <button class="sign-clear-btn no-print" id="sclear-0" onclick="clearSign(0)">× 이미지 삭제</button>
+          <div class="sign-box-name" id="sign-writer">&nbsp;</div>
+        </div>
+        <div class="sign-box">
+          <div class="sign-box-label">팀장 확인</div>
+          <div class="sign-img-area" id="simg-1"></div>
+          <input type="file" accept="image/*" id="sfile-1" style="display:none" onchange="loadSign(this,1)">
+          <label for="sfile-1" class="sign-upload-lbl no-print" id="slbl-1">+ 서명 이미지 첨부</label>
+          <button class="sign-clear-btn no-print" id="sclear-1" onclick="clearSign(1)">× 이미지 삭제</button>
+          <div class="sign-box-name">&nbsp;</div>
+        </div>
+        <div class="sign-box">
+          <div class="sign-box-label">제조사 수령 확인</div>
+          <div class="sign-img-area" id="simg-2"></div>
+          <input type="file" accept="image/*" id="sfile-2" style="display:none" onchange="loadSign(this,2)">
+          <label for="sfile-2" class="sign-upload-lbl no-print" id="slbl-2">+ 서명 이미지 첨부</label>
+          <button class="sign-clear-btn no-print" id="sclear-2" onclick="clearSign(2)">× 이미지 삭제</button>
+          <div class="sign-box-name">&nbsp;</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /form-card -->
+
+  <div class="doc-footer">LIFE WITH CORPORATION · 품질인허가팀 · <span id="footer-date"></span></div>
+
+</div><!-- /page-wrap -->
+
+<script>
+// 오늘 날짜 자동 입력
+(function(){
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const today = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  document.getElementById('f-reqdate').value = today;
+  document.getElementById('footer-date').textContent =
+    d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
+})();
+
+// 서명 이미지
+function loadSign(input, idx){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    document.getElementById('simg-'+idx).innerHTML = '<img src="'+e.target.result+'">';
+    document.getElementById('slbl-'+idx).style.display = 'none';
+    document.getElementById('sclear-'+idx).style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+function clearSign(idx){
+  document.getElementById('simg-'+idx).innerHTML = '';
+  document.getElementById('sfile-'+idx).value = '';
+  document.getElementById('slbl-'+idx).style.display = 'block';
+  document.getElementById('sclear-'+idx).style.display = 'none';
+}
+
+// 용기재질 행 추가
+function addMaterialRow(name, mat, vendor){
+  const list = document.getElementById('mat-list');
+  const row = document.createElement('div');
+  row.className = 'mat-row';
+  row.innerHTML =
+    '<input class="form-input" type="text" placeholder="예: 용기, 캡, 패킹…" value="'+(name||'')+'">' +
+    '<input class="form-input" type="text" placeholder="예: PET / 투명" value="'+(mat||'')+'">' +
+    '<input class="form-input" type="text" placeholder="예: 피플스" value="'+(vendor||'')+'">' +
+    '<button class="mat-del" onclick="this.closest(\'.mat-row\').remove()" title="삭제">×</button>';
+  list.appendChild(row);
+}
+// 기본 행 3개
+addMaterialRow('용기','','');
+addMaterialRow('캡','','');
+addMaterialRow('패킹','','');
+
+// 체크 상태 토글 스타일
+document.querySelectorAll('.check-item input[type=checkbox]').forEach(cb => {
+  cb.closest('.check-item').classList.toggle('checked', cb.checked);
+});
+function toggleCheck(cb){
+  cb.closest('.check-item').classList.toggle('checked', cb.checked);
+}
+
+// 요청사항 직접 추가
+function addCheck(){
+  const inp = document.getElementById('new-check-input');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  const list = document.getElementById('checklist');
+  const lbl = document.createElement('label');
+  lbl.className = 'check-item checked';
+  lbl.innerHTML = '<input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">'+txt+'</span>';
+  list.appendChild(lbl);
+  inp.value = '';
+  inp.focus();
+}
+
+// 담당자를 서명란에 반영
+document.getElementById('f-manager').addEventListener('input', function(){
+  document.getElementById('sign-writer').textContent = this.value || ' ';
+});
+
+// 초기화
+function resetForm(){
+  if(!confirm('입력 내용을 모두 초기화할까요?')) return;
+  document.querySelectorAll('.form-input,.form-textarea,.form-select').forEach(el=>el.value='');
+  const d = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('f-reqdate').value = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  document.getElementById('sign-writer').textContent = ' ';
+  // 용기재질 초기화
+  document.getElementById('mat-list').innerHTML = '';
+  addMaterialRow('용기','','');
+  addMaterialRow('캐','','');
+  addMaterialRow('패킹','','');
+  // 추가된 체크 제거
+  const list = document.getElementById('checklist');
+  const items = list.querySelectorAll('.check-item');
+  items.forEach((it,i)=>{
+    if(i>=7) it.remove();
+    else {
+      const cb = it.querySelector('input');
+      cb.checked = true;
+      it.classList.add('checked');
+    }
+  });
+}
+</script>
+</body>
+</html>
