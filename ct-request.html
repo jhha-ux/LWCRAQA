@@ -50,6 +50,17 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif
 .mat-add-btn{margin-top:10px;background:#f0fdf4;color:#0d5349;border:1px dashed #6ee7b7;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:600;cursor:pointer;width:100%}
 .mat-add-btn:hover{background:#dcfce7}
 
+/* ── 시험의뢰 항목 ── */
+.test-header{display:grid;grid-template-columns:1fr 36px;gap:8px;padding:0 2px 6px;border-bottom:2px solid #e5e7eb;margin-bottom:8px}
+.test-header span{font-size:10.5px;font-weight:600;color:#6b7280;letter-spacing:0.04em}
+.test-row{display:grid;grid-template-columns:1fr 36px;gap:8px;align-items:center;margin-bottom:6px}
+.ac-wrap{position:relative}
+.ac-dropdown{position:absolute;top:calc(100% + 2px);left:0;right:0;background:#fff;border:1px solid #0d5349;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:999;max-height:220px;overflow-y:auto;display:none}
+.ac-item{padding:7px 12px;font-size:12.5px;color:#374151;cursor:pointer;line-height:1.4}
+.ac-item:hover,.ac-item.ac-active{background:#f0fdf4;color:#0d5349}
+.ac-item mark{background:none;color:#0d5349;font-weight:700}
+.test-empty{font-size:12px;color:#9ca3af;padding:10px 2px;text-align:center}
+
 /* ── 체크리스트 ── */
 .checklist{display:flex;flex-direction:column;gap:6px}
 .check-item{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border:1px solid #e5e7eb;border-radius:6px;cursor:pointer;transition:background 0.1s}
@@ -97,6 +108,10 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif
   .check-item:hover{background:transparent}
   .doc-footer{display:block}
   .sign-row{margin-top:16px}
+  .test-row .mat-del{display:none}
+  .test-row:not(.has-value){display:none!important}
+  .test-empty{display:none}
+  .ac-dropdown{display:none!important}
 }
 </style>
 </head>
@@ -204,7 +219,20 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif
       <button class="mat-add-btn no-print" onclick="addMaterialRow()">+ 용기 추가</button>
     </div>
 
-    <!-- 4. 요청사항 체크리스트 -->
+    <!-- 4. 시험의뢰 항목 -->
+    <div class="sec">
+      <div class="sec-title">시험의뢰 항목</div>
+      <div class="test-header">
+        <span>시험항목명</span>
+        <span></span>
+      </div>
+      <div id="test-list">
+        <div class="test-empty">아래 버튼을 눌러 시험항목을 추가해 주세요.</div>
+      </div>
+      <button class="mat-add-btn no-print" onclick="addTestRow()">+ 시험항목 추가</button>
+    </div>
+
+    <!-- 5. 요청사항 체크리스트 -->
     <div class="sec">
       <div class="sec-title">요청사항</div>
       <div class="checklist" id="checklist">
@@ -222,14 +250,14 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif
       </div>
     </div>
 
-    <!-- 5. 비고 -->
+    <!-- 6. 비고 -->
     <div class="sec">
       <div class="sec-title">비고 / 특이사항</div>
       <textarea class="form-textarea large" id="f-remarks" rows="6"
         placeholder="추가 전달 사항, 특이 용기 구조, 이전 테스트 이슈, 참고 사항 등을 자유롭게 작성해 주세요."></textarea>
     </div>
 
-    <!-- 6. 서명란 -->
+    <!-- 7. 서명란 -->
     <div class="sec">
       <div class="sec-title">서명 / 확인</div>
       <div class="sign-row">
@@ -267,103 +295,187 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif
 </div><!-- /page-wrap -->
 
 <script>
-// 오늘 날짜 자동 입력
+// ── CT 시험항목 자동완성 데이터
+const CT_ITEMS = [
+  '감량 시험',
+  '흡착·스캘핑 시험',
+  '용출 시험',
+  '환경 응력균열 시험 (ESC)',
+  '감압 누수 시험',
+  '낙하 시험',
+  '토크 시험 (캡 개폐력)',
+  '작동력 시험',
+  '초기 작동수 시험 (Priming)',
+  '토출량 시험',
+  '분사 패턴 시험',
+  '잔량 시험',
+  '관능 평가',
+  '외관 변화 평가',
+  '내용성 시험',
+  '내온도 시험',
+  '고온 안정성 시험',
+  '동결-해동 시험',
+  '광안정성 시험',
+  '클릭감 시험',
+  '회전 질감 시험',
+  'pH 변화 측정',
+  '점도 변화 측정',
+  '미생물 한도 시험',
+];
+
+function addTestRow(value) {
+  const list = document.getElementById('test-list');
+  const empty = list.querySelector('.test-empty');
+  if (empty) empty.remove();
+  const row = document.createElement('div');
+  row.className = 'test-row';
+  if (value) row.classList.add('has-value');
+  const wrap = document.createElement('div');
+  wrap.className = 'ac-wrap';
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.className = 'form-input';
+  inp.placeholder = '시험항목명 입력 또는 선택…';
+  inp.value = value || '';
+  inp.autocomplete = 'off';
+  inp.addEventListener('input', function(){ showAC(this); updateRowState(row, this.value); });
+  inp.addEventListener('keydown', function(e){ navAC(e, this); });
+  inp.addEventListener('blur', function(){ setTimeout(()=>hideAC(this), 150); });
+  inp.addEventListener('focus', function(){ showAC(this); });
+  const drop = document.createElement('div');
+  drop.className = 'ac-dropdown';
+  wrap.appendChild(inp);
+  wrap.appendChild(drop);
+  const del = document.createElement('button');
+  del.className = 'mat-del no-print';
+  del.textContent = '×';
+  del.title = '삭제';
+  del.onclick = function(){
+    row.remove();
+    if (!list.querySelector('.test-row')) {
+      const e = document.createElement('div');
+      e.className = 'test-empty';
+      e.textContent = '아래 버튼을 눌러 시험항목을 추가해 주세요.';
+      list.appendChild(e);
+    }
+  };
+  row.appendChild(wrap);
+  row.appendChild(del);
+  list.appendChild(row);
+  inp.focus();
+}
+function updateRowState(row, val) {
+  row.classList.toggle('has-value', val.trim().length > 0);
+}
+function showAC(inp) {
+  const drop = inp.nextElementSibling;
+  const q = inp.value.trim();
+  const matches = CT_ITEMS.filter(item => item.toLowerCase().includes(q.toLowerCase())).slice(0, 10);
+  if (!matches.length || !q) {
+    if (!q) { renderAC(drop, CT_ITEMS.slice(0, 10), q, inp); }
+    else { drop.style.display = 'none'; }
+    return;
+  }
+  renderAC(drop, matches, q, inp);
+}
+function renderAC(drop, items, q, inp) {
+  drop.innerHTML = '';
+  items.forEach((item) => {
+    const div = document.createElement('div');
+    div.className = 'ac-item';
+    if (q) {
+      const idx = item.toLowerCase().indexOf(q.toLowerCase());
+      div.innerHTML = escHtml(item.slice(0,idx))+'<mark>'+escHtml(item.slice(idx,idx+q.length))+'</mark>'+escHtml(item.slice(idx+q.length));
+    } else { div.textContent = item; }
+    div.addEventListener('mousedown', function(e){
+      e.preventDefault();
+      inp.value = item;
+      drop.style.display = 'none';
+      updateRowState(inp.closest('.test-row'), item);
+    });
+    drop.appendChild(div);
+  });
+  drop.style.display = 'block';
+}
+function hideAC(inp) {
+  const drop = inp.nextElementSibling;
+  if (drop) drop.style.display = 'none';
+}
+function navAC(e, inp) {
+  const drop = inp.nextElementSibling;
+  if (drop.style.display === 'none') { if (e.key === 'ArrowDown') { showAC(inp); } return; }
+  const items = drop.querySelectorAll('.ac-item');
+  let cur = drop.querySelector('.ac-active');
+  let idx = cur ? Array.from(items).indexOf(cur) : -1;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (cur) cur.classList.remove('ac-active');
+    idx = (idx+1)%items.length;
+    items[idx].classList.add('ac-active');
+    items[idx].scrollIntoView({block:'nearest'});
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (cur) cur.classList.remove('ac-active');
+    idx = (idx-1+items.length)%items.length;
+    items[idx].classList.add('ac-active');
+    items[idx].scrollIntoView({block:'nearest'});
+  } else if (e.key === 'Enter') {
+    if (cur) { e.preventDefault(); inp.value = cur.textContent; drop.style.display = 'none'; updateRowState(inp.closest('.test-row'), inp.value); }
+    else { drop.style.display = 'none'; }
+  } else if (e.key === 'Escape') { drop.style.display = 'none'; }
+}
+function escHtml(str) { return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>\/g,'&gt;'); }
 (function(){
   const d = new Date();
   const pad = n => String(n).padStart(2,'0');
-  const today = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-  document.getElementById('f-reqdate').value = today;
-  document.getElementById('footer-date').textContent =
-    d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
+  document.getElementById('f-reqdate').value = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  document.getElementById('footer-date').textContent = d.getFullYear()+'년 '+(d.getMonth()+1)+'월 '+d.getDate()+'일';
 })();
-
-// 서명 이미지
-function loadSign(input, idx){
-  const file = input.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e){
-    document.getElementById('simg-'+idx).innerHTML = '<img src="'+e.target.result+'">';
-    document.getElementById('slbl-'+idx).style.display = 'none';
-    document.getElementById('sclear-'+idx).style.display = 'block';
-  };
+function loadSign(input,idx){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){document.getElementById('simg-'+idx).innerHTML='<img src="'+e.target.result+'">';document.getElementById('slbl-'+idx).style.display='none';document.getElementById('sclear-'+idx).style.display='block';};
   reader.readAsDataURL(file);
 }
 function clearSign(idx){
-  document.getElementById('simg-'+idx).innerHTML = '';
-  document.getElementById('sfile-'+idx).value = '';
-  document.getElementById('slbl-'+idx).style.display = 'block';
-  document.getElementById('sclear-'+idx).style.display = 'none';
+  document.getElementById('simg-'+idx).innerHTML='';
+  document.getElementById('sfile-'+idx).value='';
+  document.getElementById('slbl-'+idx).style.display='block';
+  document.getElementById('sclear-'+idx).style.display='none';
 }
-
-// 용기재질 행 추가
-function addMaterialRow(name, mat, vendor){
-  const list = document.getElementById('mat-list');
-  const row = document.createElement('div');
-  row.className = 'mat-row';
-  row.innerHTML =
-    '<input class="form-input" type="text" placeholder="예: 용기, 캡, 패킹…" value="'+(name||'')+'">' +
-    '<input class="form-input" type="text" placeholder="예: PET / 투명" value="'+(mat||'')+'">' +
-    '<input class="form-input" type="text" placeholder="예: 피플스" value="'+(vendor||'')+'">' +
-    '<button class="mat-del" onclick="this.closest(\'.mat-row\').remove()" title="삭제">×</button>';
+function addMaterialRow(name,mat,vendor){
+  const list=document.getElementById('mat-list');
+  const row=document.createElement('div');
+  row.className='mat-row';
+  row.innerHTML='<input class="form-input" type="text" placeholder="예: 용기, 캡, 패킹…" value="'+(name||'')+'">'+'<input class="form-input" type="text" placeholder="예: PET / 투명" value="'+(mat||'')+'">'+'<input class="form-input" type="text" placeholder="예: 피플스" value="'+(vendor||'')+'">'+'<button class="mat-del" onclick="this.closest(\'.mat-row\').remove()" title="삭제">×</button>';
   list.appendChild(row);
 }
-// 기본 행 3개
 addMaterialRow('용기','','');
 addMaterialRow('캡','','');
 addMaterialRow('패킹','','');
-
-// 체크 상태 토글 스타일
-document.querySelectorAll('.check-item input[type=checkbox]').forEach(cb => {
-  cb.closest('.check-item').classList.toggle('checked', cb.checked);
-});
-function toggleCheck(cb){
-  cb.closest('.check-item').classList.toggle('checked', cb.checked);
-}
-
-// 요청사항 직접 추가
+document.querySelectorAll('.check-item input[type=checkbox]').forEach(cb=>{cb.closest('.check-item').classList.toggle('checked',cb.checked);});
+function toggleCheck(cb){cb.closest('.check-item').classList.toggle('checked',cb.checked);}
 function addCheck(){
-  const inp = document.getElementById('new-check-input');
-  const txt = inp.value.trim();
-  if (!txt) return;
-  const list = document.getElementById('checklist');
-  const lbl = document.createElement('label');
-  lbl.className = 'check-item checked';
-  lbl.innerHTML = '<input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">'+txt+'</span>';
-  list.appendChild(lbl);
-  inp.value = '';
-  inp.focus();
+  const inp=document.getElementById('new-check-input');
+  const txt=inp.value.trim();if(!txt)return;
+  const list=document.getElementById('checklist');
+  const lbl=document.createElement('label');
+  lbl.className='check-item checked';
+  lbl.innerHTML='<input type="checkbox" checked onchange="toggleCheck(this)"><span class="check-text">'+txt+'</span>';
+  list.appendChild(lbl);inp.value='';inp.focus();
 }
-
-// 담당자를 서명란에 반영
-document.getElementById('f-manager').addEventListener('input', function(){
-  document.getElementById('sign-writer').textContent = this.value || ' ';
-});
-
-// 초기화
+document.getElementById('f-manager').addEventListener('input',function(){document.getElementById('sign-writer').textContent=this.value||' ';});
 function resetForm(){
-  if(!confirm('입력 내용을 모두 초기화할까요?')) return;
+  if(!confirm('입력 내용을 모두 초기화할까요?'))return;
   document.querySelectorAll('.form-input,.form-textarea,.form-select').forEach(el=>el.value='');
-  const d = new Date();
-  const pad = n => String(n).padStart(2,'0');
-  document.getElementById('f-reqdate').value = d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-  document.getElementById('sign-writer').textContent = ' ';
-  // 용기재질 초기화
-  document.getElementById('mat-list').innerHTML = '';
-  addMaterialRow('용기','','');
-  addMaterialRow('캐','','');
-  addMaterialRow('패킹','','');
-  // 추가된 체크 제거
-  const list = document.getElementById('checklist');
-  const items = list.querySelectorAll('.check-item');
-  items.forEach((it,i)=>{
-    if(i>=7) it.remove();
-    else {
-      const cb = it.querySelector('input');
-      cb.checked = true;
-      it.classList.add('checked');
-    }
-  });
+  const d=new Date();const pad=n=>String(n).padStart(2,'0');
+  document.getElementById('f-reqdate').value=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  document.getElementById('sign-writer').textContent=' ';
+  document.getElementById('mat-list').innerHTML='';
+  addMaterialRow('용기','','');addMaterialRow('캡','','');addMaterialRow('패킹','','');
+  document.getElementById('test-list').innerHTML='<div class="test-empty">아래 버튼을 눌러 시험항목을 추가해 주세요.</div>';
+  const list=document.getElementById('checklist');
+  list.querySelectorAll('.check-item').forEach((it,i)=>{if(i>=7)it.remove();else{const cb=it.querySelector('input');cb.checked=true;it.classList.add('checked');}});
 }
 </script>
 </body>
