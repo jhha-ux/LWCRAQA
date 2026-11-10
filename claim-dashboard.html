@@ -30,7 +30,7 @@
   .charts-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
   .chart-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
   .chart-title{font-size:.9rem;font-weight:600;color:#374151;margin-bottom:14px;display:flex;align-items:center;gap:6px}
-  .chart-title::before{content:'';display:inline-block;width:3px;height:14px;background:#22c55e;border-radius:2px}
+  .chart-title::before{content:'';display:inline-block;width:3px;height:14px;background:#22c55e;border-radius: px}
   .chart-wrap{position:relative}
   .table-section{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
   .table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
@@ -258,7 +258,7 @@ function renderKPI() {
   document.getElementById('kpiTotal').innerHTML = total + '<span class="kpi-unit">건</span>';
   document.getElementById('kpiNaesu').innerHTML = naesu + '<span class="kpi-unit">건</span>';
   document.getElementById('kpiNaesuPct').textContent = total ? (naesu/total*100).toFixed(0) + '% 비율' : '';
-  document.getElementById('kpiOaesu').innerHTML = oaesu + '<span class="kpi-unit">건</sspan>';
+  document.getElementById('kpiOaesu').innerHTML = oaesu + '<span class="kpi-unit">건</span>';
   document.getElementById('kpiOaesuPct').textContent = total ? (oaesu/total*100).toFixed(0) + '% 비율' : '';
 
   // top mfr
@@ -315,7 +315,7 @@ function renderCharts() {
     borderRadius: 5,
     hoverBackgroundColor: '#16a34a'
   }], {
-    plugins:{ legend:{lisplay:false} },
+    plugins:{ legend:{display:false} },
     scales:{ y:{beginAtZero:true,ticks:{stepSize:1}} }
   });
 
@@ -323,19 +323,19 @@ function renderCharts() {
   const naesu = d.filter(r=>r.gubun==='내수').length;
   const oaesu = d.filter(r=>r.gubun==='외수').length;
   const gwanri = d.filter(r=>r.gubun==='관리품').length;
-  mkChart('gubunChart', 'doughnut', ['내수',''외수','관리품'], [{
+  mkChart('gubunChart', 'doughnut', ['내수','외수','관리품'], [{
     data:[naesu,oaesu,gwanri],
     backgroundColor:['#3b82f6','#ec4899','#94a3b8'],
     hoverOffset:6
   }], {
     plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
-    cutout:'60%'
+    cutout:'65%'
   });
 
   // mfr bar (top 8)
   const mfrCnt = {};
-  d.forEach(r => { mfrCnt[r.mfr] = (mf�t[r.mfr]||0)+1; });
-  const topMfrs = Object.entries(mf�t).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  d.forEach(r => { mfrCnt[r.mfr] = (mfrCnt[r.mfr]||0)+1; });
+  const topMfrs = Object.entries(mfrCnt).sort((a,b)=>b[1]-a[1]).slice(0,8);
   mkChart('mfrChart', 'bar', topMfrs.map(e=>e[0].replace('(주)','').replace('㈜','').trim()), [{
     label: '건수',
     data: topMfrs.map(e=>e[1]),
