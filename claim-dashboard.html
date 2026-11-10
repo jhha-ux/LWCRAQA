@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>화장품 클레임 대시보드</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f1f5f9;color:#1e293b;min-height:100vh}
+  .header{background:linear-gradient(135deg,#14532d 0%,#16a34a 100%);color:#fff;padding:28px 32px 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  .header h1{font-size:1.6rem;font-weight:700;letter-spacing:-.5px}
+  .header .sub{font-size:.85rem;opacity:.8;margin-top:4px}
+  .header-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .badge{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;font-size:.8rem}
+  .btn-refresh{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:8px;padding:6px 16px;cursor:pointer;font-size:.85rem;transition:.2s}
+  .btn-refresh:hover{background:rgba(255,255,255,.3)}
+  .container{max-width:1400px;margin:0 auto;padding:24px 20px}
+  .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+  .kpi-card{background:#fff;border-radius:14px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-left:4px solid #22c55e}
+  .kpi-card.blue{border-left-color:#3b82f6}
+  .kpi-card.purple{border-left-color:#a855f7}
+  .kpi-card.orange{border-left-color:#f97316}
+  .kpi-card.red{border-left-color:#ef4444}
+  .kpi-label{font-size:.75rem;color:#64748b;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+  .kpi-value{font-size:2rem;font-weight:700;color:#0f172a;line-height:1}
+  .kpi-unit{font-size:.85rem;color:#94a3b8;margin-left:3px}
+  .kpi-sub{font-size:.78rem;color:#94a3b8;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .charts-row{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px}
+  .charts-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px}
+  .chart-card{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .chart-title{font-size:.9rem;font-weight:600;color:#374151;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+  .chart-title::before{content:'';display:inline-block;width:3px;height:14px;background:#22c55e;border-radius:2px}
+  .chart-wrap{position:relative}
+  .table-section{background:#fff;border-radius:14px;padding:20px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
+  .table-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+  .filter-btns{display:flex;gap:6px;flex-wrap:wrap}
+  .filter-btn{border:1px solid #e2e8f0;background:#f8fafc;color:#64748b;border-radius:8px;padding:5px 13px;cursor:pointer;font-size:.8rem;transition:.15s}
+  .filter-btn.active{background:#22c55e;border-color:#22c55e;color:#fff;font-weight:600}
+  .filter-btn:hover:not(.active){background:#f1f5f9}
+  .search-box{border:1px solid #e2e8f0;border-radius:8px;padding:5px 12px;font-size:.85rem;outline:none;width:200px}
+  .search-box:focus{border-color:#22c55e}
+  .tbl-wrap{overflow-x:auto;max-height:420px;overflow-y:auto}
+  table{width:100%;border-collapse:collapse;font-size:.82rem}
+  thead th{background:#f8fafc;color:#374151;font-weight:600;padding:9px 12px;text-align:left;position:sticky;top:0;z-index:1;border-bottom:1px solid #e2e8f0;white-space:nowrap}
+  tbody tr{border-bottom:1px solid #f1f5f9;transition:.1s}
+  tbody tr:hover{background:#f8fafc}
+  td{padding:8px 12px;vertical-align:top;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .badge-naesu{background:#dbeafe;color:#1d4ed8;border-radius:12px;padding:2px 9px;font-size:.75rem;font-weight:500}
+  .badge-oaesu{background:#fce7f3;color:#be185d;border-radius:12px;padding:2px 9px;font-size:.75rem;font-weight:500}
+  .badge-o{color:#16a34a;font-weight:700}
+  .badge-x{color:#dc2626;font-weight:700}
+  .loading{display:flex;align-items:center;justify-content:center;min-height:60vh;flex-direction:column;gap:16px}
+  .spinner{width:40px;height:40px;border:3px solid #e2e8f0;border-top-color:#22c55e;border-radius:50%;animation:spin 0.8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .error-box{background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:20px;color:#991b1b;text-align:center;margin:40px 0}
+  .updated-at{font-size:.75rem;color:#94a3b8}
+  #mainContent{display:none}
+  .no-data{text-align:center;color:#94a3b8;padding:30px;font-size:.9rem}
+  .cnt-label{font-size:.7rem;background:#f1f5f9;border-radius:10px;padding:1px 7px;color:#64748b;margin-left:6px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <h1>🌿 화장품 클레임 대시보드</h1>
+    <div class="sub">QC 영업팀 불량 &amp; 클레임 현황 · 구글시트 실시간 연동</div>
+  </div>
+  <div class="header-right">
+    <span class="badge" id="updatedAt">로딩 중…</span>
+    <button class="btn-refresh" onclick="loadData()">↻ 새로고침</button>
+  </div>
+</div>
+
+<div id="loadingView" class="loading">
+  <div class="spinner"></div>
+  <div style="color:#64748b;font-size:.9rem">데이터 불러오는 중…</div>
+</div>
+
+<div id="errorView" style="display:none" class="container">
+  <div class="error-box">
+    <div style="font-size:1.2rem;margin-bottom:8px">⚠️ 데이터 로딩 실패</div>
+    <div id="errorMsg" style="font-size:.85rem"></div>
+    <button class="btn-refresh" style="margin-top:14px;display:inline-block" onclick="loadData()">다시 시도</button>
+  </div>
+</div>
+
+<div id="mainContent" class="container">
+  <!-- KPI -->
+  <div class="kpi-row">
+    <div class="kpi-card"><div class="kpi-label">총 클레임</div><div class="kpi-value" id="kpiTotal">-</div><div class="kpi-sub" id="kpiPeriod">-</div></div>
+    <div class="kpi-card blue"><div class="kpi-label">내수</div><div class="kpi-value" id="kpiNaesu">-</div><div class="kpi-sub" id="kpiNaesuPct">-</div></div>
+    <div class="kpi-card purple"><div class="kpi-label">외수</div><div class="kpi-value" id="kpiOaesu">-</div><div class="kpi-sub" id="kpiOaesuPct">-</div></div>
+    <div class="kpi-card orange"><div class="kpi-label">최다 제조사</div><div class="kpi-value" id="kpiTopMfr" style="font-size:1rem;line-height:1.3;padding-top:6px">-</div><div class="kpi-sub" id="kpiTopMfrCnt">-</div></div>
+    <div class="kpi-card red"><div class="kpi-label">최다 불량유형</div><div class="kpi-value" id="kpiTopClass" style="font-size:1rem;line-height:1.3;padding-top:6px">-</div><div class="kpi-sub" id="kpiTopClassCnt">-</div></div>
+  </div>
+
+  <!-- Charts row 1 -->
+  <div class="charts-row">
+    <div class="chart-card">
+      <div class="chart-title">월별 클레임 추이</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="monthChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">내수 / 외수 비율</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="gubunChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Charts row 2 -->
+  <div class="charts-row-3">
+    <div class="chart-card">
+      <div class="chart-title">제조사별 클레임</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="mfrChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">불량 유형 분포</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="classChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">회수 여부</div>
+      <div class="chart-wrap" style="height:200px"><canvas id="recallChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-section">
+    <div class="table-header">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div class="chart-title" style="margin:0">클레임 상세 목록</div>
+        <span class="cnt-label" id="tableCount"></span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div class="filter-btns" id="filterBtns">
+          <button class="filter-btn active" data-filter="all">전체</button>
+          <button class="filter-btn" data-filter="내수">내수</button>
+          <button class="filter-btn" data-filter="외수">외수</button>
+        </div>
+        <input class="search-box" id="searchBox" type="text" placeholder="제품명, 제조사 검색…">
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table id="claimTable">
+        <thead>
+          <tr>
+            <th>No.</th><th>클레임번호</th><th>구분</th><th>접수일자</th><th>유통처</th>
+            <th>제조사</th><th>제품명</th><th>분류</th><th>클레임사유</th><th>회수</th><th>제조사클레임</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEET_ID = '1steJUGhnA7PUQpeBVC3vnsW7v2BPlhdPxj0SiWDJcwc';
+const GID = '772541930';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+
+let allData = [];
+let charts = {};
+let activeFilter = 'all';
+let searchTerm = '';
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], cur = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i+1] === '"') { cur += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else cur += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(cur.trim()); cur = ''; }
+      else if (c === '\n') { row.push(cur.trim()); rows.push(row); row = []; cur = ''; }
+      else cur += c;
+    }
+  }
+  if (cur || row.length) { row.push(cur.trim()); rows.push(row); }
+  return rows;
+}
+
+function normMfr(s) {
+  if (!s) return '미입력';
+  s = s.trim().replace(/㈜/g, '(주)').replace(/\(주\)\s+/g, '(주)');
+  return s;
+}
+
+function normClass(s) {
+  if (!s) return '미분류';
+  const map = {
+    '이물': '이물불량', '누액': '누액불량', '작동불량': '외관/작동불량',
+    '외관불량': '외관/작동불량', '포장 뷸령': '포장불량'
+  };
+  return map[s.trim()] || s.trim();
+}
+
+async function loadData() {
+  document.getElementById('loadingView').style.display = 'flex';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('errorView').style.display = 'none';
+
+  try {
+    const r = await fetch(CSV_URL);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const txt = await r.text();
+    if (!txt || txt.length < 10) throw new Error('빈 데이터');
+
+    const rows = parseCSV(txt);
+    // rows[0] = header, rows[1+] = data
+    // filter only valid claim rows (내수/외수/관리품)
+    allData = rows.slice(1).filter(r => r[2] && (r[2]==='내수' || r[2]==='외수' || r[2]==='관리품')).map(r => ({
+      no: r[0] || '',
+      claimNo: r[1] || '',
+      gubun: r[2] || '',
+      date: r[3] || '',
+      dist: r[4] || '',
+      mfr: normMfr(r[5]),
+      product: r[6] || '',
+      capacity: r[7] || '',
+      mfgNo: r[8] || '',
+      qty: r[9] || '',
+      cls: normClass(r[10]),
+      receiver: r[11] || '',
+      reason: r[12] || '',
+      recall: r[13] || '',
+      mfrClaim: r[14] || '',
+      action: r[15] || ''
+    }));
+
+    renderAll();
+    document.getElementById('updatedAt').textContent = '업데이트: ' + new Date().toLocaleString('ko-KR', {month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  } catch(e) {
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('errorView').style.display = 'block';
+    document.getElementById('errorMsg').textContent = e.message;
+  }
+}
+
+function renderAll() {
+  renderKPI();
+  renderCharts();
+  renderTable();
+}
+
+function renderKPI() {
+  const d = allData;
+  const naesu = d.filter(r => r.gubun === '내수').length;
+  const oaesu = d.filter(r => r.gubun === '외수').length;
+  const total = d.length;
+
+  document.getElementById('kpiTotal').innerHTML = total + '<span class="kpi-unit">건</span>';
+  document.getElementById('kpiNaesu').innerHTML = naesu + '<span class="kpi-unit">건</span>';
+  document.getElementById('kpiNaesuPct').textContent = total ? (naesu/total*100).toFixed(0) + '% 비율' : '';
+  document.getElementById('kpiOaesu').innerHTML = oaesu + '<span class="kpi-unit">건</sspan>';
+  document.getElementById('kpiOaesuPct').textContent = total ? (oaesu/total*100).toFixed(0) + '% 비율' : '';
+
+  // top mfr
+  const mfrCnt = {};
+  d.forEach(r => { const m = r.mfr; mfrCnt[m] = (mfrCnt[m]||0)+1; });
+  const topMfr = Object.entries(mfrCnt).sort((a,b)=>b[1]-a[1])[0];
+  if (topMfr) {
+    const shortName = topMfr[0].replace('(주)', '').replace('㈜', '').trim();
+    document.getElementById('kpiTopMfr').textContent = shortName;
+    document.getElementById('kpiTopMfrCnt').textContent = topMfr[1] + '건 (' + (topMfr[1]/total*100).toFixed(0) + '%)';
+  }
+
+  // top class
+  const clsCnt = {};
+  d.forEach(r => { const c = r.cls; clsCnt[c] = (clsCnt[c]||0)+1; });
+  const topCls = Object.entries(clsCnt).sort((a,b)=>b[1]-a[1])[0];
+  if (topCls) {
+    document.getElementById('kpiTopClass').textContent = topCls[0];
+    document.getElementById('kpiTopClassCnt').textContent = topCls[1] + '건 (' + (topCls[1]/total*100).toFixed(0) + '%)';
+  }
+
+  // period
+  const dates = d.map(r=>r.date).filter(Boolean).sort();
+  if (dates.length) {
+    document.getElementById('kpiPeriod').textContent = dates[0].slice(0,7) + ' ~ ' + dates[dates.length-1].slice(0,7);
+  }
+}
+
+function mkChart(id, type, labels, datasets, options) {
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, { type, data: { labels, datasets }, options: { responsive:true, maintainAspectRatio:false, ...options }});
+  return charts[id];
+}
+
+const GREEN_PALETTE = ['#15803d','#16a34a','#22c55e','#4ade80','#86efac','#bbf7d0','#dcfce7'];
+const MULTI_PALETTE = ['#16a34a','#3b82f6','#f97316','#a855f7','#ef4444','#06b6d4','#eab308','#64748b','#ec4899','#14b8a6'];
+
+function renderCharts() {
+  const d = allData;
+  const monthCnt = {};
+  d.forEach(r => {
+    if (r.date && r.date.length >= 7) {
+      // normalize bad dates like "20226-09-28" → skip
+      const ym = r.date.slice(0,7);
+      if (/^\d{4}-\d{2}$/.test(ym)) monthCnt[ym] = (monthCnt[ym]||0)+1;
+    }
+  });
+  const months = Object.keys(monthCnt).sort();
+  mkChart('monthChart', 'bar', months, [{
+    label: '클레임 수',
+    data: months.map(m=>monthCnt[m]),
+    backgroundColor: '#22c55e',
+    borderRadius: 5,
+    hoverBackgroundColor: '#16a34a'
+  }], {
+    plugins:{ legend:{lisplay:false} },
+    scales:{ y:{beginAtZero:true,ticks:{stepSize:1}} }
+  });
+
+  // gubun doughnut
+  const naesu = d.filter(r=>r.gubun==='내수').length;
+  const oaesu = d.filter(r=>r.gubun==='외수').length;
+  const gwanri = d.filter(r=>r.gubun==='관리품').length;
+  mkChart('gubunChart', 'doughnut', ['내수',''외수','관리품'], [{
+    data:[naesu,oaesu,gwanri],
+    backgroundColor:['#3b82f6','#ec4899','#94a3b8'],
+    hoverOffset:6
+  }], {
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    cutout:'60%'
+  });
+
+  // mfr bar (top 8)
+  const mfrCnt = {};
+  d.forEach(r => { mfrCnt[r.mfr] = (mf�t[r.mfr]||0)+1; });
+  const topMfrs = Object.entries(mf�t).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  mkChart('mfrChart', 'bar', topMfrs.map(e=>e[0].replace('(주)','').replace('㈜','').trim()), [{
+    label: '건수',
+    data: topMfrs.map(e=>e[1]),
+    backgroundColor: MULTI_PALETTE,
+    borderRadius: 4
+  }], {
+    indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{x:{beginAtZero:true,ticks:{stepSize:1}},y:{ticks:{font:{size:10}}}}
+  });
+
+  // class pie (top 10)
+  const clsCnt = {};
+  d.forEach(r => { clsCnt[r.cls] = (clsCnt[r.cls]||0)+1; });
+  const topCls = Object.entries(clsCnt).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  mkChart('classChart', 'pie', topCls.map(e=>e[0]), [{
+    data: topCls.map(e=>e[1]),
+    backgroundColor: MULTI_PALETTE
+  }], {
+    plugins:{legend:{position:'bottom',labels:{font:{size:9},boxWidth:10}}}
+  });
+
+  // recall
+  const recallY = d.filter(r=>r.recall==='O').length;
+  const recallN = d.filter(r=>r.recall==='X').length;
+  const recallBlank = d.length - recallY - recallN;
+  mkChart('recallChart', 'doughnut', ['회수 O','회수 X','미입력'], [{
+    data:[recallY,recallN,recallBlank],
+    backgroundColor:['#16a34a','#ef4444','#94a3b8'],
+    hoverOffset:6
+  }], {
+    plugins:{legend:{position:'bottom',labels:{font:{size:11}}}},
+    cutout:'60%'
+  });
+}
+
+function renderTable() {
+  let d = allData;
+  if (activeFilter !== 'all') d = d.filter(r => r.gubun === activeFilter);
+  if (searchTerm) {
+    const q = searchTerm.toLowerCase();
+    d = d.filter(r => r.product.toLowerCase().includes(q) || r.mfr.toLowerCase().includes(q) || r.reason.toLowerCase().includes(q));
+  }
+  document.getElementById('tableCount').textContent = d.length + '건';
+  const tbody = document.getElementById('tableBody');
+  if (!d.length) { tbody.innerHTML = '<tr><td colspan="11" class="no-data">해당하는 클레임이 없습니다</td></tr>'; return; }
+  tbody.innerHTML = d.map(r => `
+    <tr>
+      <td>${r.no || '-'}</td>
+      <td style="font-size:.75rem">${r.claimNo||'-'}</td>
+      <td><span class="badge-${r.gubun==='내수'?'naesu':'oaesu'}">${r.gubun}</span></td>
+      <td>${r.date.slice(0,10)||'-'}</td>
+      <td>${r.dist||'-'}</td>
+      <td>${r.mfr.replace('(주)','').trim()}</td>
+      <td title="${r.product}">${r.product.slice(0,20)+(r.product.length>20?'…':'')}</td>
+      <td>${r.cls}</td>
+      <td title="${r.reason}">${r.reason.replace(/\n/g,' ').slice(0,30)+(r.reason.length>30?'…':'')}</td>
+      <td class="badge-${r.recall==='O'?'o':'x'}">${r.recall||'-'}</td>
+      <td class="badge-${r.mfrClaim==='O'?'o':'x'}">${r.mfrClaim||'-'}</td>
+    </tr>`).join('');
+}
+
+// Filter buttons
+document.getElementById('filterBtns').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = btn.dataset.filter;
+  renderTable();
+});
+
+// Search
+document.getElementById('searchBox').addEventListener('input', e => {
+  searchTerm = e.target.value;
+  renderTable();
+});
+
+loadData();
+</script>
+</body>
+</html>
