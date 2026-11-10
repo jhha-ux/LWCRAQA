@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>P.CALM 부자재 불량률 대시보드</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif; background:#f0f4f8; color:#1e293b; font-size:14px; }
+
+.header {
+  background: linear-gradient(135deg, #14532d 0%, #16a34a 100%);
+  color:#fff; padding:28px 40px;
+  display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;
+}
+.header-left h1 { font-size:20px; font-weight:700; letter-spacing:-0.3px; margin-bottom:6px; }
+.header-left .subtitle { font-size:12px; opacity:0.75; line-height:1.8; }
+.header-right { text-align:right; font-size:12px; }
+.badge-period {
+  display:inline-block; background:rgba(255,255,255,0.18);
+  border:1px solid rgba(255,255,255,0.3);
+  border-radius:20px; padding:3px 12px; font-size:11px; font-weight:600; margin-bottom:8px;
+}
+.btn-refresh {
+  background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4);
+  color:#fff; border-radius:8px; padding:6px 16px; cursor:pointer; font-size:12px;
+  transition:.2s; margin-top:4px;
+}
+.btn-refresh:hover { background:rgba(255,255,255,0.3); }
+
+.container { max-width:1440px; margin:0 auto; padding:24px 28px; }
+
+.section-label {
+  font-size:11px; font-weight:700; color:#64748b; text-transform:uppercase;
+  letter-spacing:1px; margin-bottom:12px; display:flex; align-items:center; gap:8px;
+}
+.section-label::before {
+  content:''; display:block; width:3px; height:14px; background:#16a34a; border-radius:2px;
+}
+
+.std-box {
+  background:#f0fdf4; border:1.5px solid #86efac; border-radius:12px;
+  padding:14px 18px; margin-bottom:24px; font-size:11px; color:#166534; line-height:1.8;
+}
+.std-box strong { font-weight:700; }
+
+.kpi-row { display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-bottom:24px; }
+@media(max-width:900px){ .kpi-row { grid-template-columns:repeat(3,1fr); } }
+@media(max-width:600px){ .kpi-row { grid-template-columns:1fr 1fr; } }
+.kpi { background:#fff; border-radius:14px; padding:20px 22px; box-shadow:0 1px 4px rgba(0,0,0,0.07); border-top:3px solid; }
+.kpi.k1 { border-color:#16a34a; }
+.kpi.k2 { border-color:#dc2626; }
+.kpi.k3 { border-color:#d97706; }
+.kpi.k4 { border-color:#7c3aed; }
+.kpi.k5 { border-color:#0891b2; }
+.kpi-label { font-size:11px; color:#64748b; font-weight:600; margin-bottom:8px; }
+.kpi-value { font-size:36px; font-weight:800; line-height:1; }
+.kpi.k1 .kpi-value { color:#16a34a; }
+.kpi.k2 .kpi-value { color:#dc2626; }
+.kpi.k3 .kpi-value { color:#d97706; }
+.kpi.k4 .kpi-value { color:#7c3aed; }
+.kpi.k5 .kpi-value { color:#0891b2; }
+.kpi-sub { font-size:11px; color:#94a3b8; margin-top:6px; }
+.kpi-unit { font-size:16px; font-weight:600; margin-left:2px; }
+
+.charts-row { display:grid; gap:16px; margin-bottom:24px; }
+.row-2-1 { grid-template-columns:2fr 1.1fr; }
+.row-2   { grid-template-columns:1fr 1fr; }
+@media(max-width:800px){ .row-2-1, .row-2 { grid-template-columns:1fr; } }
+
+.card { background:#fff; border-radius:14px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,0.07); }
+.card-title { font-size:13px; font-weight:700; color:#374151; margin-bottom:16px; }
+.chart-wrap { position:relative; }
+
+.table-card { background:#fff; border-radius:14px; padding:20px 24px; box-shadow:0 1px 4px rgba(0,0,0,0.07); overflow-x:auto; }
+.table-filters { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; }
+.filter-btn {
+  padding:5px 14px; border-radius:20px; border:1.5px solid #e2e8f0;
+  background:#fff; font-size:11px; font-weight:600; cursor:pointer; color:#64748b;
+  transition:all .15s;
+}
+.filter-btn:hover,.filter-btn.active { background:#16a34a; border-color:#16a34a; color:#fff; }
+
+table { width:100%; border-collapse:collapse; font-size:12px; }
+th {
+  background:#f8fafc; padding:10px 12px; text-align:left;
+  font-weight:700; color:#475569; border-bottom:2px solid #e2e8f0;
+  white-space:nowrap; font-size:11px; position:sticky; top:0; z-index:1;
+}
+td { padding:9px 12px; border-bottom:1px solid #f1f5f9; color:#374151; vertical-align:middle; }
+tbody tr:hover td { background:#f8fafc; }
+.tbl-wrap { max-height:460px; overflow-y:auto; }
+
+.badge {
+  display:inline-block; padding:2px 8px; border-radius:20px;
+  font-size:10px; font-weight:700; white-space:nowrap;
+}
+.b-blue   { background:#dbeafe; color:#1e40af; }
+.b-red    { background:#fee2e2; color:#991b1b; }
+.b-orange { background:#fef3c7; color:#92400e; }
+.b-green  { background:#d1fae5; color:#065f46; }
+.b-gray   { background:#f1f5f9; color:#475569; }
+.b-purple { background:#ede9fe; color:#5b21b6; }
+.b-teal   { background:#ccfbf1; color:#134e4a; }
+.b-pink   { background:#fce7f3; color:#831843; }
+
+.pct-pill { display:inline-block; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; }
+.pct-critical { background:#fecaca; color:#7f1d1d; }
+.pct-high     { background:#fee2e2; color:#991b1b; }
+.pct-mid      { background:#fef3c7; color:#92400e; }
+.pct-low      { background:#f1f5f9; color:#64748b; }
+
+.loading {
+  display:flex; align-items:center; justify-content:center;
+  min-height:60vh; flex-direction:column; gap:16px;
+}
+.spinner {
+  width:40px; height:40px; border:3px solid #e2e8f0;
+  border-top-color:#16a34a; border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.error-box {
+  background:#fef2f2; border:1px solid #fecaca; border-radius:12px;
+  padding:24px; color:#991b1b; text-align:center; margin:40px 0;
+}
+#mainContent { display:none; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="badge-period" id="hdrPeriod">데이터 로딩 중…</div>
+    <h1>📦 P.CALM 완제품 부자재 불량·클레임 대시보드</h1>
+    <div class="subtitle">
+      브랜드사: (주)라이프위드코퍼레이션 &nbsp;|&nbsp; 구글시트 실시간 연동 &nbsp;|&nbsp; 자재 불량 반출 기준 적용
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="hdrRight" style="opacity:.7;font-size:12px;line-height:1.9"></div>
+    <button class="btn-refresh" onclick="loadData()">↻ 새로고침</button>
+  </div>
+</div>
+
+<div id="loadingView" class="loading">
+  <div class="spinner"></div>
+  <div style="color:#64748b;font-size:13px">구글시트 데이터 불러오는 중…</div>
+</div>
+
+<div id="errorView" style="display:none" class="container">
+  <div class="error-box">
+    <div style="font-size:18px;margin-bottom:8px">⚠️ 데이터 로딩 실패</div>
+    <div id="errorMsg" style="font-size:13px;margin-bottom:14px"></div>
+    <button class="btn-refresh" style="display:inline-block" onclick="loadData()">다시 시도</button>
+  </div>
+</div>
+
+<div id="mainContent" class="container">
+
+  <div class="std-box">
+    📋 <strong>자재 불량 반출 기준</strong> &nbsp;|&nbsp;
+    치명불량 ≥ 1% &nbsp;·&nbsp; 중불량 ≥ 3% &nbsp;·&nbsp; 경불량 ≥ 5%
+    &nbsp;&nbsp;※ 해당 불량률 이상이거나 일정 이슈가 있는 경우 &lt;기획팀&gt;과 협의 후 입고 조정
+    &nbsp;&nbsp;※ 반품 시 재생산 / 선별은 &lt;기획팀&gt;과 협의 진행
+  </div>
+
+  <div class="section-label">핵심 지표</div>
+  <div class="kpi-row">
+    <div class="kpi k1">
+      <div class="kpi-label">총 부자재 불량 건수</div>
+      <div class="kpi-value" id="k1">-</div>
+      <div class="kpi-sub" id="k1sub">-</div>
+    </div>
+    <div class="kpi k2">
+      <div class="kpi-label">용기 불량 건수</div>
+      <div class="kpi-value" id="k2">-</div>
+      <div class="kpi-sub" id="k2sub">-</div>
+    </div>
+    <div class="kpi k3">
+      <div class="kpi-label">단상자 불량 건수</div>
+      <div class="kpi-value" id="k3">-</div>
+      <div class="kpi-sub" id="k3sub">-</div>
+    </div>
+    <div class="kpi k4">
+      <div class="kpi-label">최다 발생 업체</div>
+      <div class="kpi-value" id="k4" style="font-size:22px;padding-top:4px">-</div>
+      <div class="kpi-sub" id="k4sub">-</div>
+    </div>
+    <div class="kpi k5">
+      <div class="kpi-label">최근 월 접수</div>
+      <div class="kpi-value" id="k5">-</div>
+      <div class="kpi-sub" id="k5sub">-</div>
+    </div>
+  </div>
+
+  <div class="section-label">추이 및 유형 분석</div>
+  <div class="charts-row row-2-1">
+    <div class="card">
+      <div class="card-title">📅 월별 부자재 불량 접수 추이</div>
+      <div class="chart-wrap" style="height:230px"><canvas id="monthChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📦 자재 구분별 건수</div>
+      <div class="chart-wrap" style="height:230px"><canvas id="typeChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="charts-row row-2">
+    <div class="card">
+      <div class="card-title">🏢 부자재 업체별 불량 건수</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="vendorChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔍 불량 확인 주체</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="checkChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-label">부자재 불량 상세 내역</div>
+  <div class="table-card">
+    <div class="table-filters" id="filterBtns"></div>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th>접수일자</th>
+            <th>자재구분</th>
+            <th>부자재 업체</th>
+            <th>제조사</th>
+            <th>제품명</th>
+            <th>수량</th>
+            <th>불량률</th>
+            <th>확인주체</th>
+            <th>불량 내용</th>
+            <th>처리일자</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = '1steJUGhnA7PUQpeBVC3vnsW7v2BPlhdPxj0SiWDJcwc';
+const GID = '552844904';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+
+let allData = [];
+let charts = {};
+let activeFilter = 'all';
+
+function parseCSV(text) {
+  const rows = [];
+  let row = [], cur = '', inQ = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQ) {
+      if (c === '"' && text[i+1] === '"') { cur += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else cur += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { row.push(cur.trim()); cur = ''; }
+      else if (c === '\n') { row.push(cur.trim()); rows.push(row); row = []; cur = ''; }
+      else cur += c;
+    }
+  }
+  if (cur || row.length) { row.push(cur.trim()); rows.push(row); }
+  return rows;
+}
+
+function getQuarter(dateStr) {
+  if (!dateStr) return '';
+  const m = parseInt((dateStr + '').substring(5, 7));
+  if (m <= 3) return 'Q1';
+  if (m <= 6) return 'Q2';
+  if (m <= 9) return 'Q3';
+  return 'Q4';
+}
+
+function parsePct(s) {
+  if (!s || s === '-') return null;
+  const m = (s + '').match(/[\d.]+/);
+  return m ? parseFloat(m[0]) : null;
+}
+
+function pctBadge(s) {
+  const n = parsePct(s);
+  if (n === null) return `<span style="color:#94a3b8">-</span>`;
+  const display = s.replace(/\n[\s\S]*/g, '').trim();
+  if (n >= 100) return `<span class="pct-pill pct-critical">${display}</span>`;
+  if (n >= 30)  return `<span class="pct-pill pct-high">${display}</span>`;
+  if (n >= 5)   return `<span class="pct-pill pct-mid">${display}</span>`;
+  return `<span class="pct-pill pct-low">${display}</span>`;
+}
+
+const TYPE_COLOR = {
+  '용기':'b-blue','단상자':'b-orange','캡':'b-teal','GWP':'b-purple',
+  '파우치':'b-green','라벨':'b-pink','선대':'b-gray','브러쉬':'b-gray','HC':'b-gray'
+};
+function typeBadge(t) {
+  return `<span class="badge ${TYPE_COLOR[t]||'b-gray'}">${t}</span>`;
+}
+
+const CHECK_COLOR = { '제조사':'b-blue','관리품':'b-gray','부자재사':'b-orange','브랜드사':'b-purple','소비자':'b-pink','생산 QC':'b-teal' };
+function checkBadge(v) {
+  const key = (v||'').trim().split('\n')[0].trim();
+  return `<span class="badge ${CHECK_COLOR[key]||'b-gray'}">${key||'-'}</span>`;
+}
+
+function truncate(s, n) {
+  s = (s||'').replace(/\n/g, ' ').trim();
+  return s.length > n ? s.slice(0, n) + '…' : s;
+}
+
+function mkChart(id, type, labels, datasets, extraOpts) {
+  if (charts[id]) charts[id].destroy();
+  const ctx = document.getElementById(id).getContext('2d');
+  charts[id] = new Chart(ctx, {
+    type,
+    data: { labels, datasets },
+    options: { responsive:true, maintainAspectRatio:false, ...extraOpts }
+  });
+}
+
+const PALETTE = ['#dc2626','#d97706','#16a34a','#0891b2','#7c3aed','#86efac','#94a3b8','#cbd5e1','#bae6fd','#fde68a','#f9a8d4','#6ee7b7'];
+
+async function loadData() {
+  document.getElementById('loadingView').style.display = 'flex';
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('errorView').style.display = 'none';
+
+  try {
+    const r = await fetch(CSV_URL);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const txt = await r.text();
+    if (!txt || txt.length < 20) throw new Error('빈 데이터');
+
+    const rows = parseCSV(txt);
+    allData = rows
+      .filter(r => r.length > 2 && /^\d+$/.test((r[0]||'').replace(/\s/g,'')))
+      .map(r => ({
+        no:       (r[0]||'').trim(),
+        date:     (r[1]||'').trim(),
+        type:     (r[2]||'').trim(),
+        vendor:   (r[3]||'').trim(),
+        buyType:  (r[4]||'').trim(),
+        maker:    (r[5]||'').trim(),
+        product:  (r[6]||'').trim(),
+        qty:      (r[7]||'').trim(),
+        pct:      (r[8]||'').trim(),
+        checker:  (r[9]||'').trim(),
+        content:  (r[10]||'').trim(),
+        imgLink:  (r[11]||'').trim(),
+        action:   (r[12]||'').trim(),
+        closeDate:(r[13]||'').trim(),
+      }));
+
+    if (!allData.length) throw new Error('파싱된 데이터가 없습니다');
+
+    renderKPIs();
+    renderCharts();
+    renderFilterBtns();
+    renderTable();
+
+    const dates = allData.map(d=>d.date).filter(Boolean).sort();
+    const start = dates[0] ? dates[0].slice(0,7).replace('-','.') : '';
+    const end   = dates[dates.length-1] ? dates[dates.length-1].slice(0,7).replace('-','.') : '';
+    document.getElementById('hdrPeriod').textContent = start && end ? `${start} ~ ${end} 누계` : '실시간 데이터';
+    document.getElementById('hdrRight').innerHTML =
+      `관여 부자재 업체<br><strong style="font-size:20px">${countUniq(allData,'vendor')}개사</strong><br>` +
+      `총 불량 건수<br><strong style="font-size:20px">${allData.length}건</strong><br>` +
+      `<span style="font-size:10px;opacity:.6">업데이트: ${new Date().toLocaleString('ko-KR',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})}</span>`;
+
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  } catch(e) {
+    document.getElementById('loadingView').style.display = 'none';
+    document.getElementById('errorView').style.display = 'block';
+    document.getElementById('errorMsg').textContent = e.message;
+  }
+}
+
+function countUniq(arr, key) {
+  return new Set(arr.map(d=>d[key]).filter(Boolean)).size;
+}
+
+function renderKPIs() {
+  const d = allData;
+  const total = d.length;
+  const yong  = d.filter(r=>r.type==='용기').length;
+  const dan   = d.filter(r=>r.type==='단상자').length;
+
+  const vendorCnt = {};
+  d.forEach(r => { if(r.vendor) vendorCnt[r.vendor] = (vendorCnt[r.vendor]||0)+1; });
+  const topVendor = Object.entries(vendorCnt).sort((a,b)=>b[1]-a[1])[0] || ['—', 0];
+
+  const months = [...new Set(d.map(r=>r.date.slice(0,7)).filter(Boolean))].sort();
+  const lastM   = months[months.length-1] || '';
+  const lastCnt = d.filter(r=>r.date.startsWith(lastM)).length;
+
+  document.getElementById('k1').innerHTML = `${total}<span class="kpi-unit">건</span>`;
+  document.getElementById('k1sub').textContent = '전체 누적 접수';
+  document.getElementById('k2').innerHTML = `${yong}<span class="kpi-unit">건</span>`;
+  document.getElementById('k2sub').textContent = `전체의 ${total?Math.round(yong/total*100):0}%`;
+  document.getElementById('k3').innerHTML = `${dan}<span class="kpi-unit">건</span>`;
+  document.getElementById('k3sub').textContent = `전체의 ${total?Math.round(dan/total*100):0}%`;
+  document.getElementById('k4').textContent = topVendor[0];
+  document.getElementById('k4sub').textContent = `${topVendor[1]}건 · 전체의 ${total?Math.round(topVendor[1]/total*100):0}%`;
+  document.getElementById('k5').innerHTML = `${lastCnt}<span class="kpi-unit">건</span>`;
+  document.getElementById('k5sub').textContent = lastM ? lastM.replace('-', '년 ') + '월 접수' : '-';
+}
+
+function renderCharts() {
+  const d = allData;
+
+  const monthCnt = {};
+  d.forEach(r => {
+    const ym = r.date.slice(0,7);
+    if (/^\d{4}-\d{2}$/.test(ym)) monthCnt[ym] = (monthCnt[ym]||0)+1;
+  });
+  const months = Object.keys(monthCnt).sort();
+  const monthLabels = months.map(m => {
+    const [y,mo] = m.split('-');
+    return mo + '월' + (months.length > 6 ? '\'' + y.slice(2) : '');
+  });
+  mkChart('monthChart', 'bar', monthLabels,
+    [{ label:'불량 건수', data: months.map(m=>monthCnt[m]),
+       backgroundColor: months.map((_,i)=>i===months.length-1?'#d97706':'#16a34a'),
+       borderRadius:6, borderSkipped:false }],
+    { plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.raw}건`}} },
+      scales:{ x:{grid:{display:false}}, y:{beginAtZero:true,ticks:{stepSize:1,font:{size:11}},grid:{color:'#f1f5f9'}} } }
+  );
+
+  const typeCnt = {};
+  d.forEach(r => { if(r.type) typeCnt[r.type] = (typeCnt[r.type]||0)+1; });
+  const typeEntries = Object.entries(typeCnt).sort((a,b)=>b[1]-a[1]);
+  const typeColors  = ['#2563eb','#f59e0b','#0891b2','#7c3aed','#94a3b8','#f87171','#4ade80'];
+  mkChart('typeChart', 'doughnut', typeEntries.map(e=>e[0]),
+    [{ data:typeEntries.map(e=>e[1]), backgroundColor:typeColors.slice(0,typeEntries.length), borderWidth:0, hoverOffset:8 }],
+    { plugins:{ legend:{position:'bottom',labels:{font:{size:11},padding:12}}, tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw}건`}} }, cutout:'62%' }
+  );
+
+  const vendorCnt = {};
+  d.forEach(r => { if(r.vendor) vendorCnt[r.vendor] = (vendorCnt[r.vendor]||0)+1; });
+  const topVendors = Object.entries(vendorCnt).sort((a,b)=>b[1]-a[1]).slice(0,12);
+  mkChart('vendorChart', 'bar', topVendors.map(e=>e[0]),
+    [{ label:'건수', data:topVendors.map(e=>e[1]),
+       backgroundColor:PALETTE.slice(0,topVendors.length), borderRadius:5, borderSkipped:false }],
+    { indexAxis:'y', plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw}건`}}},
+      scales:{ x:{beginAtZero:true,ticks:{stepSize:1,font:{size:11}},grid:{color:'#f1f5f9'}}, y:{grid:{display:false},ticks:{font:{size:11}}} } }
+  );
+
+  const checkCnt = {};
+  d.forEach(r => {
+    const key = (r.checker||'미입력').split('\n')[0].trim() || '미입력';
+    checkCnt[key] = (checkCnt[key]||0)+1;
+  });
+  const checkEntries = Object.entries(checkCnt).sort((a,b)=>b[1]-a[1]);
+  mkChart('checkChart', 'doughnut', checkEntries.map(e=>e[0]),
+    [{ data:checkEntries.map(e=>e[1]),
+       backgroundColor:['#2563eb','#94a3b8','#f59e0b','#7c3aed','#ec4899','#06b6d4'],
+       borderWidth:0, hoverOffset:8 }],
+    { plugins:{ legend:{position:'bottom',labels:{font:{size:11},padding:12}}, tooltip:{callbacks:{label:c=>`${c.label}: ${c.raw}건`}} }, cutout:'62%' }
+  );
+}
+
+function renderFilterBtns() {
+  const types = ['전체', ...new Set(allData.map(d=>d.type).filter(Boolean))];
+  const container = document.getElementById('filterBtns');
+  container.innerHTML = types.map(t =>
+    `<button class="filter-btn${t==='전체'?' active':''}" onclick="setFilter('${t}',this)">${t === '전체' ? `전체 (${allData.length})` : `${t} (${allData.filter(d=>d.type===t).length})`}</button>`
+  ).join('');
+}
+
+function setFilter(f, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeFilter = f;
+  renderTable();
+}
+
+function renderTable() {
+  const d = activeFilter === '전체' ? allData : allData.filter(r => r.type === activeFilter);
+  const tbody = document.getElementById('tableBody');
+  if (!d.length) {
+    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#94a3b8;padding:30px">해당하는 데이터가 없습니다</td></tr>';
+    return;
+  }
+  tbody.innerHTML = d.map(r => `
+    <tr>
+      <td><strong>${r.no}</strong></td>
+      <td style="white-space:nowrap">${r.date.slice(0,10)||'-'}</td>
+      <td>${typeBadge(r.type)}</td>
+      <td style="white-space:nowrap;font-size:11px">${r.vendor||'-'}</td>
+      <td style="font-size:11px;white-space:nowrap">${(r.maker||'-').replace(/㈜/g,'(주)')}</td>
+      <td style="font-size:11px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.product}">${r.product||'-'}</td>
+      <td style="font-size:11px;white-space:nowrap;max-width:90px;overflow:hidden;text-overflow:ellipsis">${truncate(r.qty,12)||'-'}</td>
+      <td style="text-align:center">${pctBadge(r.pct)}</td>
+      <td>${checkBadge(r.checker)}</td>
+      <td style="font-size:11px;color:#64748b;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${r.content}">${truncate(r.content,30)||'-'}</td>
+      <td style="white-space:nowrap;font-size:11px;color:#94a3b8">${r.closeDate||'-'}</td>
+    </tr>`).join('');
+}
+
+loadData();
+</script>
+</body>
+</html>
