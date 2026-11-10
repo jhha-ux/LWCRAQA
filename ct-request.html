@@ -58,6 +58,7 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif
 .ac-dropdown{position:absolute;top:calc(100% + 2px);left:0;right:0;background:#fff;border:1px solid #0d5349;border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:999;max-height:220px;overflow-y:auto;display:none}
 .ac-item{padding:7px 12px;font-size:12.5px;color:#374151;cursor:pointer;line-height:1.4}
 .ac-item:hover,.ac-item.ac-active{background:#f0fdf4;color:#0d5349}
+.ac-desc{font-size:11px;color:#9ca3af;font-weight:400}
 .ac-item mark{background:none;color:#0d5349;font-weight:700}
 .test-empty{font-size:12px;color:#9ca3af;padding:10px 2px;text-align:center}
 
@@ -297,39 +298,39 @@ body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif
 <script>
 // ── CT 시험항목 자동완성 데이터
 const CT_ITEMS = [
-  '감량 시험',
-  '흡착·스캘핑 시험',
-  '용출 시험',
-  '환경 응력균열 시험 (ESC)',
-  '감압 누수 시험',
-  '낙하 시험',
-  '토크 시험 (캡 개폐력)',
-  '작동력 시험',
-  '초기 작동수 시험 (Priming)',
-  '토출량 시험',
-  '분사 패턴 시험',
-  '잔량 시험',
-  '관능 평가',
-  '외관 변화 평가',
-  '내용성 시험',
-  '내온도 시험',
-  '고온 안정성 시험',
-  '동결-해동 시험',
-  '광안정성 시험',
-  '클릭감 시험',
-  '회전 질감 시험',
-  'pH 변화 측정',
-  '점도 변화 측정',
-  '미생물 한도 시험',
-
-  '조립안정성 시험',
-  '오버런 시험',
-  '색소 용출 시험',
-  '형광증백제 시험',
-  '함침 시험',
-  '시트 변형 시험',
-  '인쇄·코팅 박리 시험',
-  '적정용량 시험',];
+  { name: '감량 시험', desc: '보관 중 내용물 중량 감소 측정' },
+  { name: '흡착·스캘핑 시험', desc: '용기 소재의 성분 흡착 여부 확인' },
+  { name: '용출 시험', desc: '용기 소재에서 내용물로의 성분 용출 확인' },
+  { name: '환경 응력균열 시험 (ESC)', desc: '화학적 스트레스에 의한 용기 균열 확인' },
+  { name: '감압 누수 시험', desc: '진공 조건에서 누액 여부 확인' },
+  { name: '낙하 시험', desc: '낙하 충격 후 파손·누액 여부 확인' },
+  { name: '토크 시험 (캡 개폐력)', desc: '캡 개폐에 필요한 회전력 측정' },
+  { name: '작동력 시험', desc: '펌프·버튼 누름 하중 측정' },
+  { name: '공타 시험 (Priming)', desc: '내용물 첫 토출까지 필요한 빈 작동 횟수' },
+  { name: '토출량 시험', desc: '1회 작동 시 토출되는 내용물 무게 측정' },
+  { name: '분사 패턴 시험', desc: '스프레이 분사 형태·각도 확인' },
+  { name: '잔량 시험', desc: '사용 후 용기 내 잔류 내용물량 확인' },
+  { name: '관능 평가', desc: '색·향·질감 등 감각적 변화 평가' },
+  { name: '외관 변화 평가', desc: '용기·내용물의 육안 이상 여부 확인' },
+  { name: '내용성 시험', desc: '내용물 접촉 후 용기 변형·변색 확인' },
+  { name: '내온도 시험', desc: '고온 보관 후 용기 변형 여부 확인' },
+  { name: '고온 안정성 시험', desc: '고온 조건에서 내용물·용기 안정성 평가' },
+  { name: '동결-해동 시험', desc: '냉동/해동 반복 후 변화 확인' },
+  { name: '광안정성 시험', desc: '광 조사 후 변색·변취 여부 확인' },
+  { name: '클릭감 시험', desc: '클릭 타입 용기의 작동감 평가' },
+  { name: '회전 질감 시험', desc: '회전 용기의 조작감·토출감 평가' },
+  { name: 'pH 변화 측정', desc: '보관 후 내용물 pH 변화 측정' },
+  { name: '점도 변화 측정', desc: '보관 후 내용물 점도 변화 측정' },
+  { name: '미생물 한도 시험', desc: '내용물의 미생물 오염 여부 검사' },
+  { name: '조립안정성 시험', desc: '자재 체결·조립 이상 여부 확인' },
+  { name: '오버런 시험', desc: '캡·펌프 체결 후 추가 회전 발생 여부' },
+  { name: '색소 용출 시험', desc: '용기 색소의 내용물 용출 여부' },
+  { name: '형광증백제 시험', desc: '자외선 조사 시 형광 발생 여부' },
+  { name: '함침 시험', desc: '마스크팩 시트 내용물 함침 상태' },
+  { name: '시트 변형 시험', desc: '충전 후 시트 늘어짐·올풀림 확인' },
+  { name: '인쇄·코팅 박리 시험', desc: '용기 인쇄면·코팅 박리 여부' },
+  { name: '적정용량 시험', desc: '표시 용량 충전 가능 여부 확인' }
+];
 
 function addTestRow(value) {
   const list = document.getElementById('test-list');
@@ -378,7 +379,7 @@ function updateRowState(row, val) {
 function showAC(inp) {
   const drop = inp.nextElementSibling;
   const q = inp.value.trim();
-  const matches = CT_ITEMS.filter(item => item.toLowerCase().includes(q.toLowerCase())).slice(0, 10);
+  const matches = CT_ITEMS.filter(item => item.name.toLowerCase().includes(q.toLowerCase())).slice(0, 10);
   if (!matches.length || !q) {
     if (!q) { renderAC(drop, CT_ITEMS.slice(0, 10), q, inp); }
     else { drop.style.display = 'none'; }
@@ -391,20 +392,24 @@ function renderAC(drop, items, q, inp) {
   items.forEach((item) => {
     const div = document.createElement('div');
     div.className = 'ac-item';
+    const nm = item.name, desc = item.desc || '';
     if (q) {
-      const idx = item.toLowerCase().indexOf(q.toLowerCase());
-      div.innerHTML = escHtml(item.slice(0,idx))+'<mark>'+escHtml(item.slice(idx,idx+q.length))+'</mark>'+escHtml(item.slice(idx+q.length));
-    } else { div.textContent = item; }
+      const idx = nm.toLowerCase().indexOf(q.toLowerCase());
+      div.innerHTML = escHtml(nm.slice(0,idx))+'<mark>'+escHtml(nm.slice(idx,idx+q.length))+'</mark>'+escHtml(nm.slice(idx+q.length))+(desc?'<span class="ac-desc"> · '+escHtml(desc)+'</span>':'');
+    } else {
+      div.innerHTML = escHtml(nm)+(desc?'<span class="ac-desc"> · '+escHtml(desc)+'</span>':'');
+    }
     div.addEventListener('mousedown', function(e){
       e.preventDefault();
-      inp.value = item;
+      inp.value = nm;
       drop.style.display = 'none';
-      updateRowState(inp.closest('.test-row'), item);
+      updateRowState(inp.closest('.test-row'), nm);
     });
     drop.appendChild(div);
   });
   drop.style.display = 'block';
 }
+
 function hideAC(inp) {
   const drop = inp.nextElementSibling;
   if (drop) drop.style.display = 'none';
