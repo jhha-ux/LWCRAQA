@@ -1009,7 +1009,7 @@ loadData();
 <input id="cite-f7" placeholder="⑦ DOI 링크 (예: doi: 10.1111/jocd.13852)" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
 </div>
 <div style="border:1px dashed #166534;border-radius:6px;padding:8px;background:#f0fdf4;margin-bottom:4px">
-<div style="font-size:11px;color:#166534;font-weight:600;margin-bottom:6px">📎 PDF에서 자동추출 <span style="font-size:10px;font-weight:400;color:#888;">(\uCC38\uACE0\uC6A9, 100% \uC778\uC2DD \uC548\uB428)</span></div>
+<div style="font-size:11px;color:#166534;font-weight:600;margin-bottom:6px">📎 PDF에서 자동추출 <span style="font-size:10px;font-weight:400;color:#888;">(참고용, 100% 인식 안됨)</span></div>
 <div style="display:flex;align-items:center;gap:6px">
 <label style="flex:1;padding:7px 10px;background:#166534;color:#fff;border-radius:5px;font-size:12px;cursor:pointer;text-align:center;font-family:inherit">
 📄 PDF 첨부<input type="file" id="cite-pdf-input" accept=".pdf" style="display:none" onchange="fillFromPdf(this)"></label>
@@ -1019,7 +1019,7 @@ loadData();
 <div id="cite-result" style="display:none;flex-direction:column;gap:6px;">
 <div style="font-size:12px;font-weight:600;color:#374151">📄 생성된 단서조항</div>
 <div id="cite-output" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.65;color:#111827;word-break:break-all;min-height:40px;"></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px"><button id="cite-copy-btn" onclick="copyCitation(this)" style="padding:8px;background:#1d4ed8;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">\uD83D\uDCCB \uBCF5\uC0AC\uD558\uAE30</button><button onclick="resetCiteModal()" style="padding:8px;background:#6b7280;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">\uD83D\uDD04 \uCD08\uAE30\uD654</button></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px"><button id="cite-copy-btn" onclick="copyCitation(this)" style="padding:8px;background:#1d4ed8;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">📋 복사하기</button><button onclick="resetCiteModal()" style="padding:8px;background:#6b7280;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🔄 초기화</button></div>
 </div>
 </div>
 </div>
