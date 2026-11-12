@@ -1024,16 +1024,16 @@ function generateCitation(){
 var f=function(id){return document.getElementById('cite-f'+id).value.trim();};
 var a=f(1),t=f(2),j=f(3),y=f(4),v=f(5),p=f(6),d=f(7);
 var c='';
-if(a)c+=a+(a.slice(-1)==='.'?' ':'. ');
-if(t)c+=t+'. ';
-if(j)c+=j+'. ';
+if(a)c+=a+', ';
+if(t)c+=t+', ';
+if(j)c+=j+', ';
 var yv='';
 if(y)yv+=y;
 if(v)yv+=(yv?';':'')+v;
 if(p)yv+=(yv?':':'')+p;
-if(yv)c+=yv+'. ';
+if(yv)c+=yv+', ';
 if(d)c+=d;
-c=c.trim().replace(/\.+$/,'');
+c=c.trim().replace(/,+$/,'');
 document.getElementById('cite-output').textContent=c;
 document.getElementById('cite-result').style.display='flex';
 }
