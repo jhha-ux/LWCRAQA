@@ -1076,7 +1076,10 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 }
 var pdf=await pdfjsLib.getDocument({data:e.target.result}).promise;
 var text='';
-for(var i=1;i<=Math.min(2,pdf.numPages);i++){var page=await pdf.getPage(i);var c=await page.getTextContent();text+=c.items.map(function(x){return x.str;}).join(' ')+'\n';}
+for(var i=1;i<=Math.min(2,pdf.numPages);i++){
+var page=await pdf.getPage(i);var c=await page.getTextContent();
+text+=c.items.map(function(x){return x.str+(x.hasEOL?'\n':' ');}).join('')+'\n';
+}
 var dm=text.match(/10\.\d{4,9}\/\S+/);
 if(dm){status.textContent='DOI \uBC1C\uACAC, CrossRef \uC870\uD68C \uC911...';await lookupDoi(dm[0],status);}
 else{parseCiteText(text,status);}
@@ -1099,13 +1102,26 @@ status.textContent='\u2705 \uC790\uB3D9\uC644\uC131!';setTimeout(function(){stat
 }catch(e){status.textContent='CrossRef \uC870\uD68C \uC2E4\uD328, \uC9C1\uC811 \uC785\uB825\uD574\uC8FC\uC138\uC694';}
 }
 function parseCiteText(text,status){
-var lines=text.split('\n').map(function(l){return l.trim();}).filter(function(l){return l.length>5;});
-var ym=text.match(/[12][09]\d\d/);
-if(ym)document.getElementById('cite-f4').value=ym[0];
-var tl=lines.find(function(l){return l.length>20&&l.length<300;});
-if(tl)document.getElementById('cite-f2').value=tl;
-status.textContent='DOI\uB97C \uBABB \uCC3E\uC558\uC5B4\uC694. \uC77C\uBD80\uB9CC \uCC44\uC6CC\uB4DC\uB838\uC73C\uB2C8 \uD655\uC778\uD574\uC8FC\uC138\uC694';
-setTimeout(function(){status.textContent='';},5000);
+var fi=function(id,v){if(v&&v.trim())document.getElementById('cite-f'+id).value=v.trim();};
+var jm=text.match(/([A-Z][A-Za-z\s]+?)\s*\((\d{4})\)\s*(\d+)\s*:\s*(\d+)[-\u2013](\d+)/);
+if(jm){fi(3,jm[1]);fi(4,jm[2]);fi(5,jm[3]);fi(6,jm[4]+'-'+jm[5]);}
+else{var ym=text.match(/[12][09]\d\d/);if(ym)fi(4,ym[0]);}
+var am=text.match(/[A-Z][a-zA-Z\-]+(\s+[A-Z][a-zA-Z\-]+)*(\s*[\u00B7\u22C5\xB7]\s*[A-Z][a-zA-Z\-]+(\s+[A-Z][a-zA-Z\-]+)*)+/);
+if(am)fi(1,am[0].replace(/\s*[\u00B7\u22C5\xB7]\s*/g,', '));
+var stopIdx=text.search(/Received:|\bAbstract\b|\bKey words\b/);
+if(stopIdx>0){
+var pre=text.slice(0,stopIdx);
+var auIdx=pre.search(/[A-Z][a-zA-Z\-]+(\s+[A-Z][a-zA-Z\-]+)*(\s*[\u00B7\u22C5\xB7]\s*[A-Z][a-zA-Z\-]+)+/);
+if(auIdx>=0){
+var auM=pre.slice(auIdx).match(/[A-Z][a-zA-Z\-]+(\s+[A-Z][a-zA-Z\-]+)*(\s*[\u00B7\u22C5\xB7]\s*[A-Z][a-zA-Z\-]+)+/);
+if(auM){
+var titleRaw=pre.slice(auIdx+auM[0].length).trim();
+titleRaw=titleRaw.replace(/^([A-Z]\s){3,}[A-Z\s]+/,'').trim();
+titleRaw=titleRaw.replace(/[\u2013\u2014]-?\s*\n\s*/g,' ').replace(/\s+/g,' ').trim();
+if(titleRaw.length>15)fi(2,titleRaw);
+}}}
+status.textContent='DOI \uC5C6\uC74C. \uD14D\uC2A4\uD2B8 \uD30C\uC2F1\uC73C\uB85C \uCC44\uC6CC\uB4DC\uB838\uC2B5\uB2C8\uB2E4. \uD655\uC778 \uD6C4 \uD544\uC694\uC2DC \uC218\uC815\uD574\uC8FC\uC138\uC694';
+setTimeout(function(){status.textContent='';},6000);
 }</script>
 <script src="monitoring-banner.js"></script>
 </body>
