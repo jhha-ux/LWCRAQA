@@ -225,17 +225,6 @@ style="display:block; text-align:center; background:var(--accent); color:#fff; p
 style="display:block;text-align:center;background:#166534;color:#fff;padding:7px 0;border-radius:6px;font-size:12px;font-weight:500;margin-top:12px;width:100%;border:none;cursor:pointer;font-family:inherit;">
 생성하기 →
 </button>
-</div>
-<div class="notice-panel" style="border-color:#0e7490;">
-<div class="notice-title" style="color:#0e7490;">
-🧬 인체적용시험 단서조항 제작기
-</div>
-<div class="notice-body">시험명짐 · 기관 · 기간 입력 → 인체적용시험 단서조항 자동 완성
-</div>
-<button onclick="openClinicalModal()"
-style="display:block;text-align:center;background:#0e7490;color:#fff;padding:7px 0;border-radius:6px;font-size:12px;font-weight:500;margin-top:12px;width:100%;border:none;cursor:pointer;font-family:inherit;">
-생성하기 →
-</button>
 </div></div>
 
 <div style="background:linear-gradient(135deg,#0d3a2e 0%,#1a6e52 60%,#0d4a38 100%); padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;" onclick="window.open('./encyclopedia.html','_blank')">
@@ -259,6 +248,14 @@ style="background:#fff; color:#0d3a2e; font-weight:700; font-size:13px; padding:
 style="background:#fff; color:#1a3c6e; font-weight:700; font-size:13px; padding:8px 18px; border-radius:8px; text-decoration:none; white-space:nowrap;">
 검색하기 ↗
 </a>
+</div>
+<div style="background:linear-gradient(135deg,#0e3a3f 0%,#0e7490 60%,#065a73 100%); padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;" onclick="openClinicalModal()">
+<span style="font-size:22px;">🧬</span>
+<div style="flex:1; min-width:180px;">
+<strong style="color:#fff; font-size:14px; display:block; margin-bottom:2px;">인체적용시험 단서조항 제작기</strong>
+<span style="color:rgba(255,255,255,.75); font-size:12px;">시험명짐 · 기관 · 기간 입력 → 인체적용시험 단서조항 자동 완성</span>
+</div>
+<button onclick="event.stopPropagation(); openClinicalModal()" style="background:#fff; color:#0e7490; font-weight:700; font-size:13px; padding:8px 18px; border-radius:8px; border:none; cursor:pointer; white-space:nowrap; font-family:inherit;">단서조항 생성 →</button>
 </div>
 <div class="topbar">
 <div class="topbar-left">
