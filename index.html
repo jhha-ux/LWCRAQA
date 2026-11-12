@@ -1062,10 +1062,11 @@ setTimeout(function(){btn.textContent='📋 복사하기';},1800);
 }
 }
 
+
 function fillFromPdf(input){
 var file=input.files[0];if(!file)return;
 var status=document.getElementById('cite-pdf-status');
-status.textContent='폟 읽는 중...';
+status.textContent='PDF 읽는 중...';
 var reader=new FileReader();
 reader.onload=async function(e){
 try{
@@ -1075,9 +1076,9 @@ pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/p
 }
 var pdf=await pdfjsLib.getDocument({data:e.target.result}).promise;
 var text='';
-for(var i=1;i<=Math.min(2,pdf.numPages);i++){var page=await pdf.getPage(i);var c=await page.getTextContent();text+=c.items.map(function(x){return x.str;}).join(' ')+'
-';}
-var doiMatch=text.match(/(10.d{4,9}/[^s,;])"'　、]+)/);
+for(var i=1;i<=Math.min(2,pdf.numPages);i++){var page=await pdf.getPage(i);var c=await page.getTextContent();text+=c.items.map(function(x){return x.str;}).join(' ')+'\n';}
+var doiRe=new RegExp('\b(10\.\d{4,9}\/[^\s,;\])+)');
+var doiMatch=text.match(doiRe);
 if(doiMatch){status.textContent='DOI 발견, CrossRef 조회 중...';await lookupDoi(doiMatch[1],status);}
 else{parseCiteText(text,status);}
 }catch(err){status.textContent='오류: '+err.message;}
@@ -1088,20 +1089,20 @@ async function lookupDoi(doi,status){
 try{
 var r=await fetch('https://api.crossref.org/works/'+encodeURIComponent(doi));
 var data=await r.json();var m=data.message;
-if(m.author&&m.author.length){var au=m.author.map(function(a){return (a.family||a.name||'')+(a.given?' '+a.given.charAt(0)+'.':'');}).join(', ');document.getElementById('cite-f1').value=au;}
+if(m.author&&m.author.length){var au=m.author.map(function(a){return (a.family||a.name||'')+( a.given?' '+a.given.charAt(0)+'.':''  );}).join(', ');document.getElementById('cite-f1').value=au;}
 if(m.title&&m.title.length)document.getElementById('cite-f2').value=m.title[0];
 if(m['container-title']&&m['container-title'].length)document.getElementById('cite-f3').value=m['container-title'][0];
 if(m.published&&m.published['date-parts']){var dp=m.published['date-parts'][0];document.getElementById('cite-f4').value=dp[0]+(dp[1]?'/'+String(dp[1]).padStart(2,'0'):'');}
-document.getElementById('cite-f5').value=(m.volume||'')+(m.issue?'('+m.issue+')':'');
+document.getElementById('cite-f5').value=(m.volume||'')+( m.issue?'('+m.issue+')':''  );
 if(m.page)document.getElementById('cite-f6').value=m.page.replace('--','-');
 document.getElementById('cite-f7').value='https://doi.org/'+(m.DOI||doi);
 status.textContent='✅ 자동완성!';setTimeout(function(){status.textContent='';},3000);
 }catch(e){status.textContent='CrossRef 조회 실패, 직접 입력해주세요';}
 }
 function parseCiteText(text,status){
-var lines=text.split(/
-+/).map(function(l){return l.trim();}).filter(function(l){return l.length>5;});
-var ym=text.match(/(19|20)d{2}/);if(ym)document.getElementById('cite-f4').value=ym[0];
+var lines=text.split(/[\n]+/).map(function(l){return l.trim();}).filter(function(l){return l.length>5;});
+var ym=text.match(/[12][09]\d\d/);
+if(ym)document.getElementById('cite-f4').value=ym[0];
 var tl=lines.find(function(l){return l.length>20&&l.length<300;});
 if(tl)document.getElementById('cite-f2').value=tl;
 status.textContent='DOI를 못 찾았어요. 일부만 채워드렸으니 확인해주세요';
