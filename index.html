@@ -213,7 +213,19 @@ style="display:block; text-align:center; background:var(--accent); color:#fff; p
 열기 ↗
 </a>
 </div>
+
+<div class="notice-panel" style="border-color:#166534;">
+<div class="notice-title" style="color:#166534;">
+📝 논문 단서조항 제작기
 </div>
+<div class="notice-body">
+저자·논문명·저널 입력 → NLM 형식 단서조항 자동 완성
+</div>
+<button onclick="openCiteModal()"
+style="display:block;text-align:center;background:#166534;color:#fff;padding:7px 0;border-radius:6px;font-size:12px;font-weight:500;margin-top:12px;width:100%;border:none;cursor:pointer;font-family:inherit;">
+생성하기 →
+</button>
+</div></div>
 
 <div style="background:linear-gradient(135deg,#0d3a2e 0%,#1a6e52 60%,#0d4a38 100%); padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;" onclick="window.open('./encyclopedia.html','_blank')">
 <span style="font-size:22px;">🔬</span>
@@ -236,17 +248,6 @@ style="background:#fff; color:#0d3a2e; font-weight:700; font-size:13px; padding:
 style="background:#fff; color:#1a3c6e; font-weight:700; font-size:13px; padding:8px 18px; border-radius:8px; text-decoration:none; white-space:nowrap;">
 검색하기 ↗
 </a>
-</div>
-<div style="background:linear-gradient(135deg,#1a4d1a 0%,#2d7a2d 60%,#1a5a1a 100%); padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;" onclick="openCiteModal()">
-<span style="font-size:22px;">📝</span>
-<div style="flex:1; min-width:180px;">
-<strong style="color:#fff; font-size:14px; display:block; margin-bottom:2px;">논문 단서조항 제작기</strong>
-<span style="color:rgba(255,255,255,.75); font-size:12px;">저자·논문명·저널 등 입력 → NLM/Vancouver 형식 단서조항 자동 완성</span>
-</div>
-<button onclick="event.stopPropagation();openCiteModal()"
-style="background:#fff; color:#1a4d1a; font-weight:700; font-size:13px; padding:8px 18px; border-radius:8px; border:none; cursor:pointer; white-space:nowrap;">
-생성하기 ↗
-</button>
 </div>
 <div class="topbar">
 <div class="topbar-left">
