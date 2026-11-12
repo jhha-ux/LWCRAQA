@@ -237,6 +237,17 @@ style="background:#fff; color:#1a3c6e; font-weight:700; font-size:13px; padding:
 검색하기 ↗
 </a>
 </div>
+<div style="background:linear-gradient(135deg,#1a4d1a 0%,#2d7a2d 60%,#1a5a1a 100%); padding:12px 24px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; cursor:pointer;" onclick="openCiteModal()">
+<span style="font-size:22px;">📝</span>
+<div style="flex:1; min-width:180px;">
+<strong style="color:#fff; font-size:14px; display:block; margin-bottom:2px;">논문 단서조항 제작기</strong>
+<span style="color:rgba(255,255,255,.75); font-size:12px;">저자·논문명·저널 등 입력 → NLM/Vancouver 형식 단서조항 자동 완성</span>
+</div>
+<button onclick="event.stopPropagation();openCiteModal()"
+style="background:#fff; color:#1a4d1a; font-weight:700; font-size:13px; padding:8px 18px; border-radius:8px; border:none; cursor:pointer; white-space:nowrap;">
+생성하기 ↗
+</button>
+</div>
 <div class="topbar">
 <div class="topbar-left">
 <div class="logo-dot"></div>
@@ -975,6 +986,73 @@ initNotice();
 // =============================================
 updateAdminUI();
 loadData();
+</script>
+<!-- 논문 단서조항 제작기 -->
+<div id="cite-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:flex-start;justify-content:center;padding-top:5vh;overflow-y:auto" onclick="if(event.target===this)closeCiteModal()">
+<div style="background:#fff;border-radius:12px;overflow:hidden;width:min(560px,96vw);margin-bottom:20px;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+<div style="background:#166534;color:#fff;padding:12px 20px;display:flex;align-items:center;gap:10px">
+<div style="font-size:14px;font-weight:700;flex:1">📝 논문 단서조항 제작기</div>
+<button onclick="closeCiteModal()" style="background:rgba(255,255,255,0.2);border:none;color:#fff;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+</div>
+<div style="padding:16px;display:flex;flex-direction:column;gap:7px">
+<div style="font-size:11px;color:#6b7280">아래 항목을 입력하면 단서조항이 자동으로 완성됩니다. 빈 칸은 생략됩니다.</div>
+<input id="cite-f1" placeholder="① 저자 명칭 (예: Temova Rakuša Ž, Škufca P, ...)" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
+<input id="cite-f2" placeholder="② 논문명 (예: Retinoid stability and...)" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
+<input id="cite-f3" placeholder="③ 저널명칭 (예: J Cosmet Dermatol)" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+<input id="cite-f4" placeholder="④ 발행 연월 (예: 2021 Jul)" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
+<input id="cite-f5" placeholder="⑤ 권 및 호 (예: 20(7))" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+<input id="cite-f6" placeholder="⑥ 수록 페이지 (예: 2350-2358)" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
+<input id="cite-f7" placeholder="⑦ DOI 링크 (예: doi: 10.1111/jocd.13852)" style="border:1px solid #d1d5db;border-radius:6px;padding:8px 10px;font-size:12px;outline:none;font-family:inherit">
+</div>
+<button onclick="generateCitation()" style="background:#166534;color:#fff;border:none;padding:9px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">단서조항 생성</button>
+<div id="cite-result" style="display:none;flex-direction:column;gap:6px;">
+<div style="font-size:12px;font-weight:600;color:#374151">📄 생성된 단서조항</div>
+<div id="cite-output" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:7px;padding:10px 12px;font-size:12px;line-height:1.65;color:#111827;word-break:break-all;min-height:40px;"></div>
+<button id="cite-copy-btn" onclick="copyCitation(this)" style="background:#4f8ef7;color:#fff;border:none;padding:8px;border-radius:6px;font-size:12px;cursor:pointer;font-family:inherit">📋 복사하기</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+function openCiteModal(){var o=document.getElementById('cite-overlay');o.style.display='flex';}
+function closeCiteModal(){document.getElementById('cite-overlay').style.display='none';}
+function generateCitation(){
+var f=function(id){return document.getElementById('cite-f'+id).value.trim();};
+var a=f(1),t=f(2),j=f(3),y=f(4),v=f(5),p=f(6),d=f(7);
+var c='';
+if(a)c+=a+(a.slice(-1)==='.'?' ':'. ');
+if(t)c+=t+'. ';
+if(j)c+=j+'. ';
+var yv='';
+if(y)yv+=y;
+if(v)yv+=(yv?';':'')+v;
+if(p)yv+=(yv?':':'')+p;
+if(yv)c+=yv+'. ';
+if(d)c+=d;
+c=c.trim().replace(/\.+$/,'');
+document.getElementById('cite-output').textContent=c;
+document.getElementById('cite-result').style.display='flex';
+}
+function copyCitation(btn){
+var text=document.getElementById('cite-output').textContent;
+if(navigator.clipboard){
+navigator.clipboard.writeText(text).then(function(){
+btn.textContent='✅ 복사됨!';
+setTimeout(function(){btn.textContent='📋 복사하기';},1800);
+});
+} else {
+var r=document.createRange();
+r.selectNodeContents(document.getElementById('cite-output'));
+window.getSelection().removeAllRanges();
+window.getSelection().addRange(r);
+document.execCommand('copy');
+btn.textContent='✅ 복사됨!';
+setTimeout(function(){btn.textContent='📋 복사하기';},1800);
+}
+}
 </script>
 <script src="monitoring-banner.js"></script>
 </body>
