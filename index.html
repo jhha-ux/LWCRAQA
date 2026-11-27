@@ -514,14 +514,14 @@ btn.textContent = '🔓 관리자 로그아웃';
 btn.classList.add('active');
 btn.onclick = adminLogout;
 thCb.style.display = '';
-thDel.style.display = '';
+if(thDel)thDel.style.display = '';
 noticeEditBtn.style.display = 'block';
 } else {
 btn.textContent = '🔒 관리자 로그인';
 btn.classList.remove('active');
 btn.onclick = openPinModal;
 thCb.style.display = 'none';
-thDel.style.display = 'none';
+if(thDel)thDel.style.display = 'none';
 noticeEditBtn.style.display = 'none';
 document.getElementById('noticeTextarea').style.display = 'none';
 document.getElementById('noticeSaveBtn').style.display = 'none';
