@@ -76,6 +76,7 @@ tbody td { padding:13px 16px; font-size:13px; vertical-align:middle; }
 .dot.green { background:var(--green); box-shadow:0 0 5px var(--green); }
 .dot.yellow { background:var(--yellow); }
 .dot.red { background:var(--red); }
+.dot.purple { background:#9333ea; }
 .drive-link { display:inline-flex; align-items:center; gap:5px; color:var(--accent); text-decoration:none; font-size:12px; padding:4px 10px; border-radius:5px; border:1px solid rgba(79,142,247,0.3); background:rgba(79,142,247,0.06); }
 .drive-link:hover { background:rgba(79,142,247,0.15); }
 .remarks-text { font-size:12px; color:var(--text-muted); max-width:160px; word-break:break-word; line-height:1.4; }
@@ -174,7 +175,7 @@ tbody td { padding:13px 16px; font-size:13px; vertical-align:middle; }
 </head>
 <body>
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxaXr35UIdF5jUUc60ukDPPJzskVLZqUF7DeGfDM4MQkIHKYqeaN3OPmamHtkWEPqA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyvanDCAZ_gNk0PCq8SROJcA_SADDpzhtG6RnCfXUy-HUsf2z4QnaL5_uEWOhRrGt0U/exec';
 </script>
 
 <div class="loading-overlay" id="loadingOverlay">
@@ -279,6 +280,7 @@ style="background:#fff; color:#1a3c6e; font-weight:700; font-size:13px; padding:
 <button class="filter-btn active" id="status-btn-all" onclick="filterStatus('all',this)">전체</button>
 <button class="filter-btn" onclick="filterStatus('진행중',this)">진행중</button>
 <button class="filter-btn" onclick="filterStatus('신청',this)">신청</button>
+<button class="filter-btn" onclick="filterStatus('보완요청',this)">보완요청</button>
 
       <span style="width:1px;height:18px;background:var(--border);margin:0 4px;"></span>
       <span style="font-size:11px;color:var(--text-muted);">정렬</span>
@@ -713,7 +715,7 @@ return;
 
 tbody.innerHTML = pageData.map((r) => {
 const actualIdx = data.indexOf(r);
-const dotClass = r.status === '완료' ? 'green' : r.status === '진행중' ? 'yellow' : 'red';
+const dotClass = r.status === '완료' ? 'green' : r.status === '보완요청' ? 'purple' : r.status === '진행중' ? 'yellow' : 'red';
 const badgeClass = typeBadgeClass(r.type);
 const isChecked = selectedRows.has(actualIdx);
 
@@ -840,6 +842,7 @@ cell.innerHTML = `
 <option value="신청" ${current==='신청' ?'selected':''}>신청</option>
 <option value="진행중" ${current==='진행중'?'selected':''}>진행중</option>
 <option value="완료" ${current==='완료' ?'selected':''}>완료</option>
+<option value="보완요청" ${current==='보완요청'?'selected':''}>보완요청</option>
 </select>`;
 cell.querySelector('.status-select').focus();
 }
